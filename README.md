@@ -1,11 +1,9 @@
-# Digital-database
-數位資料庫
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
-    <title>🔐 原始碼登入 · 下載與 IP 限制</title>
+    <title>✨ 原始碼登入 · A-Z 專案＋100人物資料</title>
     <!-- 字體 Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,6 +23,7 @@
             justify-content: center;
             color: #e2e8f0;
         }
+        /* 粒子背景 */
         #particleCanvas {
             position: fixed;
             top: 0;
@@ -51,74 +50,73 @@
             overflow: hidden;
         }
 
-        .auth-row {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            align-items: flex-start;
+        /* 登入卡片 (獨立置中) */
+        .login-container {
+            max-width: 450px;
             margin: auto;
-            width: 100%;
-            max-width: 1000px;
-        }
-        .auth-card {
-            flex: 1;
-            max-width: 400px;
+            background: rgba(20, 30, 50, 0.9);
             backdrop-filter: blur(15px);
-            border-radius: 50px;
-            padding: 35px;
+            border-radius: 60px;
+            padding: 40px;
             border: 1px solid rgba(255,255,255,0.15);
             box-shadow: 0 30px 50px -20px black;
-        }
-        .auth-card.login-card {
-            background: linear-gradient(145deg, #1e3a8a, #1e40af);
-        }
-        .auth-card.register-card {
-            background: linear-gradient(145deg, #6b21a5, #7e22ce);
-        }
-        .auth-card h2 {
             text-align: center;
-            margin-bottom: 25px;
-            font-size: 1.8rem;
+        }
+        .login-container h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
             color: white;
         }
-        .auth-form { display: flex; flex-direction: column; gap: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group label { font-weight: 500; font-size: 0.9rem; color: #e2e8f0; }
+        .login-form { display: flex; flex-direction: column; gap: 25px; }
+        .form-group { text-align: left; }
+        .form-group label {
+            font-weight: 500; font-size: 0.9rem; color: #a5b4cb;
+            display: block; margin-bottom: 8px;
+        }
         .form-control {
-            padding: 16px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 40px;
-            background: rgba(0,0,0,0.3); color: white; font-size: 1rem;
-            backdrop-filter: blur(5px);
+            width: 100%;
+            padding: 18px 25px;
+            border: 1px solid #2d3f5e;
+            border-radius: 60px;
+            background: rgba(10, 20, 35, 0.8);
+            color: white;
+            font-size: 1.1rem;
+            transition: 0.2s;
         }
-        .form-control:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
-        .auth-btn {
-            background: linear-gradient(135deg, #2563eb, #1e40af); color: white;
-            border: none; padding: 16px; border-radius: 50px; font-weight: 700;
-            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px;
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
         }
-        .auth-btn:hover { transform: scale(1.02); }
-        .auth-btn.loading { background: #475569; pointer-events: none; }
-        .auth-btn.loading i { animation: spin 1s linear infinite; }
+        .login-btn {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 20px #1e3a8a;
+        }
+        .login-btn:hover { transform: scale(1.02); }
+        .login-btn.loading { background: #475569; pointer-events: none; }
+        .login-btn.loading i { animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .error-message {
-            color: #f87171; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;
-            background: rgba(220,38,38,0.2); padding: 10px 16px; border-radius: 30px;
+            color: #f87171; font-size: 0.9rem;
+            background: rgba(220,38,38,0.2); padding: 12px 20px; border-radius: 40px;
             border: 1px solid #ef4444; display: none;
+            margin-top: 10px;
         }
-        .small-note { color: #cbd5e1; font-size: 0.8rem; margin-top: 5px; }
+        .small-note { color: #94a3b8; font-size: 0.85rem; margin-top: 10px; }
 
-        .block-message {
-            background: rgba(239,68,68,0.2);
-            border: 1px solid #ef4444;
-            color: #f87171;
-            padding: 12px;
-            border-radius: 40px;
-            text-align: center;
-            font-size: 0.9rem;
-            display: none;
-            margin: 20px auto 0;
-            max-width: 600px;
-        }
-
+        /* 登入後主面板 (左右佈局) */
         .main-panel {
             display: none;
             flex: 1;
@@ -126,6 +124,7 @@
             height: 100%;
             overflow: hidden;
         }
+        /* 左側 A-Z 側邊欄 (可獨立滑動) */
         .sidebar {
             width: 120px;
             background: rgba(20, 30, 50, 0.7);
@@ -164,6 +163,7 @@
         .sidebar .alpha-tab:hover { background: rgba(37,99,235,0.5); transform: scale(1.05); }
         .sidebar .alpha-tab.active { background: #2563eb; border-color: white; box-shadow: 0 0 25px #2563eb; }
 
+        /* 右側內容區 (可獨立滑動) */
         .content-area {
             flex: 1;
             min-width: 0;
@@ -177,6 +177,7 @@
         .content-area::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
         .content-area::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 10px; }
 
+        /* 專案個人資訊卡片 */
         .profile-card {
             background: rgba(25, 35, 55, 0.85);
             backdrop-filter: blur(10px);
@@ -209,42 +210,63 @@
         .info-item .label { font-size: 0.8rem; color: #94a3b8; }
         .info-item .value { font-weight: 600; color: white; }
 
-        .download-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: #10b981;
+        /* 100個人員卡片區域 */
+        .people-section {
+            margin-top: 30px;
+        }
+        .people-section h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
             color: white;
-            padding: 12px 25px;
-            border-radius: 40px;
-            margin-top: 20px;
-            border: none;
-            cursor: pointer;
-            transition: 0.2s;
-            font-weight: 600;
         }
-        .download-btn:hover { background: #059669; }
-
-        .project-link {
-            display: inline-flex;
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        .person-card {
+            background: rgba(30, 40, 60, 0.6);
+            backdrop-filter: blur(5px);
+            border-radius: 25px;
+            padding: 20px 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            transition: 0.2s;
+        }
+        .person-card:hover {
+            background: rgba(40, 55, 80, 0.8);
+            transform: translateY(-3px);
+        }
+        .person-avatar {
+            width: 60px;
+            height: 60px;
+            background: #3b82f6;
+            border-radius: 30px;
+            display: flex;
             align-items: center;
-            gap: 10px;
-            background: #1e293b;
-            color: #60a5fa;
-            padding: 12px 25px;
-            border-radius: 40px;
-            margin-top: 20px;
-            border: 1px solid #3b82f6;
-            text-decoration: none;
-            transition: 0.2s;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 1.8rem;
+            color: white;
         }
-        .project-link:hover { background: #2d3b52; color: white; }
+        .person-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: white;
+        }
+        .person-role {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
 
+        /* 設定卡片 (裝飾) */
         .settings-card {
             background: rgba(25, 35, 55, 0.85);
             backdrop-filter: blur(10px);
             border-radius: 50px;
             padding: 35px;
+            margin-top: 25px;
             border: 1px solid rgba(255,255,255,0.15);
         }
         .settings-card h3 { font-size: 1.8rem; color: white; margin-bottom: 25px; }
@@ -276,10 +298,14 @@
         }
         .toast.show { opacity: 1; }
 
-        @media (max-width: 800px) {
-            .auth-row { flex-direction: column; align-items: center; }
-            .main-panel { flex-direction: column; }
-            .sidebar { width: 100%; flex-direction: row; justify-content: center; padding: 15px; }
+        /* 搖晃動畫 */
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
         }
     </style>
 </head>
@@ -287,48 +313,18 @@
     <canvas id="particleCanvas"></canvas>
 
     <div class="app-container">
-        <!-- 登入/註冊區塊 (左右獨立，不同色調) -->
-        <div id="authBlock" class="auth-row">
-            <!-- 左邊：登入 (原始碼) - 藍色調 -->
-            <div class="auth-card login-card">
-                <h2><i class="fas fa-key"></i> 原始碼登入</h2>
-                <div class="auth-form">
-                    <div class="form-group">
-                        <label>🔢 原始碼</label>
-                        <input type="text" class="form-control" id="sourceCodeInput" placeholder="請輸入原始碼" value="ROOTA">
-                        <div class="small-note">原始碼最後一個字母決定專案 (例如 ROOTA 進入 A 專案)</div>
-                    </div>
-                    <div id="loginError" class="error-message"><i class="fas fa-exclamation-triangle"></i> 原始碼錯誤</div>
-                    <button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> 登入</button>
+        <!-- 登入卡片 (只輸入原始碼) -->
+        <div id="loginBlock" class="login-container">
+            <h2><i class="fas fa-key"></i> 原始碼登入</h2>
+            <div class="login-form">
+                <div class="form-group">
+                    <label>🔢 請輸入原始碼</label>
+                    <input type="text" class="form-control" id="sourceCodeInput" placeholder="例如 ROOTA 或 ONCEA" value="ROOTA">
+                    <div class="small-note">一次性原始碼只能使用一次，永久原始碼可重複使用。<br>原始碼最後一個字母決定進入哪個專案 (A~Z)。</div>
                 </div>
+                <div id="loginError" class="error-message"><i class="fas fa-exclamation-triangle"></i> 原始碼錯誤或已失效</div>
+                <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> 登入</button>
             </div>
-
-            <!-- 右邊：註冊 (一次性驗證碼) - 紫色調 -->
-            <div class="auth-card register-card">
-                <h2><i class="fas fa-user-plus"></i> 註冊帳號</h2>
-                <div class="auth-form">
-                    <div class="form-group">
-                        <label>👤 使用者名稱</label>
-                        <input type="text" class="form-control" id="regUsername" placeholder="自訂帳號">
-                    </div>
-                    <div class="form-group">
-                        <label>🔑 密碼</label>
-                        <input type="password" class="form-control" id="regPassword" placeholder="至少6位">
-                    </div>
-                    <div class="form-group">
-                        <label>📨 一次性驗證碼</label>
-                        <input type="text" class="form-control" id="regInvite" placeholder="請輸入驗證碼">
-                    </div>
-                    <div id="registerError" class="error-message"></div>
-                    <button class="auth-btn" id="registerBtn"><i class="fas fa-check-circle"></i> 註冊</button>
-                    <div class="small-note">註冊成功後請等待管理員分配原始碼，才能登入</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- IP 封鎖提示 -->
-        <div id="blockMessage" class="block-message">
-            ⚠️ 嘗試次數過多，請等待 1 分鐘後再試
         </div>
 
         <!-- 登入後主面板 -->
@@ -338,7 +334,7 @@
 
             <!-- 右側內容區 -->
             <div class="content-area" id="contentArea">
-                <!-- 個人資訊卡片 -->
+                <!-- 專案個人資訊卡片 (可自訂) -->
                 <div class="profile-card" id="profileCard">
                     <div class="profile-header">
                         <div class="avatar-large" id="profileAvatar">A</div>
@@ -351,11 +347,17 @@
                                 <div class="info-item"><i class="fas fa-map-marker-alt"></i> <span><span class="label">地區</span><br><span class="value" id="profileLocation">台北</span></span></div>
                                 <div class="info-item"><i class="fas fa-calendar-alt"></i> <span><span class="label">加入日期</span><br><span class="value" id="profileJoin">2025-01-01</span></span></div>
                             </div>
-                            <!-- 自訂連結按鈕 -->
-                            <a href="#" target="_blank" class="project-link" id="projectLink"><i class="fas fa-external-link-alt"></i> <span id="linkText">前往專案網站</span></a>
-                            <!-- 下載檔案按鈕 -->
-                            <button class="download-btn" id="downloadBtn"><i class="fas fa-download"></i> 下載專案文件</button>
+                            <!-- 可自訂連結按鈕 (例如專案外部連結) -->
+                            <a href="#" target="_blank" class="project-link" id="projectLink" style="display:inline-flex; align-items:center; gap:10px; background:#1e293b; color:#60a5fa; padding:12px 25px; border-radius:40px; margin-top:20px; border:1px solid #3b82f6; text-decoration:none;"><i class="fas fa-external-link-alt"></i> <span id="linkText">前往專案網站</span></a>
                         </div>
+                    </div>
+                </div>
+
+                <!-- 100個人物資料卡片區 (大部分空白，可自行填入) -->
+                <div class="people-section">
+                    <h3><i class="fas fa-users"></i> 人物詳細資料 (100個)</h3>
+                    <div class="people-grid" id="peopleGrid">
+                        <!-- 這裡會由 JavaScript 動態生成 100 個卡片，內容可從 profiles.people 陣列讀取 -->
                     </div>
                 </div>
 
@@ -379,7 +381,7 @@
                         <div class="toggle-switch active" id="darkToggle"></div>
                     </div>
                     <div style="margin-top:25px;">
-                        <button class="auth-btn" style="background:#4b5563; width:auto; display:inline-block; margin-right:15px;" id="saveSettingsBtn"><i class="fas fa-save"></i> 儲存設定</button>
+                        <button class="login-btn" style="background:#4b5563; width:auto; display:inline-block; margin-right:15px; padding:12px 25px;" id="saveSettingsBtn"><i class="fas fa-save"></i> 儲存設定</button>
                         <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 登出</button>
                     </div>
                 </div>
@@ -424,16 +426,15 @@
             initParticles(); drawParticles();
 
             // ---------- DOM ----------
-            const authBlock = document.getElementById('authBlock');
+            const loginBlock = document.getElementById('loginBlock');
             const mainPanel = document.getElementById('mainPanel');
             const loginBtn = document.getElementById('loginBtn');
-            const registerBtn = document.getElementById('registerBtn');
             const loginError = document.getElementById('loginError');
-            const registerError = document.getElementById('registerError');
             const logoutBtn = document.getElementById('logoutBtn');
             const toast = document.getElementById('toast');
             const sidebar = document.getElementById('sidebar');
-            const blockMessage = document.getElementById('blockMessage');
+            const peopleGrid = document.getElementById('peopleGrid');
+
             // 個人資訊元素
             const profileAvatar = document.getElementById('profileAvatar');
             const profileName = document.getElementById('profileName');
@@ -444,7 +445,7 @@
             const profileJoin = document.getElementById('profileJoin');
             const projectLink = document.getElementById('projectLink');
             const linkText = document.getElementById('linkText');
-            const downloadBtn = document.getElementById('downloadBtn');
+
             // 開關
             const notifyToggle = document.getElementById('notifyToggle');
             const mfaToggle = document.getElementById('mfaToggle');
@@ -456,98 +457,48 @@
                 setTimeout(()=>toast.classList.remove('show'), duration);
             }
 
-            // ========== IP 失敗次數限制 (模擬) ==========
-            const FAIL_LIMIT = 3;
-            const BLOCK_TIME = 60 * 1000; // 1分鐘
-            let failCount = 0;
-            let firstFailTime = null;
-            let blocked = false;
-
-            function checkBlock() {
-                if (blocked) return true;
-                if (firstFailTime && (Date.now() - firstFailTime > BLOCK_TIME)) {
-                    // 超過一分鐘，重置計數
-                    failCount = 0;
-                    firstFailTime = null;
-                    blockMessage.style.display = 'none';
-                }
-                return false;
-            }
-
-            function recordFail() {
-                const now = Date.now();
-                if (!firstFailTime) {
-                    firstFailTime = now;
-                    failCount = 1;
-                } else {
-                    if (now - firstFailTime <= BLOCK_TIME) {
-                        failCount++;
-                        if (failCount >= FAIL_LIMIT) {
-                            blocked = true;
-                            blockMessage.style.display = 'block';
-                            // 設定一分鐘後解除封鎖
-                            setTimeout(() => {
-                                blocked = false;
-                                failCount = 0;
-                                firstFailTime = null;
-                                blockMessage.style.display = 'none';
-                            }, BLOCK_TIME);
-                        }
-                    } else {
-                        // 超過一分鐘，重置
-                        firstFailTime = now;
-                        failCount = 1;
-                    }
-                }
-            }
-
-            function resetFail() {
-                failCount = 0;
-                firstFailTime = null;
-                blocked = false;
-                blockMessage.style.display = 'none';
-            }
-
             // ========== 【請在這裡設定原始碼清單】 ==========
+            // 格式: "原始碼字串": { type: "permanent" 或 "once", letter: 對應字母, isAdmin: true/false, used: false (一次性專用) }
+            // 一次性原始碼使用後會自動標記 used，下次登入失效
             const sourceCodes = {
-                "ADMIN": { letter: "A", isAdmin: true },
-                "ROOTA": { letter: "A", isAdmin: false },
-                "ROOTB": { letter: "B", isAdmin: false },
-                "ROOTC": { letter: "C", isAdmin: false },
-                "ROOTD": { letter: "D", isAdmin: false },
-                "ROOTE": { letter: "E", isAdmin: false },
-                "ROOTF": { letter: "F", isAdmin: false },
-                "ROOTG": { letter: "G", isAdmin: false },
-                "ROOTH": { letter: "H", isAdmin: false },
-                "ROOTI": { letter: "I", isAdmin: false },
-                "ROOTJ": { letter: "J", isAdmin: false },
-                "ROOTK": { letter: "K", isAdmin: false },
-                "ROOTL": { letter: "L", isAdmin: false },
-                "ROOTM": { letter: "M", isAdmin: false },
-                "ROOTN": { letter: "N", isAdmin: false },
-                "ROOTO": { letter: "O", isAdmin: false },
-                "ROOTP": { letter: "P", isAdmin: false },
-                "ROOTQ": { letter: "Q", isAdmin: false },
-                "ROOTR": { letter: "R", isAdmin: false },
-                "ROOTS": { letter: "S", isAdmin: false },
-                "ROOTT": { letter: "T", isAdmin: false },
-                "ROOTU": { letter: "U", isAdmin: false },
-                "ROOTV": { letter: "V", isAdmin: false },
-                "ROOTW": { letter: "W", isAdmin: false },
-                "ROOTX": { letter: "X", isAdmin: false },
-                "ROOTY": { letter: "Y", isAdmin: false },
-                "ROOTZ": { letter: "Z", isAdmin: false },
+                // 管理員永久原始碼
+                "ADMIN": { type: "permanent", letter: "A", isAdmin: true },
+                // 一般永久原始碼 (最後字母決定專案)
+                "ROOTA": { type: "permanent", letter: "A", isAdmin: false },
+                "ROOTB": { type: "permanent", letter: "B", isAdmin: false },
+                "ROOTC": { type: "permanent", letter: "C", isAdmin: false },
+                "ROOTD": { type: "permanent", letter: "D", isAdmin: false },
+                "ROOTE": { type: "permanent", letter: "E", isAdmin: false },
+                "ROOTF": { type: "permanent", letter: "F", isAdmin: false },
+                "ROOTG": { type: "permanent", letter: "G", isAdmin: false },
+                "ROOTH": { type: "permanent", letter: "H", isAdmin: false },
+                "ROOTI": { type: "permanent", letter: "I", isAdmin: false },
+                "ROOTJ": { type: "permanent", letter: "J", isAdmin: false },
+                "ROOTK": { type: "permanent", letter: "K", isAdmin: false },
+                "ROOTL": { type: "permanent", letter: "L", isAdmin: false },
+                "ROOTM": { type: "permanent", letter: "M", isAdmin: false },
+                "ROOTN": { type: "permanent", letter: "N", isAdmin: false },
+                "ROOTO": { type: "permanent", letter: "O", isAdmin: false },
+                "ROOTP": { type: "permanent", letter: "P", isAdmin: false },
+                "ROOTQ": { type: "permanent", letter: "Q", isAdmin: false },
+                "ROOTR": { type: "permanent", letter: "R", isAdmin: false },
+                "ROOTS": { type: "permanent", letter: "S", isAdmin: false },
+                "ROOTT": { type: "permanent", letter: "T", isAdmin: false },
+                "ROOTU": { type: "permanent", letter: "U", isAdmin: false },
+                "ROOTV": { type: "permanent", letter: "V", isAdmin: false },
+                "ROOTW": { type: "permanent", letter: "W", isAdmin: false },
+                "ROOTX": { type: "permanent", letter: "X", isAdmin: false },
+                "ROOTY": { type: "permanent", letter: "Y", isAdmin: false },
+                "ROOTZ": { type: "permanent", letter: "Z", isAdmin: false },
+
+                // 一次性原始碼範例 (最後字母決定專案，使用一次後失效)
+                "ONCEA": { type: "once", letter: "A", isAdmin: false, used: false },
+                "ONCEB": { type: "once", letter: "B", isAdmin: false, used: false },
+                "ONCEC": { type: "once", letter: "C", isAdmin: false, used: false },
+                // 請自行增加更多一次性原始碼
             };
 
-            // ========== 【請在這裡設定註冊一次性驗證碼】 ==========
-            const validInviteCodes = {
-                "WELCOME": true,
-                "TEST123": true,
-                "DEMO2025": true,
-                "HELLO": true,
-            };
-
-            // ========== 【請在這裡設定每個字母的個人資料與下載內容】 ==========
+            // ========== 【請在這裡設定每個專案的個人資料 (顯示在頂部卡片)】 ==========
             const profiles = {
                 A: {
                     name: '王小明',
@@ -557,59 +508,58 @@
                     location: '台北',
                     joinDate: '2025-01-01',
                     linkUrl: 'https://www.google.com',
-                    linkText: '前往 A 專案官網',
-                    downloadContent: '這是 A 專案的機密文件。\n版本: 1.0\n發行日期: 2025-01-01\n備註: 僅供內部使用。'
+                    linkText: '前往 A 專案官網'
                 },
-                B: {
-                    name: '李小華',
-                    role: '開發工程師',
-                    email: 'b@project.com',
-                    phone: '0922-222-222',
-                    location: '新竹',
-                    joinDate: '2025-02-01',
-                    linkUrl: 'https://www.github.com',
-                    linkText: 'B 專案原始碼',
-                    downloadContent: 'B 專案原始碼壓縮檔 (模擬)\n包含 main.c, config.h 等'
-                },
-                C: {
-                    name: '張小美',
-                    role: 'UI設計師',
-                    email: 'c@project.com',
-                    phone: '0933-333-333',
-                    location: '台中',
-                    joinDate: '2025-03-01',
-                    linkUrl: 'https://www.figma.com',
-                    linkText: '設計稿',
-                    downloadContent: 'C 專案設計資源\n首頁設計稿.psd\n元件庫.fig'
-                },
-                // 為了節省篇幅，D~Z 請自行依此格式添加，或沿用預設
-                D: { name: '陳大文', role: '行銷專員', email: 'd@project.com', phone: '0944-444-444', location: '高雄', joinDate: '2025-04-01', linkUrl: '#', linkText: '行銷頁面', downloadContent: 'D 專案行銷資料\n季報表.pdf' },
-                E: { name: '林怡君', role: '財務分析', email: 'e@project.com', phone: '0955-555-555', location: '台南', joinDate: '2025-05-01', linkUrl: '#', linkText: '財務儀表板', downloadContent: 'E 專案財務模型.xlsx' },
-                F: { name: '黃志強', role: '業務代表', email: 'f@project.com', phone: '0966-666-666', location: '桃園', joinDate: '2025-06-01', linkUrl: '#', linkText: '客戶管理', downloadContent: 'F 專案客戶清單.csv' },
-                G: { name: '劉淑芬', role: '人資專員', email: 'g@project.com', phone: '0977-777-777', location: '基隆', joinDate: '2025-07-01', linkUrl: '#', linkText: '人資系統', downloadContent: 'G 專案員工手冊.pdf' },
-                H: { name: '吳建宏', role: '系統管理員', email: 'h@project.com', phone: '0988-888-888', location: '宜蘭', joinDate: '2025-08-01', linkUrl: '#', linkText: '後台', downloadContent: 'H 專案伺服器配置.zip' },
-                I: { name: '鄭雅文', role: '客服主任', email: 'i@project.com', phone: '0911-999-999', location: '花蓮', joinDate: '2025-09-01', linkUrl: '#', linkText: '客服系統', downloadContent: 'I 專案常見問題.docx' },
-                J: { name: '蔡明翰', role: '產品設計', email: 'j@project.com', phone: '0922-111-222', location: '台東', joinDate: '2025-10-01', linkUrl: '#', linkText: '設計資源', downloadContent: 'J 專案線框圖.bmpr' },
-                K: { name: '許婷婷', role: '品牌經理', email: 'k@project.com', phone: '0933-222-333', location: '澎湖', joinDate: '2025-11-01', linkUrl: '#', linkText: '品牌網站', downloadContent: 'K 專案品牌指南.pdf' },
-                L: { name: '何冠宇', role: '數據分析', email: 'l@project.com', phone: '0944-333-444', location: '金門', joinDate: '2025-12-01', linkUrl: '#', linkText: '數據平台', downloadContent: 'L 專案分析報告.ipynb' },
-                M: { name: '曾怡婷', role: '法務顧問', email: 'm@project.com', phone: '0955-444-555', location: '馬祖', joinDate: '2025-01-15', linkUrl: '#', linkText: '合約管理', downloadContent: 'M 專案合約範本.docx' },
-                N: { name: '蘇怡安', role: '採購專員', email: 'n@project.com', phone: '0966-555-666', location: '東京', joinDate: '2025-02-14', linkUrl: '#', linkText: '採購系統', downloadContent: 'N 專案供應商名單.xlsx' },
-                O: { name: '潘志偉', role: '品管工程', email: 'o@project.com', phone: '0977-666-777', location: '大阪', joinDate: '2025-03-20', linkUrl: '#', linkText: '品管平台', downloadContent: 'O 專案檢驗標準.pdf' },
-                P: { name: '姜佩珊', role: '公關專員', email: 'p@project.com', phone: '0988-777-888', location: '紐約', joinDate: '2025-04-10', linkUrl: '#', linkText: '新聞稿', downloadContent: 'P 專案新聞稿彙整.docx' },
-                Q: { name: '方啟文', role: '技術總監', email: 'q@project.com', phone: '0912-888-999', location: '倫敦', joinDate: '2025-05-05', linkUrl: '#', linkText: '技術文件', downloadContent: 'Q 專案架構圖.drawio' },
-                R: { name: '宋慧君', role: '創意總監', email: 'r@project.com', phone: '0923-999-000', location: '巴黎', joinDate: '2025-06-18', linkUrl: '#', linkText: '創意庫', downloadContent: 'R 專案靈感板.pdf' },
-                S: { name: '沈大鈞', role: '運營總監', email: 's@project.com', phone: '0934-111-222', location: '柏林', joinDate: '2025-07-22', linkUrl: '#', linkText: '運營儀表板', downloadContent: 'S 專案運營數據.xlsx' },
-                T: { name: '賀雲飛', role: '策略顧問', email: 't@project.com', phone: '0945-222-333', location: '雪梨', joinDate: '2025-08-30', linkUrl: '#', linkText: '策略地圖', downloadContent: 'T 專案策略規劃.pptx' },
-                U: { name: '白若蘭', role: '投資關係', email: 'u@project.com', phone: '0956-333-444', location: '上海', joinDate: '2025-09-12', linkUrl: '#', linkText: '投資人專區', downloadContent: 'U 專案財報.pdf' },
-                V: { name: '文信宏', role: '供應鏈經理', email: 'v@project.com', phone: '0967-444-555', location: '香港', joinDate: '2025-10-25', linkUrl: '#', linkText: '供應鏈追蹤', downloadContent: 'V 專案物流追蹤系統規格.docx' },
-                W: { name: '莊心怡', role: '內容編輯', email: 'w@project.com', phone: '0978-555-666', location: '新加坡', joinDate: '2025-11-07', linkUrl: '#', linkText: '內容管理', downloadContent: 'W 專案文章庫.csv' },
-                X: { name: '夏于喬', role: '執行助理', email: 'x@project.com', phone: '0989-666-777', location: '首爾', joinDate: '2025-12-19', linkUrl: '#', linkText: '行程表', downloadContent: 'X 專案行事曆.ics' },
-                Y: { name: '顧正浩', role: '研發主管', email: 'y@project.com', phone: '0913-777-888', location: '曼谷', joinDate: '2025-01-28', linkUrl: '#', linkText: '研發日誌', downloadContent: 'Y 專案實驗數據.csv' },
-                Z: { name: '游舒涵', role: '客戶成功', email: 'z@project.com', phone: '0924-888-999', location: '吉隆坡', joinDate: '2025-02-09', linkUrl: '#', linkText: '客戶支援', downloadContent: 'Z 專案客戶手冊.pdf' }
+                B: { name: '李小華', role: '開發工程師', email: 'b@project.com', phone: '0922-222-222', location: '新竹', joinDate: '2025-02-01', linkUrl: '#', linkText: 'B 專案' },
+                C: { name: '張小美', role: 'UI設計師', email: 'c@project.com', phone: '0933-333-333', location: '台中', joinDate: '2025-03-01', linkUrl: '#', linkText: 'C 專案' },
+                D: { name: '陳大文', role: '行銷專員', email: 'd@project.com', phone: '0944-444-444', location: '高雄', joinDate: '2025-04-01', linkUrl: '#', linkText: 'D 專案' },
+                // ... 其他字母請自行補齊 (E~Z 可複製上方格式)
             };
+            // 為了避免遺漏，補上 E~Z 預設資料 (您可自行修改)
+            for (let i = 69; i <= 90; i++) { // E~Z ASCII 69-90
+                let letter = String.fromCharCode(i);
+                if (!profiles[letter]) {
+                    profiles[letter] = {
+                        name: `${letter} 專案負責人`,
+                        role: '預設角色',
+                        email: `${letter}@project.com`,
+                        phone: '0912-000-000',
+                        location: '預設地區',
+                        joinDate: '2025-01-01',
+                        linkUrl: '#',
+                        linkText: `${letter} 專案連結`
+                    };
+                }
+            }
 
+            // ========== 【請在這裡設定 100 個人物資料 (可留空白)】 ==========
+            // 每個字母專案可獨立設定 100 個人物的資料。這裡先建立一個通用陣列，您可以在下方填入每個人的姓名、角色。
+            // 若留空則卡片會顯示「未填寫」。
+            const peopleData = {};
+            // 初始化 A~Z 的 100 個人資料 (預設全部空白)
+            for (let i = 65; i <= 90; i++) {
+                let letter = String.fromCharCode(i);
+                peopleData[letter] = [];
+                for (let j = 1; j <= 100; j++) {
+                    peopleData[letter].push({
+                        name: '',
+                        role: ''
+                    });
+                }
+            }
+            // 範例：填入 A 專案的前幾個人物 (您可以自由修改)
+            peopleData['A'][0] = { name: '張三', role: '工程師' };
+            peopleData['A'][1] = { name: '李四', role: '設計師' };
+            peopleData['A'][2] = { name: '王五', role: '行銷' };
+            // 其餘 97 個維持空白，卡片會顯示「未填寫」
+
+            // 您也可以在其他字母下填入人物資料，格式同上：
+            // peopleData['B'][0] = { name: '趙六', role: '分析師' };
+
+            // 目前登入的使用者
             let currentUser = null; // { sourceCode, letter, isAdmin }
 
+            // 渲染側邊欄
             function renderSidebar(activeLetter = 'A') {
                 sidebar.innerHTML = '';
                 let letters = [];
@@ -632,14 +582,16 @@
                         document.querySelectorAll('.alpha-tab').forEach(t => t.classList.remove('active'));
                         tab.classList.add('active');
                         updateProfile(letter);
+                        renderPeopleGrid(letter);
                         document.getElementById('contentArea').scrollTop = 0;
                     });
                     sidebar.appendChild(tab);
                 });
             }
 
+            // 更新頂部個人資訊
             function updateProfile(letter) {
-                const p = profiles[letter] || { name: '未知', role: '', email: '', phone: '', location: '', joinDate: '', linkUrl: '#', linkText: '連結', downloadContent: '無內容' };
+                const p = profiles[letter] || { name: '未知', role: '', email: '', phone: '', location: '', joinDate: '', linkUrl: '#', linkText: '連結' };
                 profileAvatar.textContent = letter;
                 profileName.textContent = p.name;
                 profileRole.textContent = p.role;
@@ -651,179 +603,121 @@
                     projectLink.href = p.linkUrl;
                     linkText.textContent = p.linkText || '前往專案網站';
                 }
-                downloadBtn.dataset.content = p.downloadContent || '無內容';
-                downloadBtn.dataset.filename = `${letter}_專案文件.txt`;
             }
 
-            // 下載功能
-            downloadBtn.addEventListener('click', function() {
-                const content = this.dataset.content || '預設內容';
-                const filename = this.dataset.filename || 'download.txt';
-                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showToast(`📥 開始下載 ${filename}`);
-            });
-
-            // ========== 登入動畫：使用 GSAP ==========
-            function loginSuccessAnimation() {
-                return new Promise(resolve => {
-                    // 淡出縮小登入區塊
-                    gsap.to(authBlock, {
-                        opacity: 0,
-                        scale: 0.9,
-                        duration: 0.3,
-                        ease: "power2.in",
-                        onComplete: () => {
-                            authBlock.style.display = 'none';
-                            mainPanel.style.display = 'flex';
-                            // 主面板淡入放大
-                            gsap.fromTo(mainPanel,
-                                { opacity: 0, scale: 0.95 },
-                                { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out", onComplete: resolve }
-                            );
-                        }
-                    });
-                });
+            // 渲染 100 個人物卡片
+            function renderPeopleGrid(letter) {
+                const data = peopleData[letter] || [];
+                let html = '';
+                for (let i = 0; i < 100; i++) {
+                    const person = data[i] || { name: '', role: '' };
+                    html += `
+                        <div class="person-card">
+                            <div class="person-avatar"><i class="fas fa-user"></i></div>
+                            <div class="person-name">${person.name || '未填寫'}</div>
+                            <div class="person-role">${person.role || '未填寫'}</div>
+                        </div>
+                    `;
+                }
+                peopleGrid.innerHTML = html;
             }
 
-            // 登入：只驗證原始碼
+            // 登入按鈕事件 (含動畫)
             loginBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                if (checkBlock() || blocked) {
-                    showToast('⛔ 目前已被封鎖，請稍後再試');
-                    return;
-                }
-
                 const sourceCode = document.getElementById('sourceCodeInput').value.trim();
-                const sourceData = sourceCodes[sourceCode];
 
+                // 檢查原始碼是否存在
+                const sourceData = sourceCodes[sourceCode];
                 if (!sourceData) {
-                    recordFail();
+                    // 錯誤動畫
                     loginError.style.display = 'flex';
+                    document.querySelector('.login-container').classList.add('shake');
+                    setTimeout(() => document.querySelector('.login-container').classList.remove('shake'), 500);
                     return;
                 }
 
-                // 成功登入，重置失敗計數
-                resetFail();
-                loginError.style.display = 'none';
+                // 如果是一次性原始碼且已被使用
+                if (sourceData.type === 'once' && sourceData.used) {
+                    loginError.style.display = 'flex';
+                    document.querySelector('.login-container').classList.add('shake');
+                    setTimeout(() => document.querySelector('.login-container').classList.remove('shake'), 500);
+                    return;
+                }
 
+                // 按鈕載入動畫
                 loginBtn.classList.add('loading');
                 loginBtn.innerHTML = '<i class="fas fa-spinner"></i> 驗證中...';
 
                 setTimeout(() => {
+                    // 標記一次性原始碼為已使用 (模擬)
+                    if (sourceData.type === 'once') {
+                        sourceData.used = true;
+                    }
+
                     loginBtn.classList.remove('loading');
                     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> 登入';
-                    currentUser = { sourceCode, letter: sourceData.letter, isAdmin: sourceData.isAdmin || false };
-                    
-                    // 更新個人資料 (先準備好)
+                    loginError.style.display = 'none';
+
+                    // 設定當前使用者
+                    currentUser = {
+                        sourceCode,
+                        letter: sourceData.letter,
+                        isAdmin: sourceData.isAdmin || false
+                    };
+
+                    // 切換到主面板
+                    loginBlock.style.display = 'none';
+                    mainPanel.style.display = 'flex';
+
+                    // 渲染側邊欄與內容
+                    renderSidebar(sourceData.letter);
                     updateProfile(sourceData.letter);
-                    
-                    // 執行登入動畫
-                    loginSuccessAnimation().then(() => {
-                        renderSidebar(sourceData.letter);
-                        showToast(`✨ 歡迎，原始碼 ${sourceCode} 登入成功！`);
-                    });
-                }, 500);
+                    renderPeopleGrid(sourceData.letter);
+
+                    showToast(`✨ 登入成功！歡迎進入 ${sourceData.letter} 專案`);
+                }, 800);
             });
 
-            // 註冊：驗證一次性驗證碼
-            registerBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (checkBlock() || blocked) {
-                    showToast('⛔ 目前已被封鎖，請稍後再試');
-                    return;
-                }
-
-                const username = document.getElementById('regUsername').value.trim();
-                const password = document.getElementById('regPassword').value.trim();
-                const invite = document.getElementById('regInvite').value.trim();
-
-                if (!username || !password || !invite) {
-                    registerError.innerHTML = '❌ 所有欄位必填';
-                    registerError.style.display = 'flex';
-                    recordFail();
-                    return;
-                }
-                if (password.length < 1) { // 可改為 6
-                    registerError.innerHTML = '❌ 密碼至少1位 (示範)';
-                    registerError.style.display = 'flex';
-                    recordFail();
-                    return;
-                }
-                if (!validInviteCodes[invite]) {
-                    registerError.innerHTML = '❌ 驗證碼無效';
-                    registerError.style.display = 'flex';
-                    recordFail();
-                    return;
-                }
-
-                // 註冊成功，重置失敗計數
-                resetFail();
-                registerError.style.display = 'none';
-
-                registerBtn.classList.add('loading');
-                registerBtn.innerHTML = '<i class="fas fa-spinner"></i> 註冊中...';
-
-                setTimeout(() => {
-                    registerBtn.classList.remove('loading');
-                    registerBtn.innerHTML = '<i class="fas fa-check-circle"></i> 註冊';
-                    showToast('✅ 註冊成功，請等候管理員分配原始碼');
-                    document.getElementById('regUsername').value = '';
-                    document.getElementById('regPassword').value = '';
-                    document.getElementById('regInvite').value = '';
-                }, 600);
-            });
-
+            // 登出
             logoutBtn.addEventListener('click', () => {
                 currentUser = null;
-                // 登出動畫：主面板淡出，登入區塊淡入
-                gsap.to(mainPanel, {
-                    opacity: 0,
-                    scale: 0.9,
-                    duration: 0.3,
-                    ease: "power2.in",
-                    onComplete: () => {
-                        mainPanel.style.display = 'none';
-                        authBlock.style.display = 'flex';
-                        gsap.fromTo(authBlock,
-                            { opacity: 0, scale: 0.95 },
-                            { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }
-                        );
-                        showToast('👋 已安全登出');
-                    }
-                });
+                mainPanel.style.display = 'none';
+                loginBlock.style.display = 'block';
+                showToast('👋 已安全登出');
             });
 
+            // 開關點擊
             [notifyToggle, mfaToggle, darkToggle].forEach(t => {
                 t.addEventListener('click', function() { this.classList.toggle('active'); });
             });
 
+            // 初始化
             loginError.style.display = 'none';
-            registerError.style.display = 'none';
-            authBlock.style.display = 'flex';
+            loginBlock.style.display = 'block';
             mainPanel.style.display = 'none';
-            blockMessage.style.display = 'none';
         })();
     </script>
 
     <!-- ========== 🛠️ 完整修改教學 ========== -->
     <!--
-        🔧 1. 設定原始碼清單：在 sourceCodes 物件中 (約 250 行)，格式 "原始碼": { letter: "字母", isAdmin: true/false }
-        🔧 2. 設定註冊一次性驗證碼：在 validInviteCodes 物件中 (約 280 行)，加入存在的驗證碼即可。
-        🔧 3. 設定每個專案的個人資料與下載內容：在 profiles 物件中 (約 290 行)，每個字母可設定：
-               name, role, email, phone, location, joinDate, linkUrl, linkText, downloadContent (下載的檔案文字內容)
-        🔧 4. 下載按鈕會自動產生包含 downloadContent 的 .txt 檔案，檔名為 {字母}_專案文件.txt。
-        🔧 5. IP 失敗限制已實作：同一瀏覽器 1 分鐘內累積 3 次失敗（登入+註冊合併計算）即封鎖 1 分鐘。
-        🔧 6. 登入時有 GSAP 動畫：登入區塊淡出縮小，主面板淡入放大。
-        🔧 7. 兩個卡片不同色調，易於區分。
+        🔧 1. 設定原始碼清單 (永久/一次性)
+           在 sourceCodes 物件中 (約第 250 行)：
+           - 永久原始碼格式 "代碼": { type: "permanent", letter: "字母", isAdmin: true/false }
+           - 一次性原始碼格式 "代碼": { type: "once", letter: "字母", isAdmin: false, used: false }
+           一次性原始碼使用後會自動標記 used，下次失效。
+
+        🔧 2. 設定每個專案的個人資訊 (頂部卡片)
+           在 profiles 物件中 (約第 300 行)，每個字母可設定 name, role, email, phone, location, joinDate, linkUrl, linkText。
+
+        🔧 3. 設定 100 個人物資料 (大部分空白)
+           在 peopleData 物件中 (約第 340 行)，peopleData[字母] 是一個長度 100 的陣列，每個元素為 { name, role }。
+           您可以直接修改 peopleData['A'][0] 等來填入人物，其餘維持空白，卡片會顯示「未填寫」。
+
+        🔧 4. 側邊欄獨立滾動，權限管理 (管理員可看全部)。
+
+        🔧 5. 登入動畫：按鈕載入旋轉、錯誤時搖晃卡片、成功後 toast 提示。
     -->
-    <!-- ==================================== -->
+    <!-- ========================================= -->
 </body>
 </html>
