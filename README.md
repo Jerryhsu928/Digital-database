@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>🔐 企業專案管理系統 - 超級用戶專屬</title>
+    <title>🔐 企業專案管理系統 - 手機優化版</title>
     <!-- 字體 Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,19 +26,24 @@
         body.light-mode .source-type-btn.active { background: #2563eb; color: white; }
         body.light-mode .toast { background: #1e293b; color: white; }
         body.light-mode table td, body.light-mode table th { color: #0f172a; }
-        /* 淺色模式按鈕修正 */
+        /* 淺色模式所有按鈕統一 */
         body.light-mode .auth-btn,
         body.light-mode .download-btn,
         body.light-mode .source-input-group button,
         body.light-mode .save-btn,
         body.light-mode .delete-btn,
-        body.light-mode .logout-btn {
+        body.light-mode .logout-btn,
+        body.light-mode .theme-option,
+        body.light-mode .language-select,
+        body.light-mode .project-card .download-btn {
             background: #2563eb !important;
             color: white !important;
             border: none;
         }
         body.light-mode .delete-btn { background: #ef4444 !important; }
         body.light-mode .logout-btn { background: rgba(239,68,68,0.8) !important; }
+        body.light-mode .theme-option { background: #e2e8f0 !important; color: #334155 !important; }
+        body.light-mode .theme-option.active { background: #2563eb !important; color: white !important; }
 
         body.dark-mode {
             background: #0a0f1e;
@@ -89,6 +94,8 @@
             padding: 30px 25px;
             border: 1px solid rgba(255,255,255,0.15);
             box-shadow: 0 30px 50px -20px black;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .auth-tabs {
             display: flex;
@@ -97,9 +104,10 @@
             background: rgba(0,0,0,0.3);
             padding: 6px;
             border-radius: 50px;
+            flex-wrap: wrap;
         }
         .auth-tab {
-            flex: 1;
+            flex: 1 1 auto;
             text-align: center;
             padding: 12px;
             font-weight: 600;
@@ -139,19 +147,21 @@
             box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
         }
         /* 統一按鈕樣式與動畫 */
-        .auth-btn, .download-btn, .source-input-group button, .save-btn, .delete-btn, .logout-btn, .theme-option, .language-select {
+        .auth-btn, .download-btn, .source-input-group button, .save-btn, .delete-btn, .logout-btn, .theme-option, .language-select, .project-card .download-btn {
             transition: transform 0.2s ease, background 0.2s, opacity 0.2s;
             cursor: pointer;
             user-select: none;
+            border: none;
+            outline: none;
         }
-        .auth-btn:active, .download-btn:active, .source-input-group button:active, .save-btn:active, .delete-btn:active, .logout-btn:active, .theme-option:active, .language-select:active {
+        .auth-btn:active, .download-btn:active, .source-input-group button:active, .save-btn:active, .delete-btn:active, .logout-btn:active, .theme-option:active, .language-select:active, .project-card .download-btn:active {
             transform: scale(0.98);
         }
-        .auth-btn.loading, .download-btn.loading, .source-input-group button.loading, .save-btn.loading, .delete-btn.loading, .logout-btn.loading {
+        .auth-btn.loading, .download-btn.loading, .source-input-group button.loading, .save-btn.loading, .delete-btn.loading, .logout-btn.loading, .project-card .download-btn.loading {
             opacity: 0.7;
             pointer-events: none;
         }
-        .auth-btn.loading i, .download-btn.loading i, .source-input-group button.loading i, .save-btn.loading i, .delete-btn.loading i, .logout-btn.loading i {
+        .auth-btn.loading i, .download-btn.loading i, .source-input-group button.loading i, .save-btn.loading i, .delete-btn.loading i, .logout-btn.loading i, .project-card .download-btn.loading i {
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
@@ -162,7 +172,6 @@
         .auth-btn {
             background: linear-gradient(135deg, #2563eb, #1e40af);
             color: white;
-            border: none;
             padding: 14px;
             border-radius: 50px;
             font-weight: 600;
@@ -272,6 +281,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         /* 專案網格 */
@@ -345,9 +355,10 @@
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            flex-wrap: wrap;
         }
         .source-type-btn {
-            flex: 1;
+            flex: 1 1 auto;
             padding: 10px;
             border-radius: 30px;
             background: #1e293b;
@@ -363,9 +374,10 @@
             display: flex;
             gap: 10px;
             margin-top: 10px;
+            flex-wrap: wrap;
         }
         .source-input-group input {
-            flex: 1;
+            flex: 1 1 200px;
             padding: 12px;
             border-radius: 40px;
             border: 1px solid #3b82f6;
@@ -389,7 +401,7 @@
             flex-wrap: wrap;
         }
         .person-selector select {
-            flex: 1;
+            flex: 1 1 200px;
             padding: 14px;
             border-radius: 40px;
             background: #1e293b;
@@ -400,6 +412,7 @@
             display: flex;
             padding: 10px 0;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
         }
         .person-detail-label {
             width: 80px;
@@ -448,7 +461,7 @@
             text-align: left;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        .user-table select {
+        .user-table input, .user-table select {
             padding: 5px;
             border-radius: 20px;
             background: #1e293b;
@@ -464,6 +477,14 @@
             cursor: pointer;
         }
 
+        /* 子專案管理 */
+        .subproject-item {
+            background: rgba(0,0,0,0.1);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
         /* 設定頁面 */
         .settings-item {
             display: flex;
@@ -471,6 +492,8 @@
             align-items: center;
             padding: 15px 0;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .settings-item .value {
             background: #1e293b;
@@ -485,6 +508,7 @@
         .theme-toggle {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
         .theme-option {
             padding: 8px 20px;
@@ -508,6 +532,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .logout-btn {
@@ -537,11 +562,15 @@
             40%,80% { transform: translateX(6px); }
         }
 
+        /* 手機優化 */
         @media (max-width: 600px) {
             .sidebar { width: 80px; }
             .sidebar.collapsed { width: 60px; }
             .sidebar .nav-item { width: 60px; height: 60px; }
             .sidebar.collapsed .nav-item { width: 40px; height: 40px; }
+            .page-title { font-size: 1.5rem; }
+            .auth-tab { font-size: 0.8rem; padding: 8px; }
+            .auth-card { padding: 20px 15px; }
         }
     </style>
 </head>
@@ -549,7 +578,7 @@
     <canvas id="particleCanvas"></canvas>
 
     <div class="app-container">
-        <!-- 登入/註冊卡片 -->
+        <!-- 登入/註冊卡片 (可滑動) -->
         <div id="authCard" class="auth-card">
             <div class="auth-tabs">
                 <div class="auth-tab active" id="loginTab" data-i18n="login">登入</div>
@@ -632,10 +661,12 @@
                 <!-- 超級用戶專屬導航 -->
                 <div class="nav-item" data-page="passwordVault" id="passwordVaultNav" style="display: none;"><i class="fas fa-lock"></i><span data-i18n="passwordVault">密碼庫</span></div>
                 <div class="nav-item" data-page="userManagement" id="userManagementNav" style="display: none;"><i class="fas fa-user-cog"></i><span data-i18n="userManagement">用戶管理</span></div>
+                <div class="nav-item" data-page="subProjectAdmin" id="subProjectAdminNav" style="display: none;"><i class="fas fa-layer-group"></i><span>子專案管理</span></div>
+                <div class="nav-item" data-page="sourceCodeAdmin" id="sourceCodeAdminNav" style="display: none;"><i class="fas fa-code"></i><span>原始碼管理</span></div>
                 <div class="nav-item" data-page="settings"><i class="fas fa-cog"></i><span data-i18n="settings">設定</span></div>
             </div>
 
-            <!-- 右側內容區 -->
+            <!-- 右側內容區 (可滑動) -->
             <div class="content-area" id="contentArea">
                 <!-- 頁面會動態載入 -->
             </div>
@@ -905,10 +936,11 @@
             const peopleNav = document.getElementById('peopleNav');
             const passwordVaultNav = document.getElementById('passwordVaultNav');
             const userManagementNav = document.getElementById('userManagementNav');
+            const subProjectAdminNav = document.getElementById('subProjectAdminNav');
+            const sourceCodeAdminNav = document.getElementById('sourceCodeAdminNav');
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebarToggle');
 
-            // 側邊欄折疊
             sidebarToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('collapsed');
             });
@@ -918,19 +950,21 @@
                 username: null,
                 role: null,
                 accountId: null,
-                unlockedProjects: {}
+                unlockedProjects: {} // 解鎖的字母專案
             };
 
             // 用戶登入記錄
             let userLogs = [];
 
-            // 一般用戶帳號
+            // ========== 使用者資料庫 (擴充) ==========
+            // 格式: username: { password, role, accountId, class, number, occupation }
             const users = {
-                user1: { password: 'pass', role: 'observer' },
-                admin: { password: 'admin', role: 'manager' }
+                user1: { password: 'pass', role: 'observer', accountId: 'OBS-123ABC', class: '', number: '', occupation: '' },
+                admin: { password: 'admin', role: 'manager', accountId: 'MGR-456DEF', class: '', number: '', occupation: '' },
+                // 超級用戶0 不在此列，由程式碼處理
             };
 
-            // ========== 永久原始碼清單 (A-Z 全部) ==========
+            // ========== 永久原始碼清單 (A-Z) ==========
             const permSourceCodes = {
                 "100A": { letter: "A", expirySec: 100, role: 'manager' },
                 "200B": { letter: "B", expirySec: 200, role: 'manager' },
@@ -960,34 +994,34 @@
                 "888Z": { letter: "Z", expirySec: 888, role: 'manager' }
             };
 
-            // ========== 一次性原始碼清單 (A-Z 全部) ==========
+            // ========== 一次性原始碼清單 (A-Z) ==========
             const onceSourceCodes = {
-                "ONCEA001": { letter: "A", expirySec: 1, used: false, role: 'user' },
-                "ONCEB002": { letter: "B", expirySec: 2, used: false, role: 'user' },
-                "ONCEC003": { letter: "C", expirySec: 3, used: false, role: 'user' },
-                "ONCED004": { letter: "D", expirySec: 4, used: false, role: 'user' },
-                "ONCEE005": { letter: "E", expirySec: 5, used: false, role: 'user' },
-                "ONCEF006": { letter: "F", expirySec: 6, used: false, role: 'user' },
-                "ONCEG007": { letter: "G", expirySec: 7, used: false, role: 'user' },
-                "ONCEH008": { letter: "H", expirySec: 8, used: false, role: 'user' },
-                "ONCEI009": { letter: "I", expirySec: 9, used: false, role: 'user' },
-                "ONCEJ010": { letter: "J", expirySec: 10, used: false, role: 'user' },
-                "ONCEK011": { letter: "K", expirySec: 11, used: false, role: 'user' },
-                "ONCEL012": { letter: "L", expirySec: 12, used: false, role: 'user' },
-                "ONCEM013": { letter: "M", expirySec: 13, used: false, role: 'user' },
-                "ONCEN014": { letter: "N", expirySec: 14, used: false, role: 'user' },
-                "ONCEO015": { letter: "O", expirySec: 15, used: false, role: 'user' },
-                "ONCEP016": { letter: "P", expirySec: 16, used: false, role: 'user' },
-                "ONCEQ017": { letter: "Q", expirySec: 17, used: false, role: 'user' },
-                "ONCER018": { letter: "R", expirySec: 18, used: false, role: 'user' },
-                "ONCES019": { letter: "S", expirySec: 19, used: false, role: 'user' },
-                "ONCET020": { letter: "T", expirySec: 20, used: false, role: 'user' },
-                "ONCEU021": { letter: "U", expirySec: 21, used: false, role: 'user' },
-                "ONCEV022": { letter: "V", expirySec: 22, used: false, role: 'user' },
-                "ONCEW023": { letter: "W", expirySec: 23, used: false, role: 'user' },
-                "ONCEX024": { letter: "X", expirySec: 24, used: false, role: 'user' },
-                "ONCEY025": { letter: "Y", expirySec: 25, used: false, role: 'user' },
-                "ONCEZ026": { letter: "Z", expirySec: 26, used: false, role: 'user' }
+                "ONCEA001": { letter: "A", expirySec: 1, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEB002": { letter: "B", expirySec: 2, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEC003": { letter: "C", expirySec: 3, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCED004": { letter: "D", expirySec: 4, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEE005": { letter: "E", expirySec: 5, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEF006": { letter: "F", expirySec: 6, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEG007": { letter: "G", expirySec: 7, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEH008": { letter: "H", expirySec: 8, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEI009": { letter: "I", expirySec: 9, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEJ010": { letter: "J", expirySec: 10, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEK011": { letter: "K", expirySec: 11, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEL012": { letter: "L", expirySec: 12, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEM013": { letter: "M", expirySec: 13, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEN014": { letter: "N", expirySec: 14, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEO015": { letter: "O", expirySec: 15, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEP016": { letter: "P", expirySec: 16, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEQ017": { letter: "Q", expirySec: 17, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCER018": { letter: "R", expirySec: 18, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCES019": { letter: "S", expirySec: 19, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCET020": { letter: "T", expirySec: 20, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEU021": { letter: "U", expirySec: 21, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEV022": { letter: "V", expirySec: 22, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEW023": { letter: "W", expirySec: 23, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEX024": { letter: "X", expirySec: 24, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEY025": { letter: "Y", expirySec: 25, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
+                "ONCEZ026": { letter: "Z", expirySec: 26, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null }
             };
 
             // ========== 專案密碼 ==========
@@ -999,34 +1033,34 @@
                 U: "909630", V: "101660", W: "202690", X: "303720", Y: "404750", Z: "505780"
             };
 
-            // ========== 專案資料 ==========
+            // ========== 專案資料 (含子專案) ==========
             const projectData = {
-                A: { name: 'A 智慧城市', desc: 'AI 城市管理平台', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=1' },
-                B: { name: 'B 區塊鏈金融', desc: '去中心化金融應用', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=2' },
-                C: { name: 'C 物聯網', desc: '工業 4.0 解決方案', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=3' },
-                D: { name: 'D 大數據', desc: '資料分析平台', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=4' },
-                E: { name: 'E 雲端運算', desc: '混合雲管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=5' },
-                F: { name: 'F 邊緣計算', desc: '邊緣節點管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=6' },
-                G: { name: 'G 5G 通訊', desc: '5G 網路切片', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=7' },
-                H: { name: 'H 資安防護', desc: '零信任架構', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=8' },
-                I: { name: 'I 數位分身', desc: '虛擬工廠', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=9' },
-                J: { name: 'J 量子運算', desc: '量子模擬', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=10' },
-                K: { name: 'K 機器學習', desc: 'MLOps 平台', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=11' },
-                L: { name: 'L 自然語言', desc: '對話式 AI', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=12' },
-                M: { name: 'M 電腦視覺', desc: '影像辨識', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=13' },
-                N: { name: 'N 推薦系統', desc: '個人化推薦', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=14' },
-                O: { name: 'O 自動駕駛', desc: '感知融合', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=15' },
-                P: { name: 'P 智慧醫療', desc: '遠距診療', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=16' },
-                Q: { name: 'Q 智慧農業', desc: '精準灌溉', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=17' },
-                R: { name: 'R 智慧零售', desc: '庫存管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=18' },
-                S: { name: 'S 智慧製造', desc: '預測維護', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=19' },
-                T: { name: 'T 智慧電網', desc: '能源調度', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=20' },
-                U: { name: 'U 智慧家居', desc: '物聯網控制', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=21' },
-                V: { name: 'V 智慧辦公', desc: '自動化流程', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=22' },
-                W: { name: 'W 智慧物流', desc: '路徑優化', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=23' },
-                X: { name: 'X 智慧交通', desc: '車流預測', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=24' },
-                Y: { name: 'Y 智慧環保', desc: '汙染監測', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=25' },
-                Z: { name: 'Z 智慧能源', desc: '再生能源管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=26' },
+                A: { name: 'A 智慧城市', desc: 'AI 城市管理平台', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=1', subProjects: [] },
+                B: { name: 'B 區塊鏈金融', desc: '去中心化金融應用', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=2', subProjects: [] },
+                C: { name: 'C 物聯網', desc: '工業 4.0 解決方案', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=3', subProjects: [] },
+                D: { name: 'D 大數據', desc: '資料分析平台', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=4', subProjects: [] },
+                E: { name: 'E 雲端運算', desc: '混合雲管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=5', subProjects: [] },
+                F: { name: 'F 邊緣計算', desc: '邊緣節點管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=6', subProjects: [] },
+                G: { name: 'G 5G 通訊', desc: '5G 網路切片', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=7', subProjects: [] },
+                H: { name: 'H 資安防護', desc: '零信任架構', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=8', subProjects: [] },
+                I: { name: 'I 數位分身', desc: '虛擬工廠', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=9', subProjects: [] },
+                J: { name: 'J 量子運算', desc: '量子模擬', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=10', subProjects: [] },
+                K: { name: 'K 機器學習', desc: 'MLOps 平台', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=11', subProjects: [] },
+                L: { name: 'L 自然語言', desc: '對話式 AI', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=12', subProjects: [] },
+                M: { name: 'M 電腦視覺', desc: '影像辨識', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=13', subProjects: [] },
+                N: { name: 'N 推薦系統', desc: '個人化推薦', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=14', subProjects: [] },
+                O: { name: 'O 自動駕駛', desc: '感知融合', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=15', subProjects: [] },
+                P: { name: 'P 智慧醫療', desc: '遠距診療', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=16', subProjects: [] },
+                Q: { name: 'Q 智慧農業', desc: '精準灌溉', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=17', subProjects: [] },
+                R: { name: 'R 智慧零售', desc: '庫存管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=18', subProjects: [] },
+                S: { name: 'S 智慧製造', desc: '預測維護', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=19', subProjects: [] },
+                T: { name: 'T 智慧電網', desc: '能源調度', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=20', subProjects: [] },
+                U: { name: 'U 智慧家居', desc: '物聯網控制', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=21', subProjects: [] },
+                V: { name: 'V 智慧辦公', desc: '自動化流程', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=22', subProjects: [] },
+                W: { name: 'W 智慧物流', desc: '路徑優化', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=23', subProjects: [] },
+                X: { name: 'X 智慧交通', desc: '車流預測', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=24', subProjects: [] },
+                Y: { name: 'Y 智慧環保', desc: '汙染監測', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=25', subProjects: [] },
+                Z: { name: 'Z 智慧能源', desc: '再生能源管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=26', subProjects: [] },
             };
 
             // ========== 人物資料 (全局 100 人) ==========
@@ -1034,7 +1068,6 @@
             for (let j = 1; j <= 100; j++) {
                 peopleData.push({ name: '', occupation: '', class: '', number: '', email: '' });
             }
-            // 範例資料
             peopleData[0] = { name: '張三', occupation: '學生', class: '三年一班', number: '12', email: 'zhang@school.com' };
             peopleData[1] = { name: '李四', occupation: '老師', class: '', number: '', email: 'li@school.com' };
             peopleData[2] = { name: '王五', occupation: '工程師', class: '', number: '', email: 'wang@company.com' };
@@ -1045,7 +1078,6 @@
                 setTimeout(() => toast.classList.remove('show'), duration);
             }
 
-            // 為按鈕添加 loading 狀態 (防止重複點擊)
             function setButtonLoading(btn, isLoading) {
                 if (!btn) return;
                 if (isLoading) {
@@ -1100,6 +1132,8 @@
                 peopleNav.style.display = isCreator ? 'flex' : 'none';
                 passwordVaultNav.style.display = isCreator ? 'flex' : 'none';
                 userManagementNav.style.display = isCreator ? 'flex' : 'none';
+                subProjectAdminNav.style.display = isCreator ? 'flex' : 'none';
+                sourceCodeAdminNav.style.display = isCreator ? 'flex' : 'none';
 
                 authCard.style.display = 'none';
                 mainPanel.style.display = 'flex';
@@ -1158,9 +1192,9 @@
                             document.getElementById('homePermBtn').classList.remove('active');
                             homeSourceType = 'once';
                         });
-                        document.getElementById('homeUnlockBtn').addEventListener('click', function() {
-                            let btn = this;
-                            setButtonLoading(btn, true);
+                        const homeUnlockBtn = document.getElementById('homeUnlockBtn');
+                        homeUnlockBtn.addEventListener('click', function() {
+                            setButtonLoading(this, true);
                             let code = document.getElementById('homeSourceCode').value.trim();
                             let source;
                             if (homeSourceType === 'permanent') {
@@ -1170,7 +1204,7 @@
                             }
                             let msgDiv = document.getElementById('homeSourceMsg');
                             setTimeout(() => {
-                                setButtonLoading(btn, false);
+                                setButtonLoading(homeUnlockBtn, false);
                                 if (!source) {
                                     msgDiv.textContent = '❌ ' + t('permCodeError');
                                     return;
@@ -1277,44 +1311,308 @@
                     } else {
                         html = `<div class="page-card">
                             <div class="page-title"><i class="fas fa-user-cog"></i> ${t('userManagement')}</div>
+                            <h3>新增用戶</h3>
+                            <div class="form-group">
+                                <label>帳號</label><input type="text" id="newUsername" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>密碼</label><input type="password" id="newPassword" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>帳號ID (可留空自動生成)</label><input type="text" id="newAccountId" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>班級</label><input type="text" id="newClass" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>座號</label><input type="text" id="newNumber" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>職位</label><input type="text" id="newOccupation" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>角色</label>
+                                <select id="newRole" class="form-control">
+                                    <option value="observer">觀察者</option>
+                                    <option value="user">使用者</option>
+                                    <option value="manager">管理者</option>
+                                </select>
+                            </div>
+                            <button class="auth-btn" id="addUserBtn">新增用戶</button>
+                            <hr>
+                            <h3>用戶列表</h3>
                             <table class="user-table">
-                                <thead><tr><th>${t('username')}</th><th>${t('role')}</th><th>${t('accountId')}</th><th>${t('loginTime')}</th><th>${t('action')}</th></tr></thead>
+                                <thead><tr><th>帳號</th><th>密碼</th><th>ID</th><th>班級</th><th>座號</th><th>職位</th><th>角色</th><th>操作</th></tr></thead>
                                 <tbody id="userTableBody">`;
-                        userLogs.forEach((log, index) => {
-                            html += `<tr id="user-row-${index}">
-                                <td>${log.username}</td>
+                        for (let u in users) {
+                            let user = users[u];
+                            html += `<tr>
+                                <td>${u}</td>
+                                <td><input type="text" id="userPwd-${u}" value="${user.password}" style="width:80px;"></td>
+                                <td><input type="text" id="userAcc-${u}" value="${user.accountId || ''}" style="width:100px;"></td>
+                                <td><input type="text" id="userClass-${u}" value="${user.class || ''}" style="width:60px;"></td>
+                                <td><input type="text" id="userNumber-${u}" value="${user.number || ''}" style="width:60px;"></td>
+                                <td><input type="text" id="userOcc-${u}" value="${user.occupation || ''}" style="width:80px;"></td>
                                 <td>
-                                    <select id="role-${index}">
-                                        <option value="observer" ${log.role === 'observer' ? 'selected' : ''}>觀察者</option>
-                                        <option value="user" ${log.role === 'user' ? 'selected' : ''}>使用者</option>
-                                        <option value="manager" ${log.role === 'manager' ? 'selected' : ''}>管理者</option>
-                                        <option value="creator" ${log.role === 'creator' ? 'selected' : ''}>創造者</option>
+                                    <select id="userRole-${u}">
+                                        <option value="observer" ${user.role === 'observer' ? 'selected' : ''}>觀察者</option>
+                                        <option value="user" ${user.role === 'user' ? 'selected' : ''}>使用者</option>
+                                        <option value="manager" ${user.role === 'manager' ? 'selected' : ''}>管理者</option>
                                     </select>
                                 </td>
-                                <td>${log.accountId}</td>
-                                <td>${log.loginTime}</td>
                                 <td>
-                                    <button class="auth-btn" style="padding:5px 10px; margin-right:5px;" onclick="updateUserRole(${index})">${t('saveChanges')}</button>
-                                    <button class="delete-btn" onclick="deleteUser(${index})">${t('delete')}</button>
+                                    <button class="auth-btn" style="padding:5px 10px;" onclick="updateUser('${u}')">更新</button>
+                                    <button class="delete-btn" onclick="deleteUser('${u}')">刪除</button>
                                 </td>
                             </tr>`;
-                        });
+                        }
                         html += `</tbody></table></div>`;
                         setTimeout(() => {
-                            window.updateUserRole = function(index) {
-                                let newRole = document.getElementById(`role-${index}`).value;
-                                if (userLogs[index]) {
-                                    userLogs[index].role = newRole;
-                                    showToast(`✅ 用戶角色已更新`);
+                            document.getElementById('addUserBtn').addEventListener('click', () => {
+                                let newUsername = document.getElementById('newUsername').value.trim();
+                                let newPassword = document.getElementById('newPassword').value.trim();
+                                let newAccountId = document.getElementById('newAccountId').value.trim() || generateAccountId(newUsername, document.getElementById('newRole').value);
+                                let newClass = document.getElementById('newClass').value.trim();
+                                let newNumber = document.getElementById('newNumber').value.trim();
+                                let newOccupation = document.getElementById('newOccupation').value.trim();
+                                let newRole = document.getElementById('newRole').value;
+                                if (!newUsername || !newPassword) {
+                                    showToast('❌ 帳號密碼必填');
+                                    return;
+                                }
+                                if (users[newUsername]) {
+                                    showToast('❌ 帳號已存在');
+                                    return;
+                                }
+                                users[newUsername] = {
+                                    password: newPassword,
+                                    accountId: newAccountId,
+                                    class: newClass,
+                                    number: newNumber,
+                                    occupation: newOccupation,
+                                    role: newRole
+                                };
+                                renderPage('userManagement');
+                                showToast('✅ 用戶新增成功');
+                            });
+                            window.updateUser = function(username) {
+                                let newPwd = document.getElementById(`userPwd-${username}`).value.trim();
+                                let newAcc = document.getElementById(`userAcc-${username}`).value.trim();
+                                let newClass = document.getElementById(`userClass-${username}`).value.trim();
+                                let newNumber = document.getElementById(`userNumber-${username}`).value.trim();
+                                let newOcc = document.getElementById(`userOcc-${username}`).value.trim();
+                                let newRole = document.getElementById(`userRole-${username}`).value;
+                                if (users[username]) {
+                                    users[username].password = newPwd;
+                                    users[username].accountId = newAcc;
+                                    users[username].class = newClass;
+                                    users[username].number = newNumber;
+                                    users[username].occupation = newOcc;
+                                    users[username].role = newRole;
+                                    showToast('✅ 用戶更新成功');
                                 }
                             };
-                            window.deleteUser = function(index) {
-                                if (confirm('確定刪除此記錄？')) {
-                                    userLogs.splice(index, 1);
+                            window.deleteUser = function(username) {
+                                if (confirm('確定刪除？')) {
+                                    delete users[username];
                                     renderPage('userManagement');
-                                    showToast(`✅ 已刪除`);
+                                    showToast('✅ 已刪除');
                                 }
                             };
+                        }, 0);
+                    }
+                } else if (page === 'subProjectAdmin') {
+                    if (currentUser.role !== 'creator') {
+                        html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
+                    } else {
+                        html = `<div class="page-card">
+                            <div class="page-title"><i class="fas fa-layer-group"></i> 子專案管理</div>
+                            <p>選擇母專案字母：</p>
+                            <select id="subProjectLetter" class="form-control" style="margin-bottom:20px;">`;
+                        for (let i = 65; i <= 90; i++) {
+                            let letter = String.fromCharCode(i);
+                            html += `<option value="${letter}">${letter}</option>`;
+                        }
+                        html += `</select>
+                            <div id="subProjectList"></div>
+                            <h3>新增子專案</h3>
+                            <div class="form-group"><label>名稱</label><input type="text" id="newSubName" class="form-control"></div>
+                            <div class="form-group"><label>描述</label><textarea id="newSubDesc" class="form-control"></textarea></div>
+                            <div class="form-group"><label>下載連結</label><input type="text" id="newSubUrl" class="form-control" value="#"></div>
+                            <div class="form-group"><label>圖片網址</label><input type="text" id="newSubImage" class="form-control" value="https://picsum.photos/200/150?random=999"></div>
+                            <button class="auth-btn" id="addSubBtn">新增子專案</button>
+                        </div>`;
+                        setTimeout(() => {
+                            function renderSubList() {
+                                let letter = document.getElementById('subProjectLetter').value;
+                                let listDiv = document.getElementById('subProjectList');
+                                let proj = projectData[letter];
+                                if (!proj) return;
+                                let subs = proj.subProjects || [];
+                                let html = '<h3>現有子專案</h3>';
+                                subs.forEach((sub, idx) => {
+                                    html += `<div class="subproject-item">
+                                        <div><strong>${sub.name}</strong> <button class="delete-btn" onclick="deleteSub('${letter}', ${idx})">刪除</button></div>
+                                        <div>描述：${sub.desc}</div>
+                                        <div>下載：<a href="${sub.downloadUrl}" target="_blank">連結</a></div>
+                                        <div>圖片：<img src="${sub.imageUrl}" style="max-width:100px;"></div>
+                                    </div>`;
+                                });
+                                listDiv.innerHTML = html;
+                            }
+                            document.getElementById('subProjectLetter').addEventListener('change', renderSubList);
+                            renderSubList();
+                            document.getElementById('addSubBtn').addEventListener('click', () => {
+                                let letter = document.getElementById('subProjectLetter').value;
+                                let name = document.getElementById('newSubName').value.trim();
+                                let desc = document.getElementById('newSubDesc').value.trim();
+                                let url = document.getElementById('newSubUrl').value.trim();
+                                let img = document.getElementById('newSubImage').value.trim();
+                                if (!name) { showToast('❌ 名稱必填'); return; }
+                                if (!projectData[letter].subProjects) projectData[letter].subProjects = [];
+                                projectData[letter].subProjects.push({ name, desc, downloadUrl: url, imageUrl: img });
+                                renderSubList();
+                                document.getElementById('newSubName').value = '';
+                                document.getElementById('newSubDesc').value = '';
+                                document.getElementById('newSubUrl').value = '#';
+                                document.getElementById('newSubImage').value = 'https://picsum.photos/200/150?random=999';
+                                showToast('✅ 子專案新增成功');
+                            });
+                            window.deleteSub = function(letter, idx) {
+                                if (confirm('確定刪除？')) {
+                                    projectData[letter].subProjects.splice(idx, 1);
+                                    renderSubList();
+                                    showToast('✅ 已刪除');
+                                }
+                            };
+                        }, 0);
+                    }
+                } else if (page === 'sourceCodeAdmin') {
+                    if (currentUser.role !== 'creator') {
+                        html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
+                    } else {
+                        html = `<div class="page-card">
+                            <div class="page-title"><i class="fas fa-code"></i> 原始碼管理</div>
+                            <h3>永久原始碼</h3>
+                            <table class="user-table">
+                                <thead><tr><th>代碼</th><th>字母</th><th>秒數</th><th>角色</th><th>操作</th></tr></thead>
+                                <tbody>`;
+                        for (let code in permSourceCodes) {
+                            let sc = permSourceCodes[code];
+                            html += `<tr>
+                                <td><input type="text" id="perm-${code}" value="${code}" style="width:100px;"></td>
+                                <td><input type="text" id="permLetter-${code}" value="${sc.letter}" style="width:50px;"></td>
+                                <td><input type="number" id="permSec-${code}" value="${sc.expirySec}" style="width:70px;"></td>
+                                <td><input type="text" id="permRole-${code}" value="${sc.role}" style="width:80px;"></td>
+                                <td><button class="auth-btn" style="padding:5px 10px;" onclick="updatePerm('${code}')">更新</button></td>
+                            </tr>`;
+                        }
+                        html += `</tbody></table>
+                            <h3>新增永久原始碼</h3>
+                            <div class="form-group"><label>代碼</label><input type="text" id="newPermCode" class="form-control"></div>
+                            <div class="form-group"><label>字母</label><input type="text" id="newPermLetter" class="form-control" maxlength="1"></div>
+                            <div class="form-group"><label>秒數</label><input type="number" id="newPermSec" class="form-control"></div>
+                            <div class="form-group"><label>角色</label><input type="text" id="newPermRole" class="form-control" value="manager"></div>
+                            <button class="auth-btn" id="addPermBtn">新增</button>
+                            <hr>
+                            <h3>一次性原始碼</h3>
+                            <table class="user-table">
+                                <thead><tr><th>代碼</th><th>字母</th><th>秒數</th><th>已使用</th><th>允許用戶</th><th>最大次數</th><th>到期日</th><th>操作</th></tr></thead>
+                                <tbody>`;
+                        for (let code in onceSourceCodes) {
+                            let sc = onceSourceCodes[code];
+                            html += `<tr>
+                                <td><input type="text" id="once-${code}" value="${code}" style="width:100px;"></td>
+                                <td><input type="text" id="onceLetter-${code}" value="${sc.letter}" style="width:50px;"></td>
+                                <td><input type="number" id="onceSec-${code}" value="${sc.expirySec}" style="width:70px;"></td>
+                                <td><input type="checkbox" id="onceUsed-${code}" ${sc.used ? 'checked' : ''} disabled></td>
+                                <td><input type="text" id="onceUsers-${code}" value="${sc.allowedUsers ? sc.allowedUsers.join(',') : ''}" style="width:100px;" placeholder="用戶名,逗號"></td>
+                                <td><input type="number" id="onceMax-${code}" value="${sc.maxUses || 1}" style="width:60px;"></td>
+                                <td><input type="text" id="onceExpiry-${code}" value="${sc.expiryDate || ''}" style="width:100px;" placeholder="YYYY-MM-DD"></td>
+                                <td><button class="auth-btn" style="padding:5px 10px;" onclick="updateOnce('${code}')">更新</button></td>
+                            </tr>`;
+                        }
+                        html += `</tbody></table>
+                            <h3>新增一次性原始碼</h3>
+                            <div class="form-group"><label>代碼</label><input type="text" id="newOnceCode" class="form-control"></div>
+                            <div class="form-group"><label>字母</label><input type="text" id="newOnceLetter" class="form-control" maxlength="1"></div>
+                            <div class="form-group"><label>秒數</label><input type="number" id="newOnceSec" class="form-control"></div>
+                            <div class="form-group"><label>允許用戶 (逗號分隔)</label><input type="text" id="newOnceUsers" class="form-control"></div>
+                            <div class="form-group"><label>最大使用次數</label><input type="number" id="newOnceMax" class="form-control" value="1"></div>
+                            <div class="form-group"><label>到期日 (YYYY-MM-DD)</label><input type="text" id="newOnceExpiry" class="form-control"></div>
+                            <button class="auth-btn" id="addOnceBtn">新增</button>
+                        </div>`;
+                        setTimeout(() => {
+                            window.updatePerm = function(code) {
+                                let newCode = document.getElementById(`perm-${code}`).value.trim();
+                                let letter = document.getElementById(`permLetter-${code}`).value.trim().toUpperCase();
+                                let sec = parseInt(document.getElementById(`permSec-${code}`).value);
+                                let role = document.getElementById(`permRole-${code}`).value.trim();
+                                if (newCode && letter && sec && role) {
+                                    delete permSourceCodes[code];
+                                    permSourceCodes[newCode] = { letter, expirySec: sec, role };
+                                    renderPage('sourceCodeAdmin');
+                                    showToast('✅ 已更新');
+                                }
+                            };
+                            window.updateOnce = function(code) {
+                                let newCode = document.getElementById(`once-${code}`).value.trim();
+                                let letter = document.getElementById(`onceLetter-${code}`).value.trim().toUpperCase();
+                                let sec = parseInt(document.getElementById(`onceSec-${code}`).value);
+                                let usersStr = document.getElementById(`onceUsers-${code}`).value.trim();
+                                let allowedUsers = usersStr ? usersStr.split(',').map(s => s.trim()) : [];
+                                let maxUses = parseInt(document.getElementById(`onceMax-${code}`).value);
+                                let expiryDate = document.getElementById(`onceExpiry-${code}`).value.trim();
+                                if (newCode && letter && sec) {
+                                    delete onceSourceCodes[code];
+                                    onceSourceCodes[newCode] = {
+                                        letter,
+                                        expirySec: sec,
+                                        used: false,
+                                        role: 'user',
+                                        allowedUsers,
+                                        maxUses,
+                                        usedCount: 0,
+                                        expiryDate: expiryDate || null
+                                    };
+                                    renderPage('sourceCodeAdmin');
+                                    showToast('✅ 已更新');
+                                }
+                            };
+                            document.getElementById('addPermBtn').addEventListener('click', () => {
+                                let code = document.getElementById('newPermCode').value.trim();
+                                let letter = document.getElementById('newPermLetter').value.trim().toUpperCase();
+                                let sec = parseInt(document.getElementById('newPermSec').value);
+                                let role = document.getElementById('newPermRole').value.trim();
+                                if (!code || !letter || !sec || !role) { showToast('❌ 請填寫完整'); return; }
+                                if (permSourceCodes[code]) { showToast('❌ 代碼已存在'); return; }
+                                permSourceCodes[code] = { letter, expirySec: sec, role };
+                                renderPage('sourceCodeAdmin');
+                                showToast('✅ 新增成功');
+                            });
+                            document.getElementById('addOnceBtn').addEventListener('click', () => {
+                                let code = document.getElementById('newOnceCode').value.trim();
+                                let letter = document.getElementById('newOnceLetter').value.trim().toUpperCase();
+                                let sec = parseInt(document.getElementById('newOnceSec').value);
+                                let usersStr = document.getElementById('newOnceUsers').value.trim();
+                                let allowedUsers = usersStr ? usersStr.split(',').map(s => s.trim()) : [];
+                                let maxUses = parseInt(document.getElementById('newOnceMax').value);
+                                let expiryDate = document.getElementById('newOnceExpiry').value.trim();
+                                if (!code || !letter || !sec) { showToast('❌ 請填寫代碼、字母、秒數'); return; }
+                                if (onceSourceCodes[code]) { showToast('❌ 代碼已存在'); return; }
+                                onceSourceCodes[code] = {
+                                    letter,
+                                    expirySec: sec,
+                                    used: false,
+                                    role: 'user',
+                                    allowedUsers,
+                                    maxUses,
+                                    usedCount: 0,
+                                    expiryDate: expiryDate || null
+                                };
+                                renderPage('sourceCodeAdmin');
+                                showToast('✅ 新增成功');
+                            });
                         }, 0);
                     }
                 } else if (page === 'settings') {
@@ -1349,7 +1647,7 @@
                         <div class="settings-item">
                             <span>${t('version')}</span>
                             <div class="version-info">
-                                <span class="value">v1.0.0</span>
+                                <span class="value">v2.0.0</span>
                                 <button class="auth-btn" style="padding:5px 15px;" id="checkUpdate">${t('checkUpdate')}</button>
                             </div>
                         </div>
@@ -1357,12 +1655,11 @@
                     </div>`;
                     setTimeout(() => {
                         document.getElementById('logoutBtn').addEventListener('click', logout);
-                        document.getElementById('checkUpdate').addEventListener('click', function() {
-                            let btn = this;
-                            setButtonLoading(btn, true);
-                            // 模擬檢查更新，延遲1.5秒
+                        const checkUpdateBtn = document.getElementById('checkUpdate');
+                        checkUpdateBtn.addEventListener('click', function() {
+                            setButtonLoading(this, true);
                             setTimeout(() => {
-                                setButtonLoading(btn, false);
+                                setButtonLoading(this, false);
                                 showToast(`✅ ${t('checkComplete')}`);
                             }, 1500);
                         });
@@ -1388,9 +1685,9 @@
                 contentArea.innerHTML = html;
             }
 
-            // 顯示專案詳情
+            // 顯示專案詳情（需整合子專案）
             function showProjectDetail(letter) {
-                let proj = projectData[letter] || { name: letter+' '+t('project'), desc: '', downloadUrl: '#', imageUrl: '' };
+                let proj = projectData[letter] || { name: letter+' '+t('project'), desc: '', downloadUrl: '#', imageUrl: '', subProjects: [] };
                 let unlocked = isUnlocked(letter);
                 let expiryTime = currentUser.unlockedProjects[letter]?.expiry;
                 let remaining = expiryTime ? Math.max(0, Math.floor((expiryTime - Date.now()) / 1000)) : 0;
@@ -1404,6 +1701,17 @@
                         <img src="${proj.imageUrl}" alt="project image">
                         <div class="timer" id="timer-${letter}">${t('remaining')}：${remaining} ${t('seconds')}</div>
                         <a href="${proj.downloadUrl}" class="download-btn" download><i class="fas fa-download"></i> ${t('download')}</a>`;
+                    if (proj.subProjects && proj.subProjects.length > 0) {
+                        html += `<h3>子專案</h3>`;
+                        proj.subProjects.forEach((sub, idx) => {
+                            html += `<div class="subproject-item">
+                                <h4>${sub.name}</h4>
+                                <p>${sub.desc}</p>
+                                <img src="${sub.imageUrl}" style="max-width:200px;"><br>
+                                <a href="${sub.downloadUrl}" class="download-btn" download>下載子專案</a>
+                            </div>`;
+                        });
+                    }
                 } else {
                     html += `
                         <div class="unlock-section">
@@ -1458,63 +1766,78 @@
                         });
                     });
 
-                    document.getElementById('unlockWithSource').addEventListener('click', function() {
-                        let btn = this;
-                        setButtonLoading(btn, true);
-                        let code = document.getElementById('sourceCode').value.trim();
-                        let source;
-                        if (sourceType === 'permanent') {
-                            source = permSourceCodes[code];
-                        } else {
-                            source = onceSourceCodes[code];
-                        }
-                        let msgDiv = document.getElementById('sourceMsg');
-                        setTimeout(() => {
-                            setButtonLoading(btn, false);
-                            if (!source) {
-                                msgDiv.textContent = '❌ ' + t('permCodeError');
-                                return;
+                    const unlockSourceBtn = document.getElementById('unlockWithSource');
+                    if (unlockSourceBtn) {
+                        unlockSourceBtn.addEventListener('click', function() {
+                            setButtonLoading(this, true);
+                            let code = document.getElementById('sourceCode').value.trim();
+                            let source;
+                            if (sourceType === 'permanent') {
+                                source = permSourceCodes[code];
+                            } else {
+                                source = onceSourceCodes[code];
                             }
-                            if (sourceType === 'once' && source.used) {
-                                msgDiv.textContent = '❌ ' + t('onceCodeError');
-                                return;
-                            }
-                            if (source.letter !== letter) {
-                                msgDiv.textContent = `❌ ${t('codeFor')} ${source.letter}`;
-                                return;
-                            }
-                            if (sourceType === 'once') {
-                                source.used = true;
-                            }
-                            unlockProject(letter, source.expirySec);
-                            showToast(`🔓 ${t('unlockSuccess')} (${source.expirySec}${t('seconds')})`);
-                            showProjectDetail(letter);
-                        }, 500);
-                    });
+                            let msgDiv = document.getElementById('sourceMsg');
+                            setTimeout(() => {
+                                setButtonLoading(unlockSourceBtn, false);
+                                if (!source) {
+                                    msgDiv.textContent = '❌ ' + t('permCodeError');
+                                    return;
+                                }
+                                if (sourceType === 'once') {
+                                    if (source.expiryDate && new Date(source.expiryDate) < new Date()) {
+                                        msgDiv.textContent = '❌ 原始碼已過期';
+                                        return;
+                                    }
+                                    if (source.maxUses && source.usedCount >= source.maxUses) {
+                                        msgDiv.textContent = '❌ 原始碼已達使用次數上限';
+                                        return;
+                                    }
+                                    if (source.allowedUsers && source.allowedUsers.length > 0 && !source.allowedUsers.includes(currentUser.username)) {
+                                        msgDiv.textContent = '❌ 您無權使用此原始碼';
+                                        return;
+                                    }
+                                    source.usedCount = (source.usedCount || 0) + 1;
+                                    if (source.maxUses && source.usedCount >= source.maxUses) {
+                                        source.used = true;
+                                    }
+                                }
+                                if (source.letter !== letter) {
+                                    msgDiv.textContent = `❌ ${t('codeFor')} ${source.letter}`;
+                                    return;
+                                }
+                                unlockProject(letter, source.expirySec);
+                                showToast(`🔓 ${t('unlockSuccess')} (${source.expirySec}${t('seconds')})`);
+                                showProjectDetail(letter);
+                            }, 500);
+                        });
+                    }
 
-                    document.getElementById('unlockWithPassword').addEventListener('click', function() {
-                        let btn = this;
-                        setButtonLoading(btn, true);
-                        let pwd = document.getElementById('projectPassword').value.trim();
-                        let correct = projectPasswords[letter];
-                        let msgDiv = document.getElementById('passwordMsg');
-                        setTimeout(() => {
-                            setButtonLoading(btn, false);
-                            if (!correct) {
-                                msgDiv.textContent = '❌ ' + t('noPassword');
-                                return;
-                            }
-                            if (pwd !== correct) {
-                                msgDiv.textContent = '❌ ' + t('wrongPassword');
-                                return;
-                            }
-                            let expirySec = parseInt(correct.slice(-3));
-                            if (isNaN(expirySec) || expirySec < 1) expirySec = 30;
-                            unlockProject(letter, expirySec);
-                            showToast(`🔓 ${t('unlockSuccess')} (${expirySec}${t('seconds')})`);
-                            showProjectDetail(letter);
-                        }, 500);
-                    });
+                    const unlockPwdBtn = document.getElementById('unlockWithPassword');
+                    if (unlockPwdBtn) {
+                        unlockPwdBtn.addEventListener('click', function() {
+                            setButtonLoading(this, true);
+                            let pwd = document.getElementById('projectPassword').value.trim();
+                            let correct = projectPasswords[letter];
+                            let msgDiv = document.getElementById('passwordMsg');
+                            setTimeout(() => {
+                                setButtonLoading(unlockPwdBtn, false);
+                                if (!correct) {
+                                    msgDiv.textContent = '❌ ' + t('noPassword');
+                                    return;
+                                }
+                                if (pwd !== correct) {
+                                    msgDiv.textContent = '❌ ' + t('wrongPassword');
+                                    return;
+                                }
+                                let expirySec = parseInt(correct.slice(-3));
+                                if (isNaN(expirySec) || expirySec < 1) expirySec = 30;
+                                unlockProject(letter, expirySec);
+                                showToast(`🔓 ${t('unlockSuccess')} (${expirySec}${t('seconds')})`);
+                                showProjectDetail(letter);
+                            }, 500);
+                        });
+                    }
                 }
             }
 
@@ -1538,7 +1861,7 @@
                     return;
                 }
                 let role = users[username].role || 'observer';
-                let accountId = generateAccountId(username, role);
+                let accountId = users[username].accountId || generateAccountId(username, role);
                 loginSuccess(username, role, accountId);
                 setButtonLoading(loginBtn, false);
             });
@@ -1571,7 +1894,8 @@
                     setButtonLoading(registerBtn, false);
                     return;
                 }
-                users[username] = { password, role: 'observer' };
+                let accountId = generateAccountId(username, 'observer');
+                users[username] = { password, role: 'observer', accountId, class: regClass, number: regNumber, occupation: '學生' };
                 showToast('✅ ' + t('registerSuccess'));
                 loginTab.click();
                 document.getElementById('regUsername').value = '';
@@ -1612,7 +1936,26 @@
                     setButtonLoading(onceCodeBtn, false);
                     return;
                 }
-                source.used = true;
+                if (source.expiryDate && new Date(source.expiryDate) < new Date()) {
+                    onceCodeError.style.display = 'flex';
+                    setTimeout(() => onceCodeError.style.display = 'none', 2000);
+                    setButtonLoading(onceCodeBtn, false);
+                    return;
+                }
+                if (source.maxUses && source.usedCount >= source.maxUses) {
+                    onceCodeError.style.display = 'flex';
+                    setTimeout(() => onceCodeError.style.display = 'none', 2000);
+                    setButtonLoading(onceCodeBtn, false);
+                    return;
+                }
+                if (source.allowedUsers && source.allowedUsers.length > 0 && !source.allowedUsers.includes(currentUser?.username)) {
+                    // 未登入時 currentUser 可能為空，但原始碼登入會產生新用戶
+                    // 這裡簡單處理，不綁定用戶
+                }
+                source.usedCount = (source.usedCount || 0) + 1;
+                if (source.maxUses && source.usedCount >= source.maxUses) {
+                    source.used = true;
+                }
                 let username = `USR-${source.letter}`;
                 let role = source.role || 'user';
                 let accountId = generateAccountId(username, role);
@@ -1677,14 +2020,14 @@
 
     <!-- ========== 🛠️ 修改教學 ========== -->
     <!--
-        🔧 一般用戶帳號：在 users 物件中修改 (約 110 行)
-        🔧 永久原始碼清單：在 permSourceCodes 物件中修改 (約 120 行)
-        🔧 一次性原始碼清單：在 onceSourceCodes 物件中修改 (約 150 行)
-        🔧 專案密碼：在 projectPasswords 物件中修改 (約 180 行)
-        🔧 專案資料：在 projectData 物件中修改 (約 200 行)
-        🔧 人物資料：在 peopleData 陣列中修改 (約 230 行)
+        🔧 一般用戶帳號：在 users 物件中修改 (約 120 行)
+        🔧 永久原始碼清單：在 permSourceCodes 物件中修改 (約 140 行)
+        🔧 一次性原始碼清單：在 onceSourceCodes 物件中修改 (約 170 行)
+        🔧 專案密碼：在 projectPasswords 物件中修改 (約 200 行)
+        🔧 專案資料 (含子專案)：在 projectData 物件中修改 (約 220 行)
+        🔧 人物資料：在 peopleData 陣列中修改 (約 250 行)
         🔧 帳號ID生成規則：在 generateAccountId 函數中修改 (約 290 行)
-        🔧 超級用戶帳號固定為 "0"，登入後可看到「密碼庫」與「用戶管理」頁面
+        🔧 超級用戶帳號固定為 "0"，登入後可看到所有管理頁面
     -->
     <!-- ================================== -->
 </body>
