@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>🔐 企業專案管理系統 - 最終版</title>
+    <title>🔐 企業專案管理系統 - 版本自動更新版</title>
     <!-- 字體 Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +13,7 @@
     <!-- GSAP 動畫庫 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
+        /* 樣式與前一版相同，為節省篇幅保留但不重複貼出，完整版見下方 */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; overflow: hidden; font-family: "Inter", sans-serif; }
         
@@ -59,7 +60,13 @@
         body.light-mode .logout-btn,
         body.light-mode .theme-option,
         body.light-mode .language-select,
-        body.light-mode .project-card .download-btn {
+        body.light-mode .project-card .download-btn,
+        body.light-mode .device-selector button,
+        body.light-mode .sidebar .nav-item,
+        body.light-mode .sidebar-toggle,
+        body.light-mode .alpha-tab,
+        body.light-mode .source-type-btn,
+        body.light-mode .device-btn {
             background: #2563eb !important;
             color: white !important;
             border: none;
@@ -423,36 +430,6 @@
             cursor: pointer;
         }
 
-        /* 人物區塊 (僅超級用戶) */
-        .person-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .person-selector select {
-            flex: 1 1 200px;
-            padding: 14px;
-            border-radius: 40px;
-            background: #1e293b;
-            color: white;
-            border: 1px solid #3b82f6;
-        }
-        .person-detail-item {
-            display: flex;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            flex-wrap: wrap;
-        }
-        .person-detail-label {
-            width: 80px;
-            color: #94a3b8;
-        }
-        .person-detail-value {
-            flex: 1;
-            color: white;
-        }
-
         /* 密碼庫表格 */
         .password-table {
             width: 100%;
@@ -481,15 +458,16 @@
             cursor: pointer;
         }
 
-        /* 用戶管理表格 */
+        /* 用戶管理表格 (整合人物資料，可編輯帳號) */
         .user-table {
             width: 100%;
             border-collapse: collapse;
         }
         .user-table th, .user-table td {
-            padding: 12px;
+            padding: 8px;
             text-align: left;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            vertical-align: middle;
         }
         .user-table input, .user-table select {
             padding: 5px;
@@ -497,6 +475,7 @@
             background: #1e293b;
             color: white;
             border: 1px solid #3b82f6;
+            width: 100%;
         }
         .delete-btn {
             background: #ef4444;
@@ -513,6 +492,12 @@
             border-radius: 20px;
             padding: 15px;
             margin-bottom: 10px;
+        }
+        .project-edit-section {
+            background: rgba(0,0,0,0.1);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
         /* 設定頁面 */
@@ -637,31 +622,31 @@
                 <div class="auth-tab" id="onceCodeTab" data-i18n="onceCode">一次性原始碼</div>
             </div>
 
-            <!-- 登入表單 (帳號密碼) -->
+            <!-- 登入表單 (帳號密碼) - 初始值為空 -->
             <div id="loginForm" class="auth-form">
                 <h3 data-i18n="loginTitle">帳號密碼登入</h3>
                 <div class="form-group">
                     <label data-i18n="username">👤 帳號</label>
-                    <input type="text" class="form-control" id="loginUsername" value="user1">
+                    <input type="text" class="form-control" id="loginUsername" placeholder="請輸入帳號" value="">
                 </div>
                 <div class="form-group">
                     <label data-i18n="password">🔑 密碼</label>
-                    <input type="password" class="form-control" id="loginPassword" value="pass">
+                    <input type="password" class="form-control" id="loginPassword" placeholder="請輸入密碼" value="">
                 </div>
                 <div id="loginError" class="error-message"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="loginError">帳號或密碼錯誤</span></div>
                 <button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> <span data-i18n="loginBtn">登入</span></button>
             </div>
 
-            <!-- 註冊表單 (職業只有學生) -->
+            <!-- 註冊表單 (職業只有學生) - 初始值為空 -->
             <div id="registerForm" class="auth-form" style="display: none;">
                 <h3 data-i18n="registerTitle">註冊新帳號</h3>
                 <div class="form-group">
                     <label data-i18n="username">👤 帳號</label>
-                    <input type="text" class="form-control" id="regUsername">
+                    <input type="text" class="form-control" id="regUsername" placeholder="請輸入帳號">
                 </div>
                 <div class="form-group">
                     <label data-i18n="password">🔑 密碼</label>
-                    <input type="password" class="form-control" id="regPassword">
+                    <input type="password" class="form-control" id="regPassword" placeholder="請輸入密碼">
                 </div>
                 <div class="form-group">
                     <label data-i18n="occupation">💼 職業</label>
@@ -670,30 +655,30 @@
                     </select>
                 </div>
                 <div class="student-fields" id="studentFields">
-                    <div class="form-group"><label data-i18n="class">📚 班級</label><input type="text" class="form-control" id="regClass"></div>
-                    <div class="form-group"><label data-i18n="number">🔢 座號</label><input type="text" class="form-control" id="regNumber"></div>
+                    <div class="form-group"><label data-i18n="class">📚 班級</label><input type="text" class="form-control" id="regClass" placeholder="例如 三年一班"></div>
+                    <div class="form-group"><label data-i18n="number">🔢 座號</label><input type="text" class="form-control" id="regNumber" placeholder="例如 12"></div>
                 </div>
                 <div id="registerError" class="error-message"></div>
                 <button class="auth-btn" id="registerBtn"><i class="fas fa-user-plus"></i> <span data-i18n="registerBtn">註冊</span></button>
             </div>
 
-            <!-- 永久原始碼登入 -->
+            <!-- 永久原始碼登入 - 初始值為空 -->
             <div id="permCodeForm" class="auth-form" style="display: none;">
                 <h3 data-i18n="permCodeTitle">永久原始碼登入</h3>
                 <div class="form-group">
                     <label data-i18n="permCodeInput">🔢 請輸入永久原始碼 (數字)</label>
-                    <input type="text" class="form-control" id="permCode" placeholder="例如 100A" value="100A">
+                    <input type="text" class="form-control" id="permCode" placeholder="例如 100A" value="">
                 </div>
                 <div id="permCodeError" class="error-message"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="permCodeError">原始碼無效</span></div>
                 <button class="auth-btn" id="permCodeBtn"><i class="fas fa-key"></i> <span data-i18n="permCodeBtn">登入</span></button>
             </div>
 
-            <!-- 一次性原始碼登入 -->
+            <!-- 一次性原始碼登入 - 初始值為空 -->
             <div id="onceCodeForm" class="auth-form" style="display: none;">
                 <h3 data-i18n="onceCodeTitle">一次性原始碼登入</h3>
                 <div class="form-group">
                     <label data-i18n="onceCodeInput">🔢 請輸入一次性原始碼 (數字)</label>
-                    <input type="text" class="form-control" id="onceCode" placeholder="例如 ONCEA001" value="ONCEA001">
+                    <input type="text" class="form-control" id="onceCode" placeholder="例如 ONCEA001" value="">
                 </div>
                 <div id="onceCodeError" class="error-message"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="onceCodeError">原始碼無效或已使用</span></div>
                 <button class="auth-btn" id="onceCodeBtn"><i class="fas fa-key"></i> <span data-i18n="onceCodeBtn">登入</span></button>
@@ -707,11 +692,10 @@
                 <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
                 <div class="nav-item active" data-page="home"><i class="fas fa-home"></i><span data-i18n="home">首頁</span></div>
                 <div class="nav-item" data-page="projects"><i class="fas fa-folder"></i><span data-i18n="projects">專案</span></div>
-                <div class="nav-item" data-page="people" id="peopleNav"><i class="fas fa-users"></i><span data-i18n="people">人物</span></div>
                 <!-- 超級用戶專屬導航 -->
                 <div class="nav-item" data-page="passwordVault" id="passwordVaultNav" style="display: none;"><i class="fas fa-lock"></i><span data-i18n="passwordVault">密碼庫</span></div>
                 <div class="nav-item" data-page="userManagement" id="userManagementNav" style="display: none;"><i class="fas fa-user-cog"></i><span data-i18n="userManagement">用戶管理</span></div>
-                <div class="nav-item" data-page="subProjectAdmin" id="subProjectAdminNav" style="display: none;"><i class="fas fa-layer-group"></i><span>子專案管理</span></div>
+                <div class="nav-item" data-page="subProjectAdmin" id="subProjectAdminNav" style="display: none;"><i class="fas fa-layer-group"></i><span>專案管理</span></div>
                 <div class="nav-item" data-page="sourceCodeAdmin" id="sourceCodeAdminNav" style="display: none;"><i class="fas fa-code"></i><span>原始碼管理</span></div>
                 <div class="nav-item" data-page="settings"><i class="fas fa-cog"></i><span data-i18n="settings">設定</span></div>
             </div>
@@ -753,7 +737,6 @@
                     onceCodeError: '原始碼無效或已使用',
                     home: '首頁',
                     projects: '專案',
-                    people: '人物',
                     passwordVault: '密碼庫',
                     userManagement: '用戶管理',
                     settings: '設定',
@@ -779,7 +762,6 @@
                     cancel: '取消',
                     permissionDenied: '⛔ 權限不足',
                     onlyCreator: '只有創造者可以查看此頁面',
-                    personData: '人物資料',
                     project: '專案',
                     person: '人物',
                     name: '姓名',
@@ -840,7 +822,6 @@
                     onceCodeError: 'Invalid or used code',
                     home: 'Home',
                     projects: 'Projects',
-                    people: 'People',
                     passwordVault: 'Password Vault',
                     userManagement: 'User Management',
                     settings: 'Settings',
@@ -866,7 +847,6 @@
                     cancel: 'Cancel',
                     permissionDenied: '⛔ Permission denied',
                     onlyCreator: 'Only creator can view this page',
-                    personData: 'People Data',
                     project: 'Project',
                     person: 'Person',
                     name: 'Name',
@@ -983,7 +963,6 @@
             const toast = document.getElementById('toast');
             const navItems = document.querySelectorAll('.nav-item');
             const contentArea = document.getElementById('contentArea');
-            const peopleNav = document.getElementById('peopleNav');
             const passwordVaultNav = document.getElementById('passwordVaultNav');
             const userManagementNav = document.getElementById('userManagementNav');
             const subProjectAdminNav = document.getElementById('subProjectAdminNav');
@@ -1004,7 +983,7 @@
                 });
             });
 
-            // 自動偵測設備 (可根據寬度)
+            // 自動偵測設備
             function detectDevice() {
                 const width = window.innerWidth;
                 if (width < 600) {
@@ -1030,21 +1009,47 @@
                 username: null,
                 role: null,
                 accountId: null,
-                unlockedProjects: {} // 解鎖的字母專案
+                unlockedProjects: {}
             };
 
             // 用戶登入記錄
-            let userLogs = [];
+            let userLogs = JSON.parse(localStorage.getItem('userLogs')) || [];
 
-            // ========== 使用者資料庫 (擴充) ==========
-            const users = {
-                user1: { password: 'pass', role: 'observer', accountId: 'OBS-123ABC', class: '', number: '', occupation: '' },
-                admin: { password: 'admin', role: 'manager', accountId: 'MGR-456DEF', class: '', number: '', occupation: '' },
-                // 超級用戶0 不在此列，由程式碼處理
-            };
+            // 版本號 (存於 localStorage)
+            let version = (() => {
+                const stored = localStorage.getItem('version');
+                if (stored) return stored;
+                return '1.0.0'; // 預設版本
+            })();
 
-            // ========== 永久原始碼清單 ==========
-            const permSourceCodes = {
+            function setVersion(newVersion) {
+                version = newVersion;
+                localStorage.setItem('version', version);
+            }
+
+            function incVersion(major, minor, patch) {
+                let parts = version.split('.').map(Number);
+                if (major) parts[0] += 1;
+                if (minor) parts[1] += 1;
+                if (patch) parts[2] += 1;
+                setVersion(parts.join('.'));
+            }
+
+            // ========== 從 localStorage 讀取資料 ==========
+            function loadFromStorage(key, defaultValue) {
+                const stored = localStorage.getItem(key);
+                return stored ? JSON.parse(stored) : defaultValue;
+            }
+
+            // 使用者資料庫 (已整合人物資料，並加入超級用戶 0)
+            let users = loadFromStorage('users', {
+                user1: { password: 'pass', role: 'observer', accountId: 'OBS-123ABC', name: '張三', occupation: '學生', class: '三年一班', number: '12', email: 'zhang@school.com' },
+                admin: { password: 'admin', role: 'manager', accountId: 'MGR-456DEF', name: '李四', occupation: '老師', class: '', number: '', email: 'li@school.com' },
+                '0': { password: '', role: 'creator', accountId: 'CREATOR-0', name: '超級用戶', occupation: '管理員', class: '', number: '', email: 'creator@system.com' }
+            });
+
+            // 永久原始碼
+            let permSourceCodes = loadFromStorage('permSourceCodes', {
                 "100A": { letter: "A", expirySec: 100, role: 'manager', allowedUsers: [] },
                 "200B": { letter: "B", expirySec: 200, role: 'manager', allowedUsers: [] },
                 "300C": { letter: "C", expirySec: 300, role: 'manager', allowedUsers: [] },
@@ -1071,10 +1076,10 @@
                 "666X": { letter: "X", expirySec: 666, role: 'manager', allowedUsers: [] },
                 "777Y": { letter: "Y", expirySec: 777, role: 'manager', allowedUsers: [] },
                 "888Z": { letter: "Z", expirySec: 888, role: 'manager', allowedUsers: [] }
-            };
+            });
 
-            // ========== 一次性原始碼清單 ==========
-            const onceSourceCodes = {
+            // 一次性原始碼
+            let onceSourceCodes = loadFromStorage('onceSourceCodes', {
                 "ONCEA001": { letter: "A", expirySec: 1, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
                 "ONCEB002": { letter: "B", expirySec: 2, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
                 "ONCEC003": { letter: "C", expirySec: 3, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
@@ -1101,19 +1106,19 @@
                 "ONCEX024": { letter: "X", expirySec: 24, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
                 "ONCEY025": { letter: "Y", expirySec: 25, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
                 "ONCEZ026": { letter: "Z", expirySec: 26, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null }
-            };
+            });
 
-            // ========== 專案密碼 ==========
-            const projectPasswords = {
+            // 專案密碼
+            let projectPasswords = loadFromStorage('projectPasswords', {
                 A: "123030", B: "456060", C: "789090", D: "111120", E: "222150",
                 F: "333180", G: "444210", H: "555240", I: "666270", J: "777300",
                 K: "888330", L: "999360", M: "121390", N: "232420", O: "343450",
                 P: "454480", Q: "565510", R: "676540", S: "787570", T: "898600",
                 U: "909630", V: "101660", W: "202690", X: "303720", Y: "404750", Z: "505780"
-            };
+            });
 
-            // ========== 專案資料 (含子專案) ==========
-            const projectData = {
+            // 專案資料
+            let projectData = loadFromStorage('projectData', {
                 A: { name: 'A 智慧城市', desc: 'AI 城市管理平台', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=1', subProjects: [] },
                 B: { name: 'B 區塊鏈金融', desc: '去中心化金融應用', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=2', subProjects: [] },
                 C: { name: 'C 物聯網', desc: '工業 4.0 解決方案', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=3', subProjects: [] },
@@ -1140,22 +1145,38 @@
                 X: { name: 'X 智慧交通', desc: '車流預測', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=24', subProjects: [] },
                 Y: { name: 'Y 智慧環保', desc: '汙染監測', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=25', subProjects: [] },
                 Z: { name: 'Z 智慧能源', desc: '再生能源管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=26', subProjects: [] },
-            };
+            });
 
-            // ========== 人物資料 (全局 100 人) ==========
-            const peopleData = [];
-            for (let j = 1; j <= 100; j++) {
-                peopleData.push({ name: '', occupation: '', class: '', number: '', email: '' });
+            // ========== 儲存至 localStorage 的輔助函數 ==========
+            function saveUsers() { 
+                localStorage.setItem('users', JSON.stringify(users)); 
+                incVersion(false, false, true); // 用戶資料修改 → patch +1
             }
-            peopleData[0] = { name: '張三', occupation: '學生', class: '三年一班', number: '12', email: 'zhang@school.com' };
-            peopleData[1] = { name: '李四', occupation: '老師', class: '', number: '', email: 'li@school.com' };
-            peopleData[2] = { name: '王五', occupation: '工程師', class: '', number: '', email: 'wang@company.com' };
+            function savePermSourceCodes() { 
+                localStorage.setItem('permSourceCodes', JSON.stringify(permSourceCodes)); 
+                incVersion(false, true, false); // 專案相關資料修改 → minor +1 (視為專案層級)
+            }
+            function saveOnceSourceCodes() { 
+                localStorage.setItem('onceSourceCodes', JSON.stringify(onceSourceCodes)); 
+                incVersion(false, true, false);
+            }
+            function saveProjectPasswords() { 
+                localStorage.setItem('projectPasswords', JSON.stringify(projectPasswords)); 
+                incVersion(false, true, false);
+            }
+            function saveProjectData() { 
+                localStorage.setItem('projectData', JSON.stringify(projectData)); 
+                incVersion(false, true, false);
+            }
+            function saveUserLogs() { 
+                localStorage.setItem('userLogs', JSON.stringify(userLogs)); 
+                // 日誌不影響版本
+            }
 
             // ========== 輔助函數 ==========
             function showToast(msg, duration = 2000) {
                 toast.textContent = msg;
                 toast.classList.add('show');
-                // 加入 GSAP 動畫
                 gsap.fromTo(toast, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 });
                 setTimeout(() => {
                     gsap.to(toast, { opacity: 0, y: 20, duration: 0.3, onComplete: () => {
@@ -1189,7 +1210,7 @@
             }
 
             function unlockProject(letter, expirySec) {
-                if (currentUser.role === 'creator') return; // 超級用戶不需解鎖
+                if (currentUser.role === 'creator') return;
                 if (!currentUser.unlockedProjects) currentUser.unlockedProjects = {};
                 const expiry = Date.now() + expirySec * 1000;
                 currentUser.unlockedProjects[letter] = { expiry };
@@ -1207,6 +1228,7 @@
                     accountId,
                     loginTime: new Date().toLocaleString()
                 });
+                saveUserLogs();
             }
 
             // ========== 登入成功處理 ==========
@@ -1218,12 +1240,11 @@
                 logUserLogin(username, role, accountId);
 
                 const isCreator = (role === 'creator');
-                peopleNav.style.display = isCreator ? 'flex' : 'none';
                 passwordVaultNav.style.display = isCreator ? 'flex' : 'none';
                 userManagementNav.style.display = isCreator ? 'flex' : 'none';
                 subProjectAdminNav.style.display = isCreator ? 'flex' : 'none';
                 sourceCodeAdminNav.style.display = isCreator ? 'flex' : 'none';
-                deviceSelector.style.display = 'flex'; // 顯示設備選擇器
+                deviceSelector.style.display = 'flex';
 
                 authCard.style.display = 'none';
                 mainPanel.style.display = 'flex';
@@ -1305,6 +1326,7 @@
                                 }
                                 if (homeSourceType === 'once') {
                                     source.used = true;
+                                    saveOnceSourceCodes();
                                 }
                                 unlockProject(source.letter, source.expirySec);
                                 showToast(`🔓 ${t('unlockSuccess')} (${source.expirySec}${t('seconds')})`);
@@ -1335,37 +1357,6 @@
                             });
                         });
                     }, 0);
-                } else if (page === 'people') {
-                    if (currentUser.role !== 'creator') {
-                        html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
-                    } else {
-                        html = `<div class="page-card">
-                            <div class="page-title"><i class="fas fa-users"></i> ${t('personData')}</div>
-                            <div class="person-selector">
-                                <select id="peopleIndexSelect">`;
-                        for (let i = 1; i <= 100; i++) html += `<option value="${i}">${t('person')} ${i}</option>`;
-                        html += `</select>
-                            </div>
-                            <div id="peopleDetail" class="person-details">`;
-                        for (let key of [t('name'), t('occupationLabel'), t('classLabel'), t('numberLabel'), t('email')]) {
-                            html += `<div class="person-detail-item"><span class="person-detail-label">${key}</span><span class="person-detail-value" id="person${key}">-</span></div>`;
-                        }
-                        html += `</div></div>`;
-                        setTimeout(() => {
-                            const indexSelect = document.getElementById('peopleIndexSelect');
-                            function updatePerson() {
-                                let idx = parseInt(indexSelect.value) - 1;
-                                let p = peopleData[idx] || {};
-                                document.getElementById(`person${t('name')}`).textContent = p.name || t('notFilled');
-                                document.getElementById(`person${t('occupationLabel')}`).textContent = p.occupation || t('notFilled');
-                                document.getElementById(`person${t('classLabel')}`).textContent = p.class || t('notFilled');
-                                document.getElementById(`person${t('numberLabel')}`).textContent = p.number || t('notFilled');
-                                document.getElementById(`person${t('email')}`).textContent = p.email || t('notFilled');
-                            }
-                            indexSelect.addEventListener('change', updatePerson);
-                            updatePerson();
-                        }, 0);
-                    }
                 } else if (page === 'passwordVault') {
                     if (currentUser.role !== 'creator') {
                         html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
@@ -1390,6 +1381,7 @@
                                 let newPwd = document.getElementById(`pwd-${letter}`).value.trim();
                                 if (newPwd) {
                                     projectPasswords[letter] = newPwd;
+                                    saveProjectPasswords();
                                     showToast(`✅ 密碼已更新`);
                                 }
                             };
@@ -1399,7 +1391,7 @@
                     if (currentUser.role !== 'creator') {
                         html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
                     } else {
-                        // 建立用戶列表字串供下拉選單使用
+                        // 建立用戶選項（用於原始碼管理中的下拉，此處不需要）
                         const userOptions = Object.keys(users).map(u => `<option value="${u}">${u}</option>`).join('');
                         html = `<div class="page-card">
                             <div class="page-title"><i class="fas fa-user-cog"></i> ${t('userManagement')}</div>
@@ -1414,13 +1406,19 @@
                                 <label>帳號ID (可留空自動生成)</label><input type="text" id="newAccountId" class="form-control">
                             </div>
                             <div class="form-group">
+                                <label>姓名</label><input type="text" id="newName" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>職業</label><input type="text" id="newOccupation" class="form-control">
+                            </div>
+                            <div class="form-group">
                                 <label>班級</label><input type="text" id="newClass" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label>座號</label><input type="text" id="newNumber" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label>職位</label><input type="text" id="newOccupation" class="form-control">
+                                <label>電子郵件</label><input type="email" id="newEmail" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label>角色</label>
@@ -1428,28 +1426,32 @@
                                     <option value="observer">觀察者</option>
                                     <option value="user">使用者</option>
                                     <option value="manager">管理者</option>
+                                    <option value="creator">創造者</option>
                                 </select>
                             </div>
                             <button class="auth-btn" id="addUserBtn">新增用戶</button>
                             <hr>
                             <h3>用戶列表</h3>
                             <table class="user-table">
-                                <thead><tr><th>帳號</th><th>密碼</th><th>ID</th><th>班級</th><th>座號</th><th>職位</th><th>角色</th><th>操作</th></tr></thead>
+                                <thead><tr><th>帳號</th><th>密碼</th><th>ID</th><th>姓名</th><th>職業</th><th>班級</th><th>座號</th><th>電郵</th><th>角色</th><th>操作</th></tr></thead>
                                 <tbody id="userTableBody">`;
                         for (let u in users) {
                             let user = users[u];
-                            html += `<tr>
-                                <td>${u}</td>
-                                <td><input type="text" id="userPwd-${u}" value="${user.password}" style="width:80px;"></td>
-                                <td><input type="text" id="userAcc-${u}" value="${user.accountId || ''}" style="width:100px;"></td>
+                            html += `<tr data-original-username="${u}">
+                                <td><input type="text" id="userNameField-${u}" value="${u}" class="username-input" style="width:80px;"></td>
+                                <td><input type="text" id="userPwd-${u}" value="${user.password}" style="width:60px;"></td>
+                                <td><input type="text" id="userAcc-${u}" value="${user.accountId || ''}" style="width:80px;"></td>
+                                <td><input type="text" id="userRealName-${u}" value="${user.name || ''}" style="width:70px;"></td>
+                                <td><input type="text" id="userOcc-${u}" value="${user.occupation || ''}" style="width:70px;"></td>
                                 <td><input type="text" id="userClass-${u}" value="${user.class || ''}" style="width:60px;"></td>
-                                <td><input type="text" id="userNumber-${u}" value="${user.number || ''}" style="width:60px;"></td>
-                                <td><input type="text" id="userOcc-${u}" value="${user.occupation || ''}" style="width:80px;"></td>
+                                <td><input type="text" id="userNumber-${u}" value="${user.number || ''}" style="width:50px;"></td>
+                                <td><input type="text" id="userEmail-${u}" value="${user.email || ''}" style="width:100px;"></td>
                                 <td>
                                     <select id="userRole-${u}">
                                         <option value="observer" ${user.role === 'observer' ? 'selected' : ''}>觀察者</option>
                                         <option value="user" ${user.role === 'user' ? 'selected' : ''}>使用者</option>
                                         <option value="manager" ${user.role === 'manager' ? 'selected' : ''}>管理者</option>
+                                        <option value="creator" ${user.role === 'creator' ? 'selected' : ''}>創造者</option>
                                     </select>
                                 </td>
                                 <td>
@@ -1464,9 +1466,11 @@
                                 let newUsername = document.getElementById('newUsername').value.trim();
                                 let newPassword = document.getElementById('newPassword').value.trim();
                                 let newAccountId = document.getElementById('newAccountId').value.trim() || generateAccountId(newUsername, document.getElementById('newRole').value);
+                                let newName = document.getElementById('newName').value.trim();
+                                let newOccupation = document.getElementById('newOccupation').value.trim();
                                 let newClass = document.getElementById('newClass').value.trim();
                                 let newNumber = document.getElementById('newNumber').value.trim();
-                                let newOccupation = document.getElementById('newOccupation').value.trim();
+                                let newEmail = document.getElementById('newEmail').value.trim();
                                 let newRole = document.getElementById('newRole').value;
                                 if (!newUsername || !newPassword) {
                                     showToast('❌ 帳號密碼必填');
@@ -1479,34 +1483,60 @@
                                 users[newUsername] = {
                                     password: newPassword,
                                     accountId: newAccountId,
+                                    name: newName,
+                                    occupation: newOccupation,
                                     class: newClass,
                                     number: newNumber,
-                                    occupation: newOccupation,
+                                    email: newEmail,
                                     role: newRole
                                 };
+                                saveUsers();
                                 renderPage('userManagement');
                                 showToast('✅ 用戶新增成功');
                             });
-                            window.updateUser = function(username) {
-                                let newPwd = document.getElementById(`userPwd-${username}`).value.trim();
-                                let newAcc = document.getElementById(`userAcc-${username}`).value.trim();
-                                let newClass = document.getElementById(`userClass-${username}`).value.trim();
-                                let newNumber = document.getElementById(`userNumber-${username}`).value.trim();
-                                let newOcc = document.getElementById(`userOcc-${username}`).value.trim();
-                                let newRole = document.getElementById(`userRole-${username}`).value;
-                                if (users[username]) {
-                                    users[username].password = newPwd;
-                                    users[username].accountId = newAcc;
-                                    users[username].class = newClass;
-                                    users[username].number = newNumber;
-                                    users[username].occupation = newOcc;
-                                    users[username].role = newRole;
-                                    showToast('✅ 用戶更新成功');
+                            window.updateUser = function(oldUsername) {
+                                let row = document.querySelector(`tr[data-original-username="${oldUsername}"]`);
+                                if (!row) return;
+                                let newUsername = row.querySelector('.username-input').value.trim();
+                                let newPwd = document.getElementById(`userPwd-${oldUsername}`).value.trim();
+                                let newAcc = document.getElementById(`userAcc-${oldUsername}`).value.trim();
+                                let newName = document.getElementById(`userRealName-${oldUsername}`).value.trim();
+                                let newOcc = document.getElementById(`userOcc-${oldUsername}`).value.trim();
+                                let newClass = document.getElementById(`userClass-${oldUsername}`).value.trim();
+                                let newNumber = document.getElementById(`userNumber-${oldUsername}`).value.trim();
+                                let newEmail = document.getElementById(`userEmail-${oldUsername}`).value.trim();
+                                let newRole = document.getElementById(`userRole-${oldUsername}`).value;
+                                if (!newUsername) {
+                                    showToast('❌ 帳號不可為空');
+                                    return;
                                 }
+                                if (newUsername !== oldUsername && users[newUsername] && newUsername !== oldUsername) {
+                                    showToast('❌ 新帳號已被使用');
+                                    return;
+                                }
+                                delete users[oldUsername];
+                                users[newUsername] = {
+                                    password: newPwd,
+                                    accountId: newAcc,
+                                    name: newName,
+                                    occupation: newOcc,
+                                    class: newClass,
+                                    number: newNumber,
+                                    email: newEmail,
+                                    role: newRole
+                                };
+                                saveUsers();
+                                renderPage('userManagement');
+                                showToast('✅ 用戶更新成功');
                             };
                             window.deleteUser = function(username) {
+                                if (username === '0') {
+                                    showToast('❌ 不能刪除超級用戶');
+                                    return;
+                                }
                                 if (confirm('確定刪除？')) {
                                     delete users[username];
+                                    saveUsers();
                                     renderPage('userManagement');
                                     showToast('✅ 已刪除');
                                 }
@@ -1518,14 +1548,22 @@
                         html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
                     } else {
                         html = `<div class="page-card">
-                            <div class="page-title"><i class="fas fa-layer-group"></i> 子專案管理</div>
-                            <p>選擇母專案字母：</p>
-                            <select id="subProjectLetter" class="form-control" style="margin-bottom:20px;">`;
+                            <div class="page-title"><i class="fas fa-layer-group"></i> 專案管理</div>
+                            <p>選擇專案字母：</p>
+                            <select id="projectLetter" class="form-control" style="margin-bottom:20px;">`;
                         for (let i = 65; i <= 90; i++) {
                             let letter = String.fromCharCode(i);
                             html += `<option value="${letter}">${letter}</option>`;
                         }
                         html += `</select>
+                            <div class="project-edit-section" id="projectEditSection">
+                                <h3>編輯專案基本資料</h3>
+                                <div class="form-group"><label>專案名稱</label><input type="text" id="editProjectName" class="form-control"></div>
+                                <div class="form-group"><label>專案描述</label><textarea id="editProjectDesc" class="form-control"></textarea></div>
+                                <div class="form-group"><label>下載連結</label><input type="text" id="editProjectUrl" class="form-control"></div>
+                                <div class="form-group"><label>圖片網址</label><input type="text" id="editProjectImage" class="form-control"></div>
+                                <button class="auth-btn" id="updateProjectBtn">更新專案</button>
+                            </div>
                             <div id="subProjectList"></div>
                             <h3>新增子專案</h3>
                             <div class="form-group"><label>名稱</label><input type="text" id="newSubName" class="form-control"></div>
@@ -1535,8 +1573,19 @@
                             <button class="auth-btn" id="addSubBtn">新增子專案</button>
                         </div>`;
                         setTimeout(() => {
+                            function loadProjectData() {
+                                let letter = document.getElementById('projectLetter').value;
+                                let proj = projectData[letter];
+                                if (proj) {
+                                    document.getElementById('editProjectName').value = proj.name || '';
+                                    document.getElementById('editProjectDesc').value = proj.desc || '';
+                                    document.getElementById('editProjectUrl').value = proj.downloadUrl || '#';
+                                    document.getElementById('editProjectImage').value = proj.imageUrl || '';
+                                }
+                                renderSubList();
+                            }
                             function renderSubList() {
-                                let letter = document.getElementById('subProjectLetter').value;
+                                let letter = document.getElementById('projectLetter').value;
                                 let listDiv = document.getElementById('subProjectList');
                                 let proj = projectData[letter];
                                 if (!proj) return;
@@ -1552,10 +1601,26 @@
                                 });
                                 listDiv.innerHTML = html;
                             }
-                            document.getElementById('subProjectLetter').addEventListener('change', renderSubList);
-                            renderSubList();
+                            document.getElementById('projectLetter').addEventListener('change', loadProjectData);
+                            loadProjectData();
+
+                            document.getElementById('updateProjectBtn').addEventListener('click', () => {
+                                let letter = document.getElementById('projectLetter').value;
+                                let name = document.getElementById('editProjectName').value.trim();
+                                let desc = document.getElementById('editProjectDesc').value.trim();
+                                let url = document.getElementById('editProjectUrl').value.trim();
+                                let img = document.getElementById('editProjectImage').value.trim();
+                                if (!projectData[letter]) projectData[letter] = {};
+                                projectData[letter].name = name;
+                                projectData[letter].desc = desc;
+                                projectData[letter].downloadUrl = url;
+                                projectData[letter].imageUrl = img;
+                                saveProjectData();
+                                showToast('✅ 專案已更新');
+                            });
+
                             document.getElementById('addSubBtn').addEventListener('click', () => {
-                                let letter = document.getElementById('subProjectLetter').value;
+                                let letter = document.getElementById('projectLetter').value;
                                 let name = document.getElementById('newSubName').value.trim();
                                 let desc = document.getElementById('newSubDesc').value.trim();
                                 let url = document.getElementById('newSubUrl').value.trim();
@@ -1563,6 +1628,7 @@
                                 if (!name) { showToast('❌ 名稱必填'); return; }
                                 if (!projectData[letter].subProjects) projectData[letter].subProjects = [];
                                 projectData[letter].subProjects.push({ name, desc, downloadUrl: url, imageUrl: img });
+                                saveProjectData();
                                 renderSubList();
                                 document.getElementById('newSubName').value = '';
                                 document.getElementById('newSubDesc').value = '';
@@ -1573,6 +1639,7 @@
                             window.deleteSub = function(letter, idx) {
                                 if (confirm('確定刪除？')) {
                                     projectData[letter].subProjects.splice(idx, 1);
+                                    saveProjectData();
                                     renderSubList();
                                     showToast('✅ 已刪除');
                                 }
@@ -1583,7 +1650,6 @@
                     if (currentUser.role !== 'creator') {
                         html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
                     } else {
-                        // 建立用戶選項
                         const userOptions = Object.keys(users).map(u => `<option value="${u}">${u}</option>`).join('');
                         html = `<div class="page-card">
                             <div class="page-title"><i class="fas fa-code"></i> 原始碼管理</div>
@@ -1593,7 +1659,6 @@
                                 <tbody>`;
                         for (let code in permSourceCodes) {
                             let sc = permSourceCodes[code];
-                            let selectedUsers = sc.allowedUsers ? sc.allowedUsers.join(',') : '';
                             html += `<tr>
                                 <td><input type="text" id="perm-${code}" value="${code}" style="width:100px;"></td>
                                 <td><input type="text" id="permLetter-${code}" value="${sc.letter}" style="width:50px;"></td>
@@ -1622,7 +1687,6 @@
                                 <tbody>`;
                         for (let code in onceSourceCodes) {
                             let sc = onceSourceCodes[code];
-                            let selectedUsers = sc.allowedUsers ? sc.allowedUsers.join(',') : '';
                             html += `<tr>
                                 <td><input type="text" id="once-${code}" value="${code}" style="width:100px;"></td>
                                 <td><input type="text" id="onceLetter-${code}" value="${sc.letter}" style="width:50px;"></td>
@@ -1659,6 +1723,7 @@
                                 if (newCode && letter && sec && role) {
                                     delete permSourceCodes[code];
                                     permSourceCodes[newCode] = { letter, expirySec: sec, role, allowedUsers };
+                                    savePermSourceCodes();
                                     renderPage('sourceCodeAdmin');
                                     showToast('✅ 已更新');
                                 }
@@ -1683,6 +1748,7 @@
                                         usedCount: 0,
                                         expiryDate: expiryDate || null
                                     };
+                                    saveOnceSourceCodes();
                                     renderPage('sourceCodeAdmin');
                                     showToast('✅ 已更新');
                                 }
@@ -1697,6 +1763,7 @@
                                 if (!code || !letter || !sec || !role) { showToast('❌ 請填寫完整'); return; }
                                 if (permSourceCodes[code]) { showToast('❌ 代碼已存在'); return; }
                                 permSourceCodes[code] = { letter, expirySec: sec, role, allowedUsers };
+                                savePermSourceCodes();
                                 renderPage('sourceCodeAdmin');
                                 showToast('✅ 新增成功');
                             });
@@ -1720,12 +1787,15 @@
                                     usedCount: 0,
                                     expiryDate: expiryDate || null
                                 };
+                                saveOnceSourceCodes();
                                 renderPage('sourceCodeAdmin');
                                 showToast('✅ 新增成功');
                             });
                         }, 0);
                     }
                 } else if (page === 'settings') {
+                    let currentPassword = (users[currentUser.username] && users[currentUser.username].password) || '';
+                    let dots = '●'.repeat(currentPassword.length) || '';
                     html = `<div class="page-card">
                         <div class="page-title"><i class="fas fa-cog"></i> ${t('settingsTitle')}</div>
                         <div class="settings-item">
@@ -1734,7 +1804,7 @@
                         </div>
                         <div class="settings-item">
                             <span>${t('passwordLabel')}</span>
-                            <span class="value dots">••••••••</span>
+                            <span class="value dots">${dots}</span>
                         </div>
                         <div class="settings-item">
                             <span>${t('accountId')}</span>
@@ -1757,7 +1827,7 @@
                         <div class="settings-item">
                             <span>${t('version')}</span>
                             <div class="version-info">
-                                <span class="value">v3.0.0</span>
+                                <span class="value">v${version}</span>
                                 <button class="auth-btn" style="padding:5px 15px;" id="checkUpdate">${t('checkUpdate')}</button>
                             </div>
                         </div>
@@ -1914,6 +1984,7 @@
                                     if (source.maxUses && source.usedCount >= source.maxUses) {
                                         source.used = true;
                                     }
+                                    saveOnceSourceCodes();
                                 }
                                 if (source.letter !== letter) {
                                     msgDiv.textContent = `❌ ${t('codeFor')} ${source.letter}`;
@@ -1961,7 +2032,11 @@
                 let username = document.getElementById('loginUsername').value.trim();
                 let password = document.getElementById('loginPassword').value.trim();
                 if (username === '0') {
-                    let accountId = generateAccountId('0', 'creator');
+                    if (!users['0']) {
+                        users['0'] = { password: '', role: 'creator', accountId: 'CREATOR-0', name: '超級用戶', occupation: '管理員', class: '', number: '', email: 'creator@system.com' };
+                        saveUsers();
+                    }
+                    let accountId = users['0'].accountId || generateAccountId('0', 'creator');
                     loginSuccess('0', 'creator', accountId);
                     setButtonLoading(loginBtn, false);
                     return;
@@ -2008,7 +2083,8 @@
                     return;
                 }
                 let accountId = generateAccountId(username, 'observer');
-                users[username] = { password, role: 'observer', accountId, class: regClass, number: regNumber, occupation: '學生' };
+                users[username] = { password, role: 'observer', accountId, name: '', occupation: '學生', class: regClass, number: regNumber, email: '' };
+                saveUsers();
                 showToast('✅ ' + t('registerSuccess'));
                 loginTab.click();
                 document.getElementById('regUsername').value = '';
@@ -2061,13 +2137,12 @@
                     setButtonLoading(onceCodeBtn, false);
                     return;
                 }
-                if (source.allowedUsers && source.allowedUsers.length > 0 && !source.allowedUsers.includes(currentUser?.username)) {
-                    // 未登入時 currentUser 可能為空，但原始碼登入會產生新用戶
-                }
+                // 原始碼登入不檢查 allowedUsers，因為無法確定是誰
                 source.usedCount = (source.usedCount || 0) + 1;
                 if (source.maxUses && source.usedCount >= source.maxUses) {
                     source.used = true;
                 }
+                saveOnceSourceCodes();
                 let username = `USR-${source.letter}`;
                 let role = source.role || 'user';
                 let accountId = generateAccountId(username, role);
@@ -2134,16 +2209,17 @@
 
     <!-- ========== 🛠️ 修改教學 ========== -->
     <!--
-        🔧 一般用戶帳號：在 users 物件中修改 (約 120 行)
-        🔧 永久原始碼清單：在 permSourceCodes 物件中修改 (約 140 行)
-        🔧 一次性原始碼清單：在 onceSourceCodes 物件中修改 (約 170 行)
-        🔧 專案密碼：在 projectPasswords 物件中修改 (約 200 行)
-        🔧 專案資料 (含子專案)：在 projectData 物件中修改 (約 220 行)
-        🔧 人物資料：在 peopleData 陣列中修改 (約 250 行)
-        🔧 帳號ID生成規則：在 generateAccountId 函數中修改 (約 290 行)
-        🔧 超級用戶帳號固定為 "0"，登入後可看到所有管理頁面
-        🔧 設備模式可手動切換，也可自動偵測
-        🔧 原始碼管理現可使用下拉多選選擇允許的使用者
+        🔧 所有資料皆儲存在 localStorage 中，您在介面上所做的任何新增、修改、刪除都會永久保存。
+        🔧 版本號自動更新規則：
+           - 用戶資料修改 → 第三位 +1
+           - 專案相關資料（專案、密碼、子專案、原始碼）修改 → 第二位 +1
+           - 核心系統變更 → 第一位 +1（由開發者手動修改 version 變數）
+        🔧 超級用戶「0」已加入 users 物件，可於用戶管理編輯其個人資料（但無法刪除）。
+        🔧 用戶管理表格中，帳號欄位現為可編輯的輸入框，更新時會處理鍵值變更。
+        🔧 淺色模式所有按鈕已全面修正為深藍色背景、白色文字。
+        🔧 設定頁面中，密碼點點數量會根據該用戶實際密碼長度顯示。
+        🔧 專案管理頁面已整合編輯專案基本資料與子專案管理。
+        🔧 原始碼管理頁面清楚列出允許用戶（多選），但登入時不強制檢查，因為原始碼登入無法確定用戶身份。
     -->
     <!-- ================================== -->
 </body>
