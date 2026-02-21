@@ -2,28 +2,25 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
-    <title>✨ 原始碼登入 · A-Z 專案＋100人物資料</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>🔐 A-Z 專案 · 超級用戶0＋原始碼導向</title>
     <!-- 字體 Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- GSAP 動畫庫 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; overflow: hidden; }
+        /* 樣式與前完全相同，為節省篇幅此處省略，但完整程式碼需包含所有樣式 */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; overflow: hidden; font-family: "Inter", sans-serif; }
         body {
-            font-family: "Inter", sans-serif;
             background: #0a0f1e;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #e2e8f0;
         }
-        /* 粒子背景 */
         #particleCanvas {
             position: fixed;
             top: 0;
@@ -35,13 +32,13 @@
             background: radial-gradient(circle at 20% 30%, #1e2a4a, #0b1423);
         }
         .app-container {
-            width: 95%;
+            width: 100%;
             max-width: 1400px;
-            height: 90vh;
+            height: 100vh;
             background: rgba(15, 25, 45, 0.6);
             backdrop-filter: blur(20px);
-            border-radius: 60px;
-            padding: 30px;
+            -webkit-backdrop-filter: blur(20px);
+            padding: 15px;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
             border: 1px solid rgba(255,255,255,0.1);
             z-index: 2;
@@ -50,120 +47,158 @@
             overflow: hidden;
         }
 
-        /* 登入卡片 (獨立置中) */
-        .login-container {
+        .auth-card {
             max-width: 450px;
+            width: 100%;
             margin: auto;
             background: rgba(20, 30, 50, 0.9);
             backdrop-filter: blur(15px);
-            border-radius: 60px;
-            padding: 40px;
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 40px;
+            padding: 30px 20px;
             border: 1px solid rgba(255,255,255,0.15);
             box-shadow: 0 30px 50px -20px black;
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: rgba(0,0,0,0.3);
+            padding: 6px;
+            border-radius: 50px;
+        }
+        .auth-tab {
+            flex: 1;
             text-align: center;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #94a3b8;
+            cursor: pointer;
+            border-radius: 40px;
+            transition: 0.3s;
         }
-        .login-container h2 {
-            font-size: 2rem;
-            margin-bottom: 30px;
+        .auth-tab.active {
+            background: #2563eb;
             color: white;
+            box-shadow: 0 5px 15px #2563eb;
         }
-        .login-form { display: flex; flex-direction: column; gap: 25px; }
+        .auth-form { display: flex; flex-direction: column; gap: 18px; }
         .form-group { text-align: left; }
         .form-group label {
-            font-weight: 500; font-size: 0.9rem; color: #a5b4cb;
-            display: block; margin-bottom: 8px;
+            font-weight: 500; font-size: 0.85rem; color: #a5b4cb;
+            display: block; margin-bottom: 6px;
         }
         .form-control {
             width: 100%;
-            padding: 18px 25px;
+            padding: 14px 18px;
             border: 1px solid #2d3f5e;
-            border-radius: 60px;
+            border-radius: 40px;
             background: rgba(10, 20, 35, 0.8);
             color: white;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             transition: 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
         }
         .form-control:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
         }
-        .login-btn {
+        .auth-btn {
             background: linear-gradient(135deg, #2563eb, #1e40af);
             color: white;
             border: none;
-            padding: 18px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 1.2rem;
+            padding: 14px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
             cursor: pointer;
             transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 8px 20px #1e3a8a;
+            gap: 8px;
         }
-        .login-btn:hover { transform: scale(1.02); }
-        .login-btn.loading { background: #475569; pointer-events: none; }
-        .login-btn.loading i { animation: spin 1s linear infinite; }
+        .auth-btn:active { transform: scale(0.98); }
+        .auth-btn.loading { background: #475569; pointer-events: none; }
+        .auth-btn.loading i { animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .error-message {
-            color: #f87171; font-size: 0.9rem;
-            background: rgba(220,38,38,0.2); padding: 12px 20px; border-radius: 40px;
+            color: #f87171; font-size: 0.85rem;
+            background: rgba(220,38,38,0.2); padding: 10px 16px; border-radius: 30px;
             border: 1px solid #ef4444; display: none;
-            margin-top: 10px;
         }
-        .small-note { color: #94a3b8; font-size: 0.85rem; margin-top: 10px; }
+        .student-fields { display: none; flex-direction: column; gap: 15px; }
 
-        /* 登入後主面板 (左右佈局) */
         .main-panel {
             display: none;
             flex: 1;
-            gap: 25px;
+            gap: 15px;
             height: 100%;
             overflow: hidden;
         }
-        /* 左側 A-Z 側邊欄 (可獨立滑動) */
         .sidebar {
-            width: 120px;
+            width: 95px;
             background: rgba(20, 30, 50, 0.7);
             backdrop-filter: blur(10px);
-            border-radius: 50px;
-            padding: 20px 0;
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 35px;
+            padding: 15px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             border: 1px solid rgba(255,255,255,0.15);
             height: 100%;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: #2563eb #1e293b;
         }
-        .sidebar::-webkit-scrollbar { width: 6px; }
-        .sidebar::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
-        .sidebar::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 10px; }
         .sidebar .alpha-tab {
-            width: 70px;
-            height: 70px;
+            width: 55px;
+            height: 55px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: rgba(255,255,255,0.08);
-            border-radius: 30px;
+            border-radius: 25px;
             color: white;
             font-weight: 700;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             cursor: pointer;
             transition: 0.2s;
             border: 1px solid rgba(255,255,255,0.1);
             flex-shrink: 0;
+            position: relative;
         }
-        .sidebar .alpha-tab:hover { background: rgba(37,99,235,0.5); transform: scale(1.05); }
-        .sidebar .alpha-tab.active { background: #2563eb; border-color: white; box-shadow: 0 0 25px #2563eb; }
+        .sidebar .alpha-tab:active { transform: scale(0.95); }
+        .sidebar .alpha-tab.active {
+            background: #2563eb;
+            border-color: white;
+            box-shadow: 0 0 20px #2563eb;
+        }
+        .sidebar .alpha-tab.locked::after {
+            content: '\f023';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.7rem;
+            color: #f87171;
+        }
+        .sidebar .alpha-tab.unlocked::after {
+            content: '\f3c1';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.7rem;
+            color: #4ade80;
+        }
 
-        /* 右側內容區 (可獨立滑動) */
         .content-area {
             flex: 1;
             min-width: 0;
@@ -171,219 +206,355 @@
             overflow-y: auto;
             padding-right: 5px;
             scrollbar-width: thin;
-            scrollbar-color: #2563eb #1e293b;
         }
-        .content-area::-webkit-scrollbar { width: 6px; }
-        .content-area::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
-        .content-area::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 10px; }
 
-        /* 專案個人資訊卡片 */
-        .profile-card {
+        .project-card {
             background: rgba(25, 35, 55, 0.85);
             backdrop-filter: blur(10px);
-            border-radius: 50px;
-            padding: 35px;
-            margin-bottom: 25px;
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 20px;
+            margin-bottom: 15px;
             border: 1px solid rgba(255,255,255,0.15);
         }
-        .profile-header { display: flex; align-items: center; gap: 30px; flex-wrap: wrap; }
-        .avatar-large {
-            width: 120px; height: 120px;
-            background: linear-gradient(145deg, #2563eb, #7c3aed);
-            border-radius: 40px;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 3.5rem; font-weight: 700;
-        }
-        .profile-info { flex: 1; }
-        .profile-info h2 { font-size: 2.5rem; font-weight: 700; color: white; }
-        .profile-info .role { color: #94a3b8; font-size: 1.2rem; margin-bottom: 20px; }
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        .project-header {
+            display: flex;
+            align-items: center;
             gap: 15px;
         }
-        .info-item {
-            display: flex; align-items: center; gap: 15px;
-            background: rgba(0,0,0,0.3); padding: 15px 20px; border-radius: 40px;
-        }
-        .info-item i { width: 40px; height: 40px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .info-item .label { font-size: 0.8rem; color: #94a3b8; }
-        .info-item .value { font-weight: 600; color: white; }
-
-        /* 100個人員卡片區域 */
-        .people-section {
-            margin-top: 30px;
-        }
-        .people-section h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: white;
-        }
-        .people-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px;
-        }
-        .person-card {
-            background: rgba(30, 40, 60, 0.6);
-            backdrop-filter: blur(5px);
-            border-radius: 25px;
-            padding: 20px 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-            transition: 0.2s;
-        }
-        .person-card:hover {
-            background: rgba(40, 55, 80, 0.8);
-            transform: translateY(-3px);
-        }
-        .person-avatar {
+        .project-avatar {
             width: 60px;
             height: 60px;
-            background: #3b82f6;
-            border-radius: 30px;
+            background: #2563eb;
+            border-radius: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
-            font-size: 1.8rem;
+            font-size: 2rem;
             color: white;
         }
-        .person-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            color: white;
+        .project-info h2 { font-size: 1.6rem; color: white; }
+        .project-info .project-desc { color: #94a3b8; font-size: 0.9rem; }
+
+        .source-section {
+            background: rgba(0,0,0,0.2);
+            border-radius: 30px;
+            padding: 15px;
+            margin-bottom: 15px;
         }
-        .person-role {
-            font-size: 0.8rem;
+        .source-type-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .source-type-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 30px;
+            background: #1e293b;
             color: #94a3b8;
+            text-align: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .source-type-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+        .source-input-group {
+            display: flex;
+            gap: 8px;
+        }
+        .source-input-group input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 40px;
+            border: 1px solid #3b82f6;
+            background: #0f172a;
+            color: white;
+            font-size: 0.9rem;
+        }
+        .source-input-group button {
+            padding: 12px 18px;
+            border-radius: 40px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .source-message { margin-top: 8px; font-size: 0.8rem; color: #94a3b8; }
+
+        .person-selector {
+            margin-bottom: 15px;
+        }
+        .person-selector select {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 40px;
+            background: #1e293b;
+            color: white;
+            border: 1px solid #3b82f6;
+            font-size: 0.95rem;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .person-details {
+            background: rgba(0,0,0,0.2);
+            border-radius: 30px;
+            padding: 20px;
+        }
+        .person-detail-item {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .person-detail-item:last-child { border-bottom: none; }
+        .person-detail-label {
+            width: 70px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        .person-detail-value {
+            flex: 1;
+            color: white;
+            font-weight: 500;
+            font-size: 0.95rem;
         }
 
-        /* 設定卡片 (裝飾) */
+        .password-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .password-modal.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-content {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 40px;
+            width: 90%;
+            max-width: 350px;
+            border: 1px solid #3b82f6;
+        }
+        .modal-content h3 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 40px;
+            border: 1px solid #3b82f6;
+            background: #0f172a;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .modal-buttons .confirm {
+            background: #2563eb;
+            color: white;
+        }
+        .modal-buttons .cancel {
+            background: #475569;
+            color: white;
+        }
+
         .settings-card {
             background: rgba(25, 35, 55, 0.85);
             backdrop-filter: blur(10px);
-            border-radius: 50px;
-            padding: 35px;
-            margin-top: 25px;
-            border: 1px solid rgba(255,255,255,0.15);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 20px;
+            margin-top: 15px;
+            text-align: center;
         }
-        .settings-card h3 { font-size: 1.8rem; color: white; margin-bottom: 25px; }
-        .settings-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .settings-item .left { display: flex; align-items: center; gap: 15px; color: #cbd5e1; }
-        .toggle-switch {
-            width: 60px; height: 30px; background: #334155; border-radius: 30px;
-            position: relative; cursor: pointer;
-        }
-        .toggle-switch.active { background: #2563eb; }
-        .toggle-switch::after {
-            content: ''; width: 26px; height: 26px; background: white; border-radius: 50%;
-            position: absolute; top: 2px; left: 2px; transition: 0.2s;
-        }
-        .toggle-switch.active::after { left: 32px; }
         .logout-btn {
-            background: rgba(239,68,68,0.2); color: #f87171;
-            border: 1px solid #ef4444; padding: 14px 30px; border-radius: 50px;
-            cursor: pointer; margin-top: 20px; display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(239,68,68,0.2);
+            color: #f87171;
+            border: 1px solid #ef4444;
+            padding: 12px 30px;
+            border-radius: 40px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
         }
         .toast {
-            position: fixed; bottom: 30px; right: 30px;
-            background: #1e293b; color: white; padding: 16px 28px; border-radius: 60px;
+            position: fixed; bottom: 20px; right: 20px;
+            background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px;
             z-index: 9999; opacity: 0; transition: opacity 0.3s;
             border: 1px solid #3b82f6;
+            font-size: 0.9rem;
+            pointer-events: none;
         }
         .toast.show { opacity: 1; }
 
-        /* 搖晃動畫 */
         .shake {
             animation: shake 0.4s ease-in-out;
         }
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
+            0%,100% { transform: translateX(0); }
+            20%,60% { transform: translateX(-6px); }
+            40%,80% { transform: translateX(6px); }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar { width: 70px; }
+            .sidebar .alpha-tab { width: 45px; height: 45px; font-size: 1.2rem; }
+            .project-avatar { width: 50px; height: 50px; font-size: 1.6rem; }
+            .project-info h2 { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
     <canvas id="particleCanvas"></canvas>
 
+    <!-- 密碼輸入 Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">輸入專案密碼</h3>
+            <input type="password" id="modalPassword" placeholder="請輸入密碼">
+            <div class="modal-buttons">
+                <button class="confirm" id="modalConfirm">確認</button>
+                <button class="cancel" id="modalCancel">取消</button>
+            </div>
+        </div>
+    </div>
+
     <div class="app-container">
-        <!-- 登入卡片 (只輸入原始碼) -->
-        <div id="loginBlock" class="login-container">
-            <h2><i class="fas fa-key"></i> 原始碼登入</h2>
-            <div class="login-form">
+        <!-- 登入/註冊卡片 -->
+        <div id="authCard" class="auth-card">
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="loginTab">登入</div>
+                <div class="auth-tab" id="registerTab">註冊</div>
+            </div>
+
+            <!-- 登入表單 -->
+            <div id="loginForm" class="auth-form">
                 <div class="form-group">
-                    <label>🔢 請輸入原始碼</label>
-                    <input type="text" class="form-control" id="sourceCodeInput" placeholder="例如 ROOTA 或 ONCEA" value="ROOTA">
-                    <div class="small-note">一次性原始碼只能使用一次，永久原始碼可重複使用。<br>原始碼最後一個字母決定進入哪個專案 (A~Z)。</div>
+                    <label>👤 帳號</label>
+                    <input type="text" class="form-control" id="loginUsername" placeholder="請輸入帳號" value="user1">
                 </div>
-                <div id="loginError" class="error-message"><i class="fas fa-exclamation-triangle"></i> 原始碼錯誤或已失效</div>
-                <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> 登入</button>
+                <div class="form-group">
+                    <label>🔑 密碼</label>
+                    <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" value="pass">
+                </div>
+                <div id="loginError" class="error-message"><i class="fas fa-exclamation-triangle"></i> 帳號或密碼錯誤</div>
+                <button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> 登入</button>
+            </div>
+
+            <!-- 註冊表單 -->
+            <div id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label>👤 帳號</label>
+                    <input type="text" class="form-control" id="regUsername" placeholder="自訂帳號">
+                </div>
+                <div class="form-group">
+                    <label>🔑 密碼</label>
+                    <input type="password" class="form-control" id="regPassword" placeholder="至少6位">
+                </div>
+                <div class="form-group">
+                    <label>💼 職業</label>
+                    <select class="form-control" id="regOccupation">
+                        <option value="student">學生</option>
+                        <option value="teacher">老師</option>
+                        <option value="engineer">工程師</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+                <div class="student-fields" id="studentFields">
+                    <div class="form-group">
+                        <label>📚 班級</label>
+                        <input type="text" class="form-control" id="regClass" placeholder="例如 三年一班">
+                    </div>
+                    <div class="form-group">
+                        <label>🔢 座號</label>
+                        <input type="text" class="form-control" id="regNumber" placeholder="例如 12">
+                    </div>
+                </div>
+                <div id="registerError" class="error-message"></div>
+                <button class="auth-btn" id="registerBtn"><i class="fas fa-user-plus"></i> 註冊</button>
             </div>
         </div>
 
         <!-- 登入後主面板 -->
         <div id="mainPanel" class="main-panel">
-            <!-- 左側 A-Z 側邊欄 -->
             <div class="sidebar" id="sidebar"></div>
-
-            <!-- 右側內容區 -->
             <div class="content-area" id="contentArea">
-                <!-- 專案個人資訊卡片 (可自訂) -->
-                <div class="profile-card" id="profileCard">
-                    <div class="profile-header">
-                        <div class="avatar-large" id="profileAvatar">A</div>
-                        <div class="profile-info">
-                            <h2 id="profileName">王小明</h2>
-                            <div class="role" id="profileRole">專案經理</div>
-                            <div class="info-grid">
-                                <div class="info-item"><i class="fas fa-envelope"></i> <span><span class="label">電子郵件</span><br><span class="value" id="profileEmail">a@project.com</span></span></div>
-                                <div class="info-item"><i class="fas fa-phone-alt"></i> <span><span class="label">電話</span><br><span class="value" id="profilePhone">0912-345-678</span></span></div>
-                                <div class="info-item"><i class="fas fa-map-marker-alt"></i> <span><span class="label">地區</span><br><span class="value" id="profileLocation">台北</span></span></div>
-                                <div class="info-item"><i class="fas fa-calendar-alt"></i> <span><span class="label">加入日期</span><br><span class="value" id="profileJoin">2025-01-01</span></span></div>
-                            </div>
-                            <!-- 可自訂連結按鈕 (例如專案外部連結) -->
-                            <a href="#" target="_blank" class="project-link" id="projectLink" style="display:inline-flex; align-items:center; gap:10px; background:#1e293b; color:#60a5fa; padding:12px 25px; border-radius:40px; margin-top:20px; border:1px solid #3b82f6; text-decoration:none;"><i class="fas fa-external-link-alt"></i> <span id="linkText">前往專案網站</span></a>
+                <div class="project-card" id="projectCard">
+                    <div class="project-header">
+                        <div class="project-avatar" id="projectAvatar">A</div>
+                        <div class="project-info">
+                            <h2 id="projectName">A 專案</h2>
+                            <div class="project-desc" id="projectDesc">請選擇一個專案</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 100個人物資料卡片區 (大部分空白，可自行填入) -->
-                <div class="people-section">
-                    <h3><i class="fas fa-users"></i> 人物詳細資料 (100個)</h3>
-                    <div class="people-grid" id="peopleGrid">
-                        <!-- 這裡會由 JavaScript 動態生成 100 個卡片，內容可從 profiles.people 陣列讀取 -->
+                <div class="source-section">
+                    <div class="source-type-toggle">
+                        <div class="source-type-btn active" id="permBtn">永久原始碼</div>
+                        <div class="source-type-btn" id="onceBtn">一次性原始碼</div>
+                    </div>
+                    <div class="source-input-group">
+                        <input type="text" id="sourceCodeInput" placeholder="請輸入原始碼" value="ROOTA">
+                        <button id="verifySourceBtn">驗證</button>
+                    </div>
+                    <div id="sourceMessage" class="source-message"></div>
+                </div>
+
+                <div class="person-selector">
+                    <select id="personSelect"></select>
+                </div>
+
+                <div class="person-details" id="personDetails">
+                    <div class="person-detail-item">
+                        <span class="person-detail-label">姓名</span>
+                        <span class="person-detail-value" id="personName">-</span>
+                    </div>
+                    <div class="person-detail-item">
+                        <span class="person-detail-label">職業</span>
+                        <span class="person-detail-value" id="personOccupation">-</span>
+                    </div>
+                    <div class="person-detail-item">
+                        <span class="person-detail-label">班級</span>
+                        <span class="person-detail-value" id="personClass">-</span>
+                    </div>
+                    <div class="person-detail-item">
+                        <span class="person-detail-label">座號</span>
+                        <span class="person-detail-value" id="personNumber">-</span>
+                    </div>
+                    <div class="person-detail-item">
+                        <span class="person-detail-label">電子郵件</span>
+                        <span class="person-detail-value" id="personEmail">-</span>
                     </div>
                 </div>
 
-                <!-- 設定卡片 (裝飾用) -->
                 <div class="settings-card">
-                    <h3><i class="fas fa-cog"></i> 個人設定</h3>
-                    <div class="settings-item">
-                        <div class="left"><i class="fas fa-bell"></i> 通知提醒</div>
-                        <div class="toggle-switch" id="notifyToggle"></div>
-                    </div>
-                    <div class="settings-item">
-                        <div class="left"><i class="fas fa-lock"></i> 雙重驗證</div>
-                        <div class="toggle-switch" id="mfaToggle"></div>
-                    </div>
-                    <div class="settings-item">
-                        <div class="left"><i class="fas fa-globe"></i> 語言</div>
-                        <select><option>繁體中文</option><option>English</option></select>
-                    </div>
-                    <div class="settings-item">
-                        <div class="left"><i class="fas fa-moon"></i> 深色模式</div>
-                        <div class="toggle-switch active" id="darkToggle"></div>
-                    </div>
-                    <div style="margin-top:25px;">
-                        <button class="login-btn" style="background:#4b5563; width:auto; display:inline-block; margin-right:15px; padding:12px 25px;" id="saveSettingsBtn"><i class="fas fa-save"></i> 儲存設定</button>
-                        <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 登出</button>
-                    </div>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 登出</button>
                 </div>
             </div>
         </div>
@@ -393,21 +564,24 @@
 
     <script>
         (function() {
-            // 粒子背景 (裝飾)
+            // 粒子背景
             const canvas = document.getElementById('particleCanvas');
             const ctx = canvas.getContext('2d');
             let width, height, particles = [];
             function initParticles() {
                 width = window.innerWidth; height = window.innerHeight;
                 canvas.width = width; canvas.height = height;
+                const isMobile = width < 768;
+                const particleCount = isMobile ? 40 : 80;
                 particles = [];
-                for (let i = 0; i < 100; i++) {
+                for (let i = 0; i < particleCount; i++) {
                     particles.push({
-                        x: Math.random() * width, y: Math.random() * height,
-                        radius: Math.random() * 4 + 1,
-                        vx: (Math.random() - 0.5) * 0.4,
-                        vy: (Math.random() - 0.5) * 0.4,
-                        color: `rgba(59,130,246,${Math.random() * 0.4 + 0.2})`
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        radius: Math.random() * 3 + 1,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        color: `rgba(59,130,246,${Math.random() * 0.3 + 0.2})`
                     });
                 }
             }
@@ -417,53 +591,97 @@
                     ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
                     ctx.fillStyle = p.color; ctx.fill();
                     p.x += p.vx; p.y += p.vy;
-                    if (p.x<0||p.x>width) p.vx=-p.vx;
-                    if (p.y<0||p.y>height) p.vy=-p.vy;
+                    if (p.x<0||p.x>width) p.vx = -p.vx;
+                    if (p.y<0||p.y>height) p.vy = -p.vy;
                 });
                 requestAnimationFrame(drawParticles);
             }
             window.addEventListener('resize', initParticles);
             initParticles(); drawParticles();
 
-            // ---------- DOM ----------
-            const loginBlock = document.getElementById('loginBlock');
+            // ---------- DOM 元素 ----------
+            const authCard = document.getElementById('authCard');
             const mainPanel = document.getElementById('mainPanel');
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
             const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
             const loginError = document.getElementById('loginError');
+            const registerError = document.getElementById('registerError');
+            const regOccupation = document.getElementById('regOccupation');
+            const studentFields = document.getElementById('studentFields');
             const logoutBtn = document.getElementById('logoutBtn');
             const toast = document.getElementById('toast');
             const sidebar = document.getElementById('sidebar');
-            const peopleGrid = document.getElementById('peopleGrid');
+            const projectAvatar = document.getElementById('projectAvatar');
+            const projectName = document.getElementById('projectName');
+            const projectDesc = document.getElementById('projectDesc');
+            const sourceCodeInput = document.getElementById('sourceCodeInput');
+            const verifySourceBtn = document.getElementById('verifySourceBtn');
+            const sourceMessage = document.getElementById('sourceMessage');
+            const permBtn = document.getElementById('permBtn');
+            const onceBtn = document.getElementById('onceBtn');
+            const personSelect = document.getElementById('personSelect');
+            const personName = document.getElementById('personName');
+            const personOccupation = document.getElementById('personOccupation');
+            const personClass = document.getElementById('personClass');
+            const personNumber = document.getElementById('personNumber');
+            const personEmail = document.getElementById('personEmail');
 
-            // 個人資訊元素
-            const profileAvatar = document.getElementById('profileAvatar');
-            const profileName = document.getElementById('profileName');
-            const profileRole = document.getElementById('profileRole');
-            const profileEmail = document.getElementById('profileEmail');
-            const profilePhone = document.getElementById('profilePhone');
-            const profileLocation = document.getElementById('profileLocation');
-            const profileJoin = document.getElementById('profileJoin');
-            const projectLink = document.getElementById('projectLink');
-            const linkText = document.getElementById('linkText');
+            // 密碼 Modal
+            const passwordModal = document.getElementById('passwordModal');
+            const modalPassword = document.getElementById('modalPassword');
+            const modalConfirm = document.getElementById('modalConfirm');
+            const modalCancel = document.getElementById('modalCancel');
+            const modalTitle = document.getElementById('modalTitle');
 
-            // 開關
-            const notifyToggle = document.getElementById('notifyToggle');
-            const mfaToggle = document.getElementById('mfaToggle');
-            const darkToggle = document.getElementById('darkToggle');
-            document.getElementById('saveSettingsBtn').addEventListener('click', ()=> showToast('✅ 設定已儲存 (示範)'));
+            // 原始碼類型
+            let sourceType = 'permanent';
+            permBtn.addEventListener('click', () => {
+                permBtn.classList.add('active');
+                onceBtn.classList.remove('active');
+                sourceType = 'permanent';
+            });
+            onceBtn.addEventListener('click', () => {
+                onceBtn.classList.add('active');
+                permBtn.classList.remove('active');
+                sourceType = 'once';
+            });
 
-            function showToast(msg, duration=2500) {
+            function showToast(msg, duration = 2000) {
                 toast.textContent = msg; toast.classList.add('show');
-                setTimeout(()=>toast.classList.remove('show'), duration);
+                setTimeout(() => toast.classList.remove('show'), duration);
             }
 
-            // ========== 【請在這裡設定原始碼清單】 ==========
-            // 格式: "原始碼字串": { type: "permanent" 或 "once", letter: 對應字母, isAdmin: true/false, used: false (一次性專用) }
-            // 一次性原始碼使用後會自動標記 used，下次登入失效
+            // 切換登入/註冊
+            loginTab.addEventListener('click', () => {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginForm.style.display = 'flex';
+                registerForm.style.display = 'none';
+            });
+            registerTab.addEventListener('click', () => {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+                registerForm.style.display = 'flex';
+                loginForm.style.display = 'none';
+            });
+
+            regOccupation.addEventListener('change', () => {
+                studentFields.style.display = regOccupation.value === 'student' ? 'flex' : 'none';
+            });
+
+            // ========== 【使用者帳號密碼】 ==========
+            const users = {
+                user1: { password: 'pass' },
+                admin: { password: 'admin' },
+                // 超級用戶 0 不需要密碼，由程式碼特別處理
+            };
+
+            // ========== 【原始碼清單】 ==========
             const sourceCodes = {
-                // 管理員永久原始碼
-                "ADMIN": { type: "permanent", letter: "A", isAdmin: true },
-                // 一般永久原始碼 (最後字母決定專案)
                 "ROOTA": { type: "permanent", letter: "A", isAdmin: false },
                 "ROOTB": { type: "permanent", letter: "B", isAdmin: false },
                 "ROOTC": { type: "permanent", letter: "C", isAdmin: false },
@@ -490,234 +708,372 @@
                 "ROOTX": { type: "permanent", letter: "X", isAdmin: false },
                 "ROOTY": { type: "permanent", letter: "Y", isAdmin: false },
                 "ROOTZ": { type: "permanent", letter: "Z", isAdmin: false },
-
-                // 一次性原始碼範例 (最後字母決定專案，使用一次後失效)
                 "ONCEA": { type: "once", letter: "A", isAdmin: false, used: false },
                 "ONCEB": { type: "once", letter: "B", isAdmin: false, used: false },
                 "ONCEC": { type: "once", letter: "C", isAdmin: false, used: false },
-                // 請自行增加更多一次性原始碼
+                "ADMIN": { type: "permanent", letter: "A", isAdmin: true },
             };
 
-            // ========== 【請在這裡設定每個專案的個人資料 (顯示在頂部卡片)】 ==========
-            const profiles = {
-                A: {
-                    name: '王小明',
-                    role: '專案經理',
-                    email: 'a@project.com',
-                    phone: '0912-111-111',
-                    location: '台北',
-                    joinDate: '2025-01-01',
-                    linkUrl: 'https://www.google.com',
-                    linkText: '前往 A 專案官網'
-                },
-                B: { name: '李小華', role: '開發工程師', email: 'b@project.com', phone: '0922-222-222', location: '新竹', joinDate: '2025-02-01', linkUrl: '#', linkText: 'B 專案' },
-                C: { name: '張小美', role: 'UI設計師', email: 'c@project.com', phone: '0933-333-333', location: '台中', joinDate: '2025-03-01', linkUrl: '#', linkText: 'C 專案' },
-                D: { name: '陳大文', role: '行銷專員', email: 'd@project.com', phone: '0944-444-444', location: '高雄', joinDate: '2025-04-01', linkUrl: '#', linkText: 'D 專案' },
-                // ... 其他字母請自行補齊 (E~Z 可複製上方格式)
+            // ========== 【專案密碼】 ==========
+            const projectPasswords = {
+                A: '1234', B: '5678', C: 'abcd', D: 'passD', E: 'passE',
+                F: 'passF', G: 'passG', H: 'passH', I: 'passI', J: 'passJ',
+                K: 'passK', L: 'passL', M: 'passM', N: 'passN', O: 'passO',
+                P: 'passP', Q: 'passQ', R: 'passR', S: 'passS', T: 'passT',
+                U: 'passU', V: 'passV', W: 'passW', X: 'passX', Y: 'passY',
+                Z: 'passZ',
             };
-            // 為了避免遺漏，補上 E~Z 預設資料 (您可自行修改)
-            for (let i = 69; i <= 90; i++) { // E~Z ASCII 69-90
-                let letter = String.fromCharCode(i);
-                if (!profiles[letter]) {
-                    profiles[letter] = {
-                        name: `${letter} 專案負責人`,
-                        role: '預設角色',
-                        email: `${letter}@project.com`,
-                        phone: '0912-000-000',
-                        location: '預設地區',
-                        joinDate: '2025-01-01',
-                        linkUrl: '#',
-                        linkText: `${letter} 專案連結`
-                    };
-                }
-            }
 
-            // ========== 【請在這裡設定 100 個人物資料 (可留空白)】 ==========
-            // 每個字母專案可獨立設定 100 個人物的資料。這裡先建立一個通用陣列，您可以在下方填入每個人的姓名、角色。
-            // 若留空則卡片會顯示「未填寫」。
+            // ========== 【專案資訊】 ==========
+            const projectInfo = {
+                A: { name: 'A 專案', desc: '人工智慧研發中心' },
+                B: { name: 'B 專案', desc: '區塊鏈金融平台' },
+                C: { name: 'C 專案', desc: '物聯網智慧工廠' },
+                D: { name: 'D 專案', desc: '雲端數據分析' },
+                E: { name: 'E 專案', desc: '行動應用開發' },
+                F: { name: 'F 專案', desc: '電子商務網站' },
+                G: { name: 'G 專案', desc: '遊戲引擎研發' },
+                H: { name: 'H 專案', desc: '資安防護系統' },
+                I: { name: 'I 專案', desc: '大數據平台' },
+                J: { name: 'J 專案', desc: '機器人自動化' },
+                K: { name: 'K 專案', desc: '智慧醫療' },
+                L: { name: 'L 專案', desc: '教育科技' },
+                M: { name: 'M 專案', desc: '金融科技' },
+                N: { name: 'N 專案', desc: '社群媒體分析' },
+                O: { name: 'O 專案', desc: 'AR/VR 應用' },
+                P: { name: 'P 專案', desc: '智慧城市' },
+                Q: { name: 'Q 專案', desc: '量子運算研究' },
+                R: { name: 'R 專案', desc: '機器學習框架' },
+                S: { name: 'S 專案', desc: '供應鏈管理' },
+                T: { name: 'T 專案', desc: '數位轉型顧問' },
+                U: { name: 'U 專案', desc: '使用者體驗設計' },
+                V: { name: 'V 專案', desc: '影片串流技術' },
+                W: { name: 'W 專案', desc: '智慧穿戴裝置' },
+                X: { name: 'X 專案', desc: '無人機系統' },
+                Y: { name: 'Y 專案', desc: '語音識別' },
+                Z: { name: 'Z 專案', desc: '自動駕駛' },
+            };
+
+            // ========== 【100個人物資料】 ==========
             const peopleData = {};
-            // 初始化 A~Z 的 100 個人資料 (預設全部空白)
             for (let i = 65; i <= 90; i++) {
                 let letter = String.fromCharCode(i);
                 peopleData[letter] = [];
                 for (let j = 1; j <= 100; j++) {
                     peopleData[letter].push({
                         name: '',
-                        role: ''
+                        occupation: '',
+                        class: '',
+                        number: '',
+                        email: ''
                     });
                 }
             }
-            // 範例：填入 A 專案的前幾個人物 (您可以自由修改)
-            peopleData['A'][0] = { name: '張三', role: '工程師' };
-            peopleData['A'][1] = { name: '李四', role: '設計師' };
-            peopleData['A'][2] = { name: '王五', role: '行銷' };
-            // 其餘 97 個維持空白，卡片會顯示「未填寫」
+            // 範例填寫
+            peopleData['A'][0] = { name: '張三', occupation: '學生', class: '三年一班', number: '12', email: 'zhangsan@school.com' };
+            peopleData['A'][1] = { name: '李四', occupation: '老師', class: '', number: '', email: 'lisi@school.com' };
+            peopleData['A'][2] = { name: '王五', occupation: '工程師', class: '', number: '', email: 'wangwu@company.com' };
 
-            // 您也可以在其他字母下填入人物資料，格式同上：
-            // peopleData['B'][0] = { name: '趙六', role: '分析師' };
+            // 全域狀態
+            let currentUser = null;
+            let unlockedLetters = new Set();
+            let currentLetter = null;
+            let isSuperUser = false; // 是否為超級用戶 0
 
-            // 目前登入的使用者
-            let currentUser = null; // { sourceCode, letter, isAdmin }
-
-            // 渲染側邊欄
-            function renderSidebar(activeLetter = 'A') {
+            // 渲染側邊欄 (永遠顯示全部)
+            function renderSidebar() {
                 sidebar.innerHTML = '';
-                let letters = [];
-                if (currentUser && currentUser.isAdmin) {
-                    for (let i = 0; i < 26; i++) letters.push(String.fromCharCode(65 + i));
-                } else if (currentUser) {
-                    letters = [currentUser.letter];
-                } else return;
-
-                letters.forEach(letter => {
+                for (let i = 0; i < 26; i++) {
+                    let letter = String.fromCharCode(65 + i);
                     const tab = document.createElement('div');
-                    tab.className = `alpha-tab ${letter === activeLetter ? 'active' : ''}`;
+                    tab.className = 'alpha-tab';
+                    if (letter === currentLetter) tab.classList.add('active');
+                    // 超級用戶直接解鎖全部，否則根據 unlockedLetters
+                    if (isSuperUser || unlockedLetters.has(letter)) {
+                        tab.classList.add('unlocked');
+                    } else {
+                        tab.classList.add('locked');
+                    }
                     tab.textContent = letter;
                     tab.dataset.letter = letter;
-                    tab.addEventListener('click', () => {
-                        if (!currentUser.isAdmin && letter !== currentUser.letter) {
-                            showToast('⛔ 權限不足，無法查看其他專案');
-                            return;
-                        }
-                        document.querySelectorAll('.alpha-tab').forEach(t => t.classList.remove('active'));
-                        tab.classList.add('active');
-                        updateProfile(letter);
-                        renderPeopleGrid(letter);
-                        document.getElementById('contentArea').scrollTop = 0;
-                    });
+                    tab.addEventListener('click', () => handleLetterClick(letter));
                     sidebar.appendChild(tab);
+                }
+            }
+
+            // 處理字母點擊
+            function handleLetterClick(letter) {
+                if (isSuperUser || unlockedLetters.has(letter)) {
+                    // 已解鎖，直接切換
+                    switchToLetter(letter);
+                } else {
+                    // 未解鎖，彈出密碼視窗
+                    modalTitle.textContent = `輸入 ${letter} 專案密碼`;
+                    modalPassword.value = '';
+                    passwordModal.classList.add('show');
+                    passwordModal.dataset.targetLetter = letter;
+                }
+            }
+
+            // 切換到指定字母
+            function switchToLetter(letter) {
+                document.querySelectorAll('.alpha-tab').forEach(tab => {
+                    if (tab.dataset.letter === letter) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
                 });
+                currentLetter = letter;
+                const info = projectInfo[letter] || { name: `${letter} 專案`, desc: '暫無描述' };
+                projectAvatar.textContent = letter;
+                projectName.textContent = info.name;
+                projectDesc.textContent = info.desc;
+                populatePersonSelect(letter);
+                loadPerson(letter, 1);
             }
 
-            // 更新頂部個人資訊
-            function updateProfile(letter) {
-                const p = profiles[letter] || { name: '未知', role: '', email: '', phone: '', location: '', joinDate: '', linkUrl: '#', linkText: '連結' };
-                profileAvatar.textContent = letter;
-                profileName.textContent = p.name;
-                profileRole.textContent = p.role;
-                profileEmail.textContent = p.email;
-                profilePhone.textContent = p.phone;
-                profileLocation.textContent = p.location;
-                profileJoin.textContent = p.joinDate;
-                if (p.linkUrl) {
-                    projectLink.href = p.linkUrl;
-                    linkText.textContent = p.linkText || '前往專案網站';
+            function populatePersonSelect(letter) {
+                let options = '';
+                for (let i = 1; i <= 100; i++) {
+                    options += `<option value="${i}">人物 ${i}</option>`;
                 }
+                personSelect.innerHTML = options;
+                personSelect.value = 1;
             }
 
-            // 渲染 100 個人物卡片
-            function renderPeopleGrid(letter) {
-                const data = peopleData[letter] || [];
-                let html = '';
-                for (let i = 0; i < 100; i++) {
-                    const person = data[i] || { name: '', role: '' };
-                    html += `
-                        <div class="person-card">
-                            <div class="person-avatar"><i class="fas fa-user"></i></div>
-                            <div class="person-name">${person.name || '未填寫'}</div>
-                            <div class="person-role">${person.role || '未填寫'}</div>
-                        </div>
-                    `;
+            function loadPerson(letter, index) {
+                const person = peopleData[letter]?.[index-1] || { name: '', occupation: '', class: '', number: '', email: '' };
+                personName.textContent = person.name || '未填寫';
+                personOccupation.textContent = person.occupation || '未填寫';
+                personClass.textContent = person.class || '未填寫';
+                personNumber.textContent = person.number || '未填寫';
+                personEmail.textContent = person.email || '未填寫';
+            }
+
+            personSelect.addEventListener('change', (e) => {
+                if (currentLetter) {
+                    loadPerson(currentLetter, parseInt(e.target.value));
                 }
-                peopleGrid.innerHTML = html;
-            }
+            });
 
-            // 登入按鈕事件 (含動畫)
+            // 密碼確認
+            modalConfirm.addEventListener('click', () => {
+                const letter = passwordModal.dataset.targetLetter;
+                const enteredPwd = modalPassword.value.trim();
+                const correctPwd = projectPasswords[letter];
+                if (enteredPwd === correctPwd) {
+                    unlockedLetters.add(letter);
+                    passwordModal.classList.remove('show');
+                    renderSidebar();
+                    switchToLetter(letter);
+                    showToast(`🔓 ${letter} 專案已解鎖`);
+                } else {
+                    showToast('❌ 密碼錯誤');
+                }
+            });
+
+            modalCancel.addEventListener('click', () => {
+                passwordModal.classList.remove('show');
+            });
+            passwordModal.addEventListener('click', (e) => {
+                if (e.target === passwordModal) {
+                    passwordModal.classList.remove('show');
+                }
+            });
+
+            // ========== 登入 ==========
             loginBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const sourceCode = document.getElementById('sourceCodeInput').value.trim();
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
 
-                // 檢查原始碼是否存在
-                const sourceData = sourceCodes[sourceCode];
-                if (!sourceData) {
-                    // 錯誤動畫
-                    loginError.style.display = 'flex';
-                    document.querySelector('.login-container').classList.add('shake');
-                    setTimeout(() => document.querySelector('.login-container').classList.remove('shake'), 500);
+                // 超級用戶 0：不需密碼
+                if (username === '0') {
+                    // 直接登入，不檢查密碼
+                    loginSuccess(username, true);
                     return;
                 }
 
-                // 如果是一次性原始碼且已被使用
-                if (sourceData.type === 'once' && sourceData.used) {
+                // 一般用戶檢查密碼
+                if (!users[username] || users[username].password !== password) {
                     loginError.style.display = 'flex';
-                    document.querySelector('.login-container').classList.add('shake');
-                    setTimeout(() => document.querySelector('.login-container').classList.remove('shake'), 500);
+                    authCard.classList.add('shake');
+                    setTimeout(() => authCard.classList.remove('shake'), 500);
                     return;
                 }
 
-                // 按鈕載入動畫
+                loginSuccess(username, false);
+            });
+
+            function loginSuccess(username, isSuper) {
                 loginBtn.classList.add('loading');
-                loginBtn.innerHTML = '<i class="fas fa-spinner"></i> 驗證中...';
+                loginBtn.innerHTML = '<i class="fas fa-spinner"></i> 登入中...';
 
                 setTimeout(() => {
-                    // 標記一次性原始碼為已使用 (模擬)
-                    if (sourceData.type === 'once') {
-                        sourceData.used = true;
-                    }
-
                     loginBtn.classList.remove('loading');
                     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> 登入';
                     loginError.style.display = 'none';
 
-                    // 設定當前使用者
-                    currentUser = {
-                        sourceCode,
-                        letter: sourceData.letter,
-                        isAdmin: sourceData.isAdmin || false
-                    };
+                    currentUser = username;
+                    isSuperUser = isSuper;
+                    unlockedLetters.clear(); // 清空先前解鎖狀態
+                    currentLetter = null;
 
-                    // 切換到主面板
-                    loginBlock.style.display = 'none';
+                    authCard.style.display = 'none';
                     mainPanel.style.display = 'flex';
 
-                    // 渲染側邊欄與內容
-                    renderSidebar(sourceData.letter);
-                    updateProfile(sourceData.letter);
-                    renderPeopleGrid(sourceData.letter);
+                    // 如果是超級用戶，直接解鎖全部字母
+                    if (isSuperUser) {
+                        for (let i = 65; i <= 90; i++) {
+                            unlockedLetters.add(String.fromCharCode(i));
+                        }
+                    }
 
-                    showToast(`✨ 登入成功！歡迎進入 ${sourceData.letter} 專案`);
-                }, 800);
+                    renderSidebar();
+
+                    // 清空右側內容
+                    projectAvatar.textContent = '?';
+                    projectName.textContent = '請選擇一個專案';
+                    projectDesc.textContent = '';
+                    personSelect.innerHTML = '<option>請先選擇專案</option>';
+                    personName.textContent = personOccupation.textContent = personClass.textContent = personNumber.textContent = personEmail.textContent = '-';
+
+                    showToast(isSuper ? '👑 歡迎超級用戶 0' : `👋 歡迎 ${username}`);
+                }, 500);
+            }
+
+            // ========== 註冊 ==========
+            registerBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('regUsername').value.trim();
+                const password = document.getElementById('regPassword').value.trim();
+                const occupation = regOccupation.value;
+                const regClass = document.getElementById('regClass').value.trim();
+                const regNumber = document.getElementById('regNumber').value.trim();
+
+                if (!username || !password) {
+                    registerError.innerHTML = '❌ 帳號密碼必填';
+                    registerError.style.display = 'flex';
+                    return;
+                }
+                if (password.length < 1) {
+                    registerError.innerHTML = '❌ 密碼至少1位';
+                    registerError.style.display = 'flex';
+                    return;
+                }
+                // 禁止註冊用戶名 0
+                if (username === '0') {
+                    registerError.innerHTML = '❌ 此帳號不可註冊';
+                    registerError.style.display = 'flex';
+                    return;
+                }
+                if (users[username]) {
+                    registerError.innerHTML = '❌ 帳號已存在';
+                    registerError.style.display = 'flex';
+                    return;
+                }
+                if (occupation === 'student' && (!regClass || !regNumber)) {
+                    registerError.innerHTML = '❌ 學生請填寫班級與座號';
+                    registerError.style.display = 'flex';
+                    return;
+                }
+
+                registerBtn.classList.add('loading');
+                registerBtn.innerHTML = '<i class="fas fa-spinner"></i> 註冊中...';
+
+                setTimeout(() => {
+                    users[username] = { password: password };
+                    registerBtn.classList.remove('loading');
+                    registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> 註冊';
+                    showToast('✅ 註冊成功，請登入');
+                    loginTab.click();
+                    document.getElementById('regUsername').value = '';
+                    document.getElementById('regPassword').value = '';
+                    document.getElementById('regClass').value = '';
+                    document.getElementById('regNumber').value = '';
+                    registerError.style.display = 'none';
+                }, 500);
             });
 
-            // 登出
+            // ========== 原始碼驗證 (超級用戶也可使用，直接導向對應專案) ==========
+            verifySourceBtn.addEventListener('click', () => {
+                const code = sourceCodeInput.value.trim();
+                const source = sourceCodes[code];
+
+                if (!source) {
+                    sourceMessage.textContent = '❌ 原始碼無效';
+                    return;
+                }
+                // 一次性原始碼檢查是否已使用
+                if (source.type === 'once' && source.used) {
+                    sourceMessage.textContent = '❌ 一次性原始碼已使用';
+                    return;
+                }
+                // 檢查類型是否匹配 (永久/一次性)
+                if (source.type !== sourceType) {
+                    sourceMessage.textContent = `❌ 請選擇正確的類型 (目前選擇 ${sourceType === 'permanent' ? '永久' : '一次性'})`;
+                    return;
+                }
+
+                // 標記一次性原始碼為已使用 (無論用戶類型，使用後即失效)
+                if (source.type === 'once') {
+                    source.used = true;
+                }
+
+                // 如果是管理員原始碼，且用戶不是超級用戶，才解鎖全部 (超級用戶已經解鎖全部，不需要)
+                if (source.isAdmin && !isSuperUser) {
+                    for (let i = 65; i <= 90; i++) {
+                        unlockedLetters.add(String.fromCharCode(i));
+                    }
+                    showToast('👑 管理員權限，全部專案已解鎖');
+                } else if (!source.isAdmin && !isSuperUser) {
+                    // 一般原始碼，解鎖對應字母
+                    unlockedLetters.add(source.letter);
+                    showToast(`🔓 ${source.letter} 專案已解鎖 (原始碼)`);
+                }
+
+                // 重新渲染側邊欄 (解鎖狀態可能更新)
+                renderSidebar();
+
+                // 切換到原始碼對應的字母 (若尚未切換)
+                if (currentLetter !== source.letter) {
+                    switchToLetter(source.letter);
+                }
+
+                // 顯示成功訊息
+                sourceMessage.textContent = '✅ 驗證成功，已切換到對應專案';
+            });
+
+            // ========== 登出 ==========
             logoutBtn.addEventListener('click', () => {
                 currentUser = null;
+                isSuperUser = false;
+                unlockedLetters.clear();
+                currentLetter = null;
                 mainPanel.style.display = 'none';
-                loginBlock.style.display = 'block';
+                authCard.style.display = 'block';
+                document.getElementById('loginUsername').value = 'user1';
+                document.getElementById('loginPassword').value = 'pass';
+                loginError.style.display = 'none';
                 showToast('👋 已安全登出');
-            });
-
-            // 開關點擊
-            [notifyToggle, mfaToggle, darkToggle].forEach(t => {
-                t.addEventListener('click', function() { this.classList.toggle('active'); });
             });
 
             // 初始化
             loginError.style.display = 'none';
-            loginBlock.style.display = 'block';
+            registerError.style.display = 'none';
+            studentFields.style.display = 'none';
+            authCard.style.display = 'block';
             mainPanel.style.display = 'none';
         })();
     </script>
 
-    <!-- ========== 🛠️ 完整修改教學 ========== -->
+    <!-- ========== 🛠️ 修改教學 ========== -->
     <!--
-        🔧 1. 設定原始碼清單 (永久/一次性)
-           在 sourceCodes 物件中 (約第 250 行)：
-           - 永久原始碼格式 "代碼": { type: "permanent", letter: "字母", isAdmin: true/false }
-           - 一次性原始碼格式 "代碼": { type: "once", letter: "字母", isAdmin: false, used: false }
-           一次性原始碼使用後會自動標記 used，下次失效。
-
-        🔧 2. 設定每個專案的個人資訊 (頂部卡片)
-           在 profiles 物件中 (約第 300 行)，每個字母可設定 name, role, email, phone, location, joinDate, linkUrl, linkText。
-
-        🔧 3. 設定 100 個人物資料 (大部分空白)
-           在 peopleData 物件中 (約第 340 行)，peopleData[字母] 是一個長度 100 的陣列，每個元素為 { name, role }。
-           您可以直接修改 peopleData['A'][0] 等來填入人物，其餘維持空白，卡片會顯示「未填寫」。
-
-        🔧 4. 側邊欄獨立滾動，權限管理 (管理員可看全部)。
-
-        🔧 5. 登入動畫：按鈕載入旋轉、錯誤時搖晃卡片、成功後 toast 提示。
+        🔧 超級用戶「0」：使用帳號 0 登入，不需密碼，可查看所有專案及人物資料，且可使用原始碼直接導向對應專案。
+        🔧 一般用戶：需註冊，登入後需使用原始碼或專案密碼解鎖字母才能查看。
+        🔧 原始碼清單、專案密碼、專案資訊、人物資料皆可依需求修改（位置已在程式碼中標註）。
     -->
-    <!-- ========================================= -->
+    <!-- ================================== -->
 </body>
 </html>
