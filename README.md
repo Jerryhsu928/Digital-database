@@ -3,16 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>🔐 企業專案管理系統 - 手機優化版</title>
+    <title>🔐 企業專案管理系統 - 最終版</title>
     <!-- 字體 Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- GSAP 動畫庫 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; overflow: hidden; font-family: "Inter", sans-serif; }
+        
+        /* 設備模式 - 手機 */
+        body.mobile .sidebar { width: 70px; }
+        body.mobile .sidebar.collapsed { width: 50px; }
+        body.mobile .sidebar .nav-item { width: 50px; height: 50px; font-size: 0.7rem; }
+        body.mobile .sidebar.collapsed .nav-item { width: 40px; height: 40px; }
+        body.mobile .page-title { font-size: 1.5rem; }
+        body.mobile .auth-tab { font-size: 0.8rem; padding: 8px; }
+        body.mobile .auth-card { padding: 20px 15px; }
+        body.mobile .project-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+        
+        /* 平板模式 */
+        body.tablet .sidebar { width: 90px; }
+        body.tablet .sidebar.collapsed { width: 60px; }
+        body.tablet .sidebar .nav-item { width: 60px; height: 60px; font-size: 0.8rem; }
+        body.tablet .sidebar.collapsed .nav-item { width: 45px; height: 45px; }
+        body.tablet .page-title { font-size: 1.8rem; }
+        
+        /* 桌面模式 (預設) */
+        body.desktop .sidebar { width: 100px; }
+        body.desktop .sidebar.collapsed { width: 70px; }
+        body.desktop .sidebar .nav-item { width: 70px; height: 70px; font-size: 0.75rem; }
+
         body.light-mode {
             background: #f8fafc;
             color: #0f172a;
@@ -26,7 +51,6 @@
         body.light-mode .source-type-btn.active { background: #2563eb; color: white; }
         body.light-mode .toast { background: #1e293b; color: white; }
         body.light-mode table td, body.light-mode table th { color: #0f172a; }
-        /* 淺色模式所有按鈕統一 */
         body.light-mode .auth-btn,
         body.light-mode .download-btn,
         body.light-mode .source-input-group button,
@@ -147,21 +171,21 @@
             box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
         }
         /* 統一按鈕樣式與動畫 */
-        .auth-btn, .download-btn, .source-input-group button, .save-btn, .delete-btn, .logout-btn, .theme-option, .language-select, .project-card .download-btn {
+        .auth-btn, .download-btn, .source-input-group button, .save-btn, .delete-btn, .logout-btn, .theme-option, .language-select, .project-card .download-btn, .device-selector button {
             transition: transform 0.2s ease, background 0.2s, opacity 0.2s;
             cursor: pointer;
             user-select: none;
             border: none;
             outline: none;
         }
-        .auth-btn:active, .download-btn:active, .source-input-group button:active, .save-btn:active, .delete-btn:active, .logout-btn:active, .theme-option:active, .language-select:active, .project-card .download-btn:active {
+        .auth-btn:active, .download-btn:active, .source-input-group button:active, .save-btn:active, .delete-btn:active, .logout-btn:active, .theme-option:active, .language-select:active, .project-card .download-btn:active, .device-selector button:active {
             transform: scale(0.98);
         }
-        .auth-btn.loading, .download-btn.loading, .source-input-group button.loading, .save-btn.loading, .delete-btn.loading, .logout-btn.loading, .project-card .download-btn.loading {
+        .auth-btn.loading, .download-btn.loading, .source-input-group button.loading, .save-btn.loading, .delete-btn.loading, .logout-btn.loading, .project-card .download-btn.loading, .device-selector button.loading {
             opacity: 0.7;
             pointer-events: none;
         }
-        .auth-btn.loading i, .download-btn.loading i, .source-input-group button.loading i, .save-btn.loading i, .delete-btn.loading i, .logout-btn.loading i, .project-card .download-btn.loading i {
+        .auth-btn.loading i, .download-btn.loading i, .source-input-group button.loading i, .save-btn.loading i, .delete-btn.loading i, .logout-btn.loading i, .project-card .download-btn.loading i, .device-selector button.loading i {
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
@@ -188,6 +212,20 @@
         }
         .student-fields { display: flex; flex-direction: column; gap: 15px; }
 
+        /* 設備選擇器 */
+        .device-selector {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+        .device-selector button {
+            background: #1e293b;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+        }
+
         /* 主面板 (左右) */
         .main-panel {
             display: none;
@@ -211,17 +249,11 @@
             height: 100%;
             overflow-y: auto;
             transition: width 0.3s;
-            width: 100px;
-        }
-        .sidebar.collapsed {
-            width: 70px;
         }
         .sidebar.collapsed .nav-item span {
             display: none;
         }
         .sidebar .nav-item {
-            width: 70px;
-            height: 70px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -234,12 +266,10 @@
             border: 1px solid rgba(255,255,255,0.1);
             gap: 5px;
             font-size: 0.75rem;
+            width: 70px;
+            height: 70px;
         }
-        .sidebar.collapsed .nav-item {
-            width: 50px;
-            height: 50px;
-        }
-        .nav-item i { font-size: 1.5rem; }
+        .sidebar .nav-item i { font-size: 1.5rem; }
         .nav-item.active {
             background: #2563eb;
             border-color: white;
@@ -376,7 +406,7 @@
             margin-top: 10px;
             flex-wrap: wrap;
         }
-        .source-input-group input {
+        .source-input-group input, .source-input-group select {
             flex: 1 1 200px;
             padding: 12px;
             border-radius: 40px;
@@ -549,11 +579,15 @@
         .toast {
             position: fixed; bottom: 20px; right: 20px;
             background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px;
-            z-index: 9999; opacity: 0; transition: opacity 0.3s;
+            z-index: 9999; opacity: 0; transform: translateY(20px);
             border: 1px solid #3b82f6;
             pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
         }
-        .toast.show { opacity: 1; }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
         .shake { animation: shake 0.4s ease-in-out; }
         @keyframes shake {
@@ -562,22 +596,38 @@
             40%,80% { transform: translateX(6px); }
         }
 
-        /* 手機優化 */
-        @media (max-width: 600px) {
-            .sidebar { width: 80px; }
-            .sidebar.collapsed { width: 60px; }
-            .sidebar .nav-item { width: 60px; height: 60px; }
-            .sidebar.collapsed .nav-item { width: 40px; height: 40px; }
-            .page-title { font-size: 1.5rem; }
-            .auth-tab { font-size: 0.8rem; padding: 8px; }
-            .auth-card { padding: 20px 15px; }
+        /* 設備相關調整 */
+        .device-selector {
+            display: flex;
+            gap: 5px;
+        }
+        .device-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .device-btn.active {
+            background: #2563eb;
+            color: white;
         }
     </style>
 </head>
-<body class="dark-mode">
+<body class="dark-mode desktop">
     <canvas id="particleCanvas"></canvas>
 
     <div class="app-container">
+        <!-- 頂部設備選擇器 (僅在登入後顯示) -->
+        <div id="deviceSelector" style="display: none; justify-content: flex-end; margin-bottom: 10px;">
+            <div class="device-selector">
+                <button class="device-btn active" data-device="desktop"><i class="fas fa-desktop"></i> 桌面</button>
+                <button class="device-btn" data-device="tablet"><i class="fas fa-tablet-alt"></i> 平板</button>
+                <button class="device-btn" data-device="mobile"><i class="fas fa-mobile-alt"></i> 手機</button>
+            </div>
+        </div>
+
         <!-- 登入/註冊卡片 (可滑動) -->
         <div id="authCard" class="auth-card">
             <div class="auth-tabs">
@@ -940,6 +990,36 @@
             const sourceCodeAdminNav = document.getElementById('sourceCodeAdminNav');
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebarToggle');
+            const deviceSelector = document.getElementById('deviceSelector');
+            const deviceBtns = document.querySelectorAll('.device-btn');
+
+            // 設備切換
+            deviceBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    deviceBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const device = btn.dataset.device;
+                    document.body.classList.remove('desktop', 'tablet', 'mobile');
+                    document.body.classList.add(device);
+                });
+            });
+
+            // 自動偵測設備 (可根據寬度)
+            function detectDevice() {
+                const width = window.innerWidth;
+                if (width < 600) {
+                    document.body.classList.remove('desktop', 'tablet');
+                    document.body.classList.add('mobile');
+                } else if (width < 1024) {
+                    document.body.classList.remove('desktop', 'mobile');
+                    document.body.classList.add('tablet');
+                } else {
+                    document.body.classList.remove('tablet', 'mobile');
+                    document.body.classList.add('desktop');
+                }
+            }
+            window.addEventListener('resize', detectDevice);
+            detectDevice();
 
             sidebarToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('collapsed');
@@ -957,44 +1037,43 @@
             let userLogs = [];
 
             // ========== 使用者資料庫 (擴充) ==========
-            // 格式: username: { password, role, accountId, class, number, occupation }
             const users = {
                 user1: { password: 'pass', role: 'observer', accountId: 'OBS-123ABC', class: '', number: '', occupation: '' },
                 admin: { password: 'admin', role: 'manager', accountId: 'MGR-456DEF', class: '', number: '', occupation: '' },
                 // 超級用戶0 不在此列，由程式碼處理
             };
 
-            // ========== 永久原始碼清單 (A-Z) ==========
+            // ========== 永久原始碼清單 ==========
             const permSourceCodes = {
-                "100A": { letter: "A", expirySec: 100, role: 'manager' },
-                "200B": { letter: "B", expirySec: 200, role: 'manager' },
-                "300C": { letter: "C", expirySec: 300, role: 'manager' },
-                "400D": { letter: "D", expirySec: 400, role: 'manager' },
-                "500E": { letter: "E", expirySec: 500, role: 'manager' },
-                "600F": { letter: "F", expirySec: 600, role: 'manager' },
-                "700G": { letter: "G", expirySec: 700, role: 'manager' },
-                "800H": { letter: "H", expirySec: 800, role: 'manager' },
-                "900I": { letter: "I", expirySec: 900, role: 'manager' },
-                "101J": { letter: "J", expirySec: 101, role: 'manager' },
-                "202K": { letter: "K", expirySec: 202, role: 'manager' },
-                "303L": { letter: "L", expirySec: 303, role: 'manager' },
-                "404M": { letter: "M", expirySec: 404, role: 'manager' },
-                "505N": { letter: "N", expirySec: 505, role: 'manager' },
-                "606O": { letter: "O", expirySec: 606, role: 'manager' },
-                "707P": { letter: "P", expirySec: 707, role: 'manager' },
-                "808Q": { letter: "Q", expirySec: 808, role: 'manager' },
-                "909R": { letter: "R", expirySec: 909, role: 'manager' },
-                "111S": { letter: "S", expirySec: 111, role: 'manager' },
-                "222T": { letter: "T", expirySec: 222, role: 'manager' },
-                "333U": { letter: "U", expirySec: 333, role: 'manager' },
-                "444V": { letter: "V", expirySec: 444, role: 'manager' },
-                "555W": { letter: "W", expirySec: 555, role: 'manager' },
-                "666X": { letter: "X", expirySec: 666, role: 'manager' },
-                "777Y": { letter: "Y", expirySec: 777, role: 'manager' },
-                "888Z": { letter: "Z", expirySec: 888, role: 'manager' }
+                "100A": { letter: "A", expirySec: 100, role: 'manager', allowedUsers: [] },
+                "200B": { letter: "B", expirySec: 200, role: 'manager', allowedUsers: [] },
+                "300C": { letter: "C", expirySec: 300, role: 'manager', allowedUsers: [] },
+                "400D": { letter: "D", expirySec: 400, role: 'manager', allowedUsers: [] },
+                "500E": { letter: "E", expirySec: 500, role: 'manager', allowedUsers: [] },
+                "600F": { letter: "F", expirySec: 600, role: 'manager', allowedUsers: [] },
+                "700G": { letter: "G", expirySec: 700, role: 'manager', allowedUsers: [] },
+                "800H": { letter: "H", expirySec: 800, role: 'manager', allowedUsers: [] },
+                "900I": { letter: "I", expirySec: 900, role: 'manager', allowedUsers: [] },
+                "101J": { letter: "J", expirySec: 101, role: 'manager', allowedUsers: [] },
+                "202K": { letter: "K", expirySec: 202, role: 'manager', allowedUsers: [] },
+                "303L": { letter: "L", expirySec: 303, role: 'manager', allowedUsers: [] },
+                "404M": { letter: "M", expirySec: 404, role: 'manager', allowedUsers: [] },
+                "505N": { letter: "N", expirySec: 505, role: 'manager', allowedUsers: [] },
+                "606O": { letter: "O", expirySec: 606, role: 'manager', allowedUsers: [] },
+                "707P": { letter: "P", expirySec: 707, role: 'manager', allowedUsers: [] },
+                "808Q": { letter: "Q", expirySec: 808, role: 'manager', allowedUsers: [] },
+                "909R": { letter: "R", expirySec: 909, role: 'manager', allowedUsers: [] },
+                "111S": { letter: "S", expirySec: 111, role: 'manager', allowedUsers: [] },
+                "222T": { letter: "T", expirySec: 222, role: 'manager', allowedUsers: [] },
+                "333U": { letter: "U", expirySec: 333, role: 'manager', allowedUsers: [] },
+                "444V": { letter: "V", expirySec: 444, role: 'manager', allowedUsers: [] },
+                "555W": { letter: "W", expirySec: 555, role: 'manager', allowedUsers: [] },
+                "666X": { letter: "X", expirySec: 666, role: 'manager', allowedUsers: [] },
+                "777Y": { letter: "Y", expirySec: 777, role: 'manager', allowedUsers: [] },
+                "888Z": { letter: "Z", expirySec: 888, role: 'manager', allowedUsers: [] }
             };
 
-            // ========== 一次性原始碼清單 (A-Z) ==========
+            // ========== 一次性原始碼清單 ==========
             const onceSourceCodes = {
                 "ONCEA001": { letter: "A", expirySec: 1, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
                 "ONCEB002": { letter: "B", expirySec: 2, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
@@ -1074,8 +1153,15 @@
 
             // ========== 輔助函數 ==========
             function showToast(msg, duration = 2000) {
-                toast.textContent = msg; toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), duration);
+                toast.textContent = msg;
+                toast.classList.add('show');
+                // 加入 GSAP 動畫
+                gsap.fromTo(toast, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 });
+                setTimeout(() => {
+                    gsap.to(toast, { opacity: 0, y: 20, duration: 0.3, onComplete: () => {
+                        toast.classList.remove('show');
+                    }});
+                }, duration);
             }
 
             function setButtonLoading(btn, isLoading) {
@@ -1089,7 +1175,9 @@
                 }
             }
 
+            // 超級用戶自動解鎖所有專案
             function isUnlocked(letter) {
+                if (currentUser.role === 'creator') return true;
                 if (!currentUser.unlockedProjects) return false;
                 const data = currentUser.unlockedProjects[letter];
                 if (!data) return false;
@@ -1101,6 +1189,7 @@
             }
 
             function unlockProject(letter, expirySec) {
+                if (currentUser.role === 'creator') return; // 超級用戶不需解鎖
                 if (!currentUser.unlockedProjects) currentUser.unlockedProjects = {};
                 const expiry = Date.now() + expirySec * 1000;
                 currentUser.unlockedProjects[letter] = { expiry };
@@ -1134,6 +1223,7 @@
                 userManagementNav.style.display = isCreator ? 'flex' : 'none';
                 subProjectAdminNav.style.display = isCreator ? 'flex' : 'none';
                 sourceCodeAdminNav.style.display = isCreator ? 'flex' : 'none';
+                deviceSelector.style.display = 'flex'; // 顯示設備選擇器
 
                 authCard.style.display = 'none';
                 mainPanel.style.display = 'flex';
@@ -1309,6 +1399,8 @@
                     if (currentUser.role !== 'creator') {
                         html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
                     } else {
+                        // 建立用戶列表字串供下拉選單使用
+                        const userOptions = Object.keys(users).map(u => `<option value="${u}">${u}</option>`).join('');
                         html = `<div class="page-card">
                             <div class="page-title"><i class="fas fa-user-cog"></i> ${t('userManagement')}</div>
                             <h3>新增用戶</h3>
@@ -1491,19 +1583,27 @@
                     if (currentUser.role !== 'creator') {
                         html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
                     } else {
+                        // 建立用戶選項
+                        const userOptions = Object.keys(users).map(u => `<option value="${u}">${u}</option>`).join('');
                         html = `<div class="page-card">
                             <div class="page-title"><i class="fas fa-code"></i> 原始碼管理</div>
                             <h3>永久原始碼</h3>
                             <table class="user-table">
-                                <thead><tr><th>代碼</th><th>字母</th><th>秒數</th><th>角色</th><th>操作</th></tr></thead>
+                                <thead><tr><th>代碼</th><th>字母</th><th>秒數</th><th>角色</th><th>允許用戶</th><th>操作</th></tr></thead>
                                 <tbody>`;
                         for (let code in permSourceCodes) {
                             let sc = permSourceCodes[code];
+                            let selectedUsers = sc.allowedUsers ? sc.allowedUsers.join(',') : '';
                             html += `<tr>
                                 <td><input type="text" id="perm-${code}" value="${code}" style="width:100px;"></td>
                                 <td><input type="text" id="permLetter-${code}" value="${sc.letter}" style="width:50px;"></td>
                                 <td><input type="number" id="permSec-${code}" value="${sc.expirySec}" style="width:70px;"></td>
                                 <td><input type="text" id="permRole-${code}" value="${sc.role}" style="width:80px;"></td>
+                                <td>
+                                    <select id="permUsers-${code}" multiple style="height:60px; width:120px;">
+                                        ${userOptions}
+                                    </select>
+                                </td>
                                 <td><button class="auth-btn" style="padding:5px 10px;" onclick="updatePerm('${code}')">更新</button></td>
                             </tr>`;
                         }
@@ -1513,6 +1613,7 @@
                             <div class="form-group"><label>字母</label><input type="text" id="newPermLetter" class="form-control" maxlength="1"></div>
                             <div class="form-group"><label>秒數</label><input type="number" id="newPermSec" class="form-control"></div>
                             <div class="form-group"><label>角色</label><input type="text" id="newPermRole" class="form-control" value="manager"></div>
+                            <div class="form-group"><label>允許用戶 (按住Ctrl多選)</label><select id="newPermUsers" multiple style="height:100px;">${userOptions}</select></div>
                             <button class="auth-btn" id="addPermBtn">新增</button>
                             <hr>
                             <h3>一次性原始碼</h3>
@@ -1521,12 +1622,17 @@
                                 <tbody>`;
                         for (let code in onceSourceCodes) {
                             let sc = onceSourceCodes[code];
+                            let selectedUsers = sc.allowedUsers ? sc.allowedUsers.join(',') : '';
                             html += `<tr>
                                 <td><input type="text" id="once-${code}" value="${code}" style="width:100px;"></td>
                                 <td><input type="text" id="onceLetter-${code}" value="${sc.letter}" style="width:50px;"></td>
                                 <td><input type="number" id="onceSec-${code}" value="${sc.expirySec}" style="width:70px;"></td>
                                 <td><input type="checkbox" id="onceUsed-${code}" ${sc.used ? 'checked' : ''} disabled></td>
-                                <td><input type="text" id="onceUsers-${code}" value="${sc.allowedUsers ? sc.allowedUsers.join(',') : ''}" style="width:100px;" placeholder="用戶名,逗號"></td>
+                                <td>
+                                    <select id="onceUsers-${code}" multiple style="height:60px; width:120px;">
+                                        ${userOptions}
+                                    </select>
+                                </td>
                                 <td><input type="number" id="onceMax-${code}" value="${sc.maxUses || 1}" style="width:60px;"></td>
                                 <td><input type="text" id="onceExpiry-${code}" value="${sc.expiryDate || ''}" style="width:100px;" placeholder="YYYY-MM-DD"></td>
                                 <td><button class="auth-btn" style="padding:5px 10px;" onclick="updateOnce('${code}')">更新</button></td>
@@ -1537,7 +1643,7 @@
                             <div class="form-group"><label>代碼</label><input type="text" id="newOnceCode" class="form-control"></div>
                             <div class="form-group"><label>字母</label><input type="text" id="newOnceLetter" class="form-control" maxlength="1"></div>
                             <div class="form-group"><label>秒數</label><input type="number" id="newOnceSec" class="form-control"></div>
-                            <div class="form-group"><label>允許用戶 (逗號分隔)</label><input type="text" id="newOnceUsers" class="form-control"></div>
+                            <div class="form-group"><label>允許用戶 (按住Ctrl多選)</label><select id="newOnceUsers" multiple style="height:100px;">${userOptions}</select></div>
                             <div class="form-group"><label>最大使用次數</label><input type="number" id="newOnceMax" class="form-control" value="1"></div>
                             <div class="form-group"><label>到期日 (YYYY-MM-DD)</label><input type="text" id="newOnceExpiry" class="form-control"></div>
                             <button class="auth-btn" id="addOnceBtn">新增</button>
@@ -1548,9 +1654,11 @@
                                 let letter = document.getElementById(`permLetter-${code}`).value.trim().toUpperCase();
                                 let sec = parseInt(document.getElementById(`permSec-${code}`).value);
                                 let role = document.getElementById(`permRole-${code}`).value.trim();
+                                let userSelect = document.getElementById(`permUsers-${code}`);
+                                let allowedUsers = Array.from(userSelect.selectedOptions).map(opt => opt.value);
                                 if (newCode && letter && sec && role) {
                                     delete permSourceCodes[code];
-                                    permSourceCodes[newCode] = { letter, expirySec: sec, role };
+                                    permSourceCodes[newCode] = { letter, expirySec: sec, role, allowedUsers };
                                     renderPage('sourceCodeAdmin');
                                     showToast('✅ 已更新');
                                 }
@@ -1559,8 +1667,8 @@
                                 let newCode = document.getElementById(`once-${code}`).value.trim();
                                 let letter = document.getElementById(`onceLetter-${code}`).value.trim().toUpperCase();
                                 let sec = parseInt(document.getElementById(`onceSec-${code}`).value);
-                                let usersStr = document.getElementById(`onceUsers-${code}`).value.trim();
-                                let allowedUsers = usersStr ? usersStr.split(',').map(s => s.trim()) : [];
+                                let userSelect = document.getElementById(`onceUsers-${code}`);
+                                let allowedUsers = Array.from(userSelect.selectedOptions).map(opt => opt.value);
                                 let maxUses = parseInt(document.getElementById(`onceMax-${code}`).value);
                                 let expiryDate = document.getElementById(`onceExpiry-${code}`).value.trim();
                                 if (newCode && letter && sec) {
@@ -1584,9 +1692,11 @@
                                 let letter = document.getElementById('newPermLetter').value.trim().toUpperCase();
                                 let sec = parseInt(document.getElementById('newPermSec').value);
                                 let role = document.getElementById('newPermRole').value.trim();
+                                let userSelect = document.getElementById('newPermUsers');
+                                let allowedUsers = Array.from(userSelect.selectedOptions).map(opt => opt.value);
                                 if (!code || !letter || !sec || !role) { showToast('❌ 請填寫完整'); return; }
                                 if (permSourceCodes[code]) { showToast('❌ 代碼已存在'); return; }
-                                permSourceCodes[code] = { letter, expirySec: sec, role };
+                                permSourceCodes[code] = { letter, expirySec: sec, role, allowedUsers };
                                 renderPage('sourceCodeAdmin');
                                 showToast('✅ 新增成功');
                             });
@@ -1594,8 +1704,8 @@
                                 let code = document.getElementById('newOnceCode').value.trim();
                                 let letter = document.getElementById('newOnceLetter').value.trim().toUpperCase();
                                 let sec = parseInt(document.getElementById('newOnceSec').value);
-                                let usersStr = document.getElementById('newOnceUsers').value.trim();
-                                let allowedUsers = usersStr ? usersStr.split(',').map(s => s.trim()) : [];
+                                let userSelect = document.getElementById('newOnceUsers');
+                                let allowedUsers = Array.from(userSelect.selectedOptions).map(opt => opt.value);
                                 let maxUses = parseInt(document.getElementById('newOnceMax').value);
                                 let expiryDate = document.getElementById('newOnceExpiry').value.trim();
                                 if (!code || !letter || !sec) { showToast('❌ 請填寫代碼、字母、秒數'); return; }
@@ -1647,7 +1757,7 @@
                         <div class="settings-item">
                             <span>${t('version')}</span>
                             <div class="version-info">
-                                <span class="value">v2.0.0</span>
+                                <span class="value">v3.0.0</span>
                                 <button class="auth-btn" style="padding:5px 15px;" id="checkUpdate">${t('checkUpdate')}</button>
                             </div>
                         </div>
@@ -1685,7 +1795,7 @@
                 contentArea.innerHTML = html;
             }
 
-            // 顯示專案詳情（需整合子專案）
+            // 顯示專案詳情（整合子專案）
             function showProjectDetail(letter) {
                 let proj = projectData[letter] || { name: letter+' '+t('project'), desc: '', downloadUrl: '#', imageUrl: '', subProjects: [] };
                 let unlocked = isUnlocked(letter);
@@ -1739,24 +1849,27 @@
                 html += `</div></div>`;
                 contentArea.innerHTML = html;
 
-                if (unlocked) {
+                if (unlocked && currentUser.role !== 'creator') {
                     const timerEl = document.getElementById(`timer-${letter}`);
-                    const interval = setInterval(() => {
-                        let expiry = currentUser.unlockedProjects[letter]?.expiry;
-                        if (!expiry) {
-                            clearInterval(interval);
-                            timerEl.textContent = t('expired');
-                            return;
-                        }
-                        let remaining = Math.max(0, Math.floor((expiry - Date.now()) / 1000));
-                        timerEl.textContent = `${t('remaining')}：${remaining} ${t('seconds')}`;
-                        if (remaining <= 0) {
-                            clearInterval(interval);
-                            delete currentUser.unlockedProjects[letter];
-                            showProjectDetail(letter);
-                        }
-                    }, 1000);
-                } else {
+                    if (timerEl) {
+                        const interval = setInterval(() => {
+                            let expiry = currentUser.unlockedProjects[letter]?.expiry;
+                            if (!expiry) {
+                                clearInterval(interval);
+                                timerEl.textContent = t('expired');
+                                return;
+                            }
+                            let remaining = Math.max(0, Math.floor((expiry - Date.now()) / 1000));
+                            timerEl.textContent = `${t('remaining')}：${remaining} ${t('seconds')}`;
+                            if (remaining <= 0) {
+                                clearInterval(interval);
+                                delete currentUser.unlockedProjects[letter];
+                                showToast(`⏰ 專案 ${letter} 已過期`, 3000);
+                                showProjectDetail(letter);
+                            }
+                        }, 1000);
+                    }
+                } else if (!unlocked) {
                     let sourceType = 'permanent';
                     document.querySelectorAll('.source-type-btn').forEach(btn => {
                         btn.addEventListener('click', function() {
@@ -1950,7 +2063,6 @@
                 }
                 if (source.allowedUsers && source.allowedUsers.length > 0 && !source.allowedUsers.includes(currentUser?.username)) {
                     // 未登入時 currentUser 可能為空，但原始碼登入會產生新用戶
-                    // 這裡簡單處理，不綁定用戶
                 }
                 source.usedCount = (source.usedCount || 0) + 1;
                 if (source.maxUses && source.usedCount >= source.maxUses) {
@@ -1968,6 +2080,7 @@
                 currentUser = { username: null, role: null, accountId: null, unlockedProjects: {} };
                 mainPanel.style.display = 'none';
                 authCard.style.display = 'block';
+                deviceSelector.style.display = 'none';
                 showToast('👋 ' + t('logout'));
             }
 
@@ -2004,6 +2117,7 @@
             onceCodeError.style.display = 'none';
             authCard.style.display = 'block';
             mainPanel.style.display = 'none';
+            deviceSelector.style.display = 'none';
 
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
@@ -2028,6 +2142,8 @@
         🔧 人物資料：在 peopleData 陣列中修改 (約 250 行)
         🔧 帳號ID生成規則：在 generateAccountId 函數中修改 (約 290 行)
         🔧 超級用戶帳號固定為 "0"，登入後可看到所有管理頁面
+        🔧 設備模式可手動切換，也可自動偵測
+        🔧 原始碼管理現可使用下拉多選選擇允許的使用者
     -->
     <!-- ================================== -->
 </body>
