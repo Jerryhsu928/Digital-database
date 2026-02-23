@@ -679,7 +679,7 @@ These Terms are governed by the laws of the Republic of China (Taiwan). Disputes
                 const defaultUsers = {
                     admin: { password: 'admin', role: 'manager', accountId: 'MGR-456DEF', name: '管理員', occupation: '管理者', class: '', number: '', email: 'admin@system.com' },
                     '0': { password: '', role: 'creator', accountId: 'CREATOR-0', name: '超級用戶', occupation: '管理員', class: '', number: '', email: 'creator@system.com' }
-                };
+                "81016": { password: "113564", role: "observer", accountId: "27141571253441", name: "武桓鋒", occupation: "學生", class: "810", number: "16", email: "電子郵件" }};
                 // 生成100位預設用戶 (A001 ~ A100)
                 for (let i = 1; i <= 100; i++) {
                     let username = 'A' + String(i).padStart(3, '0'); // A001, A002, ...
@@ -709,7 +709,7 @@ These Terms are governed by the laws of the Republic of China (Taiwan). Disputes
             let filePasswords = loadFromStorage('filePasswords', {
                 A: "090102", B: "090103", C: "090104", D: "090105", E: "090106",
                 F: "090107", G: "090108", H: "090109", I: "090110", J: "090111",
-                K: "090112", L: "090113", M: "090114", N: "090115", O: "090116",
+                K: "090112", L: "341571", M: "090114", N: "090115", O: "090116",
                 P: "090117", Q: "090118", R: "090119", S: "090120", T: "090121",
                 U: "090122", V: "090123", W: "090124", X: "090125", Y: "090126", Z: "090127"
             });
@@ -756,6 +756,7 @@ These Terms are governed by the laws of the Republic of China (Taiwan). Disputes
 
             // ---------- 檔案資訊 (A-Z) ----------
             // 格式: 字母: { name: "名稱", desc: "描述", downloadUrl: "下載連結", imageUrl: "圖片網址", websiteUrl: "網站連結" }
+        L: { name: "勝利國中", desc: "113學年度勝利國中新生編班名單(按前往網站或下載檔案)", downloadUrl: "https://sljh.hcc.edu.tw/app/index.php?Action=downloadfile&file=WVhSMFlXTm9MemN5TDNCMFlWOHpNemMxTVRSZk9UYzFOVGs0TWw4NU1UQTNOaTV3WkdZPQ==&fname=FHSS50SWYWQOPPIH44FGFC34MKDGGDB1OPQKGGGCUTGDMLEGQKDC24FGUSOOGHFCKKPOWWIHA4VW05JG34KOA0XS34B004MKVXYTXWB0YS2034POECOKXS50LOLKCCXX50NOCHWTMKHCWSICUSFGMOIC01UXQPCCUWDCFCA4FGTSROROTWLK2115JC1034ZWIG1430XSWSMOB1NOZTA1NLTS", imageUrl: "圖片網址", websiteUrl: "https://sljh.hcc.edu.tw/p/404-1034-449861.php?Lang=zh-tw" }
             let fileData = loadFromStorage('fileData', (() => {
                 const data = {};
                 for (let i = 65; i <= 90; i++) {
