@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>🔐 企業專案管理系統 - 版本自動更新版</title>
+    <title>🔐 企業檔案管理系統 - 完整可修改版</title>
     <!-- 字體 Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,11 +13,19 @@
     <!-- GSAP 動畫庫 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
-        /* 樣式與前一版相同，為節省篇幅保留但不重複貼出，完整版見下方 */
+        /* 此處樣式與前一版本相同，為節省篇幅省略，實際使用時需保留完整樣式 */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; overflow: hidden; font-family: "Inter", sans-serif; }
-        
-        /* 設備模式 - 手機 */
+        body { background: #0a0f1e; display: flex; align-items: center; justify-content: center; color: #e2e8f0; }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; background: radial-gradient(circle at 20% 30%, #1e2a4a, #0b1423); }
+        .app-container { width: 100%; max-width: 1400px; height: 100vh; background: rgba(15, 25, 45, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 15px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8); border: 1px solid rgba(255,255,255,0.1); z-index: 2; display: flex; flex-direction: column; overflow: hidden; transition: background 0.3s; }
+        /* 點擊動畫規則 (與前相同) */
+        .auth-btn, .download-btn, .website-btn, .source-input-group button, .save-btn, .delete-btn, .logout-btn, .theme-option, .language-select, .project-card, .nav-item, .sidebar-toggle, .device-btn, .source-type-btn, .project-card .download-btn, .project-card .website-btn, .device-selector button { transition: transform 0.15s ease, background 0.2s, opacity 0.2s, box-shadow 0.2s; cursor: pointer; user-select: none; border: none; outline: none; }
+        .auth-btn:active, .download-btn:active, .website-btn:active, .source-input-group button:active, .save-btn:active, .delete-btn:active, .logout-btn:active, .theme-option:active, .language-select:active, .project-card:active, .nav-item:active, .sidebar-toggle:active, .device-btn:active, .source-type-btn:active, .project-card .download-btn:active, .project-card .website-btn:active, .device-selector button:active { transform: scale(0.96); }
+        .auth-btn.loading, .download-btn.loading, .website-btn.loading, .source-input-group button.loading, .save-btn.loading, .delete-btn.loading, .logout-btn.loading, .project-card .download-btn.loading, .project-card .website-btn.loading, .device-btn.loading { opacity: 0.7; pointer-events: none; }
+        .auth-btn.loading i, .download-btn.loading i, .website-btn.loading i, .source-input-group button.loading i, .save-btn.loading i, .delete-btn.loading i, .logout-btn.loading i, .project-card .download-btn.loading i, .project-card .website-btn.loading i, .device-btn.loading i { animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* 設備模式 */
         body.mobile .sidebar { width: 70px; }
         body.mobile .sidebar.collapsed { width: 50px; }
         body.mobile .sidebar .nav-item { width: 50px; height: 50px; font-size: 0.7rem; }
@@ -26,23 +34,16 @@
         body.mobile .auth-tab { font-size: 0.8rem; padding: 8px; }
         body.mobile .auth-card { padding: 20px 15px; }
         body.mobile .project-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-        
-        /* 平板模式 */
         body.tablet .sidebar { width: 90px; }
         body.tablet .sidebar.collapsed { width: 60px; }
         body.tablet .sidebar .nav-item { width: 60px; height: 60px; font-size: 0.8rem; }
         body.tablet .sidebar.collapsed .nav-item { width: 45px; height: 45px; }
         body.tablet .page-title { font-size: 1.8rem; }
-        
-        /* 桌面模式 (預設) */
         body.desktop .sidebar { width: 100px; }
         body.desktop .sidebar.collapsed { width: 70px; }
         body.desktop .sidebar .nav-item { width: 70px; height: 70px; font-size: 0.75rem; }
-
-        body.light-mode {
-            background: #f8fafc;
-            color: #0f172a;
-        }
+        /* 淺色/深色模式 */
+        body.light-mode { background: #f8fafc; color: #0f172a; }
         body.light-mode .app-container { background: rgba(255,255,255,0.7); }
         body.light-mode .auth-card { background: rgba(255,255,255,0.9); color: #0f172a; }
         body.light-mode .sidebar { background: rgba(255,255,255,0.7); }
@@ -52,34 +53,12 @@
         body.light-mode .source-type-btn.active { background: #2563eb; color: white; }
         body.light-mode .toast { background: #1e293b; color: white; }
         body.light-mode table td, body.light-mode table th { color: #0f172a; }
-        body.light-mode .auth-btn,
-        body.light-mode .download-btn,
-        body.light-mode .source-input-group button,
-        body.light-mode .save-btn,
-        body.light-mode .delete-btn,
-        body.light-mode .logout-btn,
-        body.light-mode .theme-option,
-        body.light-mode .language-select,
-        body.light-mode .project-card .download-btn,
-        body.light-mode .device-selector button,
-        body.light-mode .sidebar .nav-item,
-        body.light-mode .sidebar-toggle,
-        body.light-mode .alpha-tab,
-        body.light-mode .source-type-btn,
-        body.light-mode .device-btn {
-            background: #2563eb !important;
-            color: white !important;
-            border: none;
-        }
+        body.light-mode .auth-btn, body.light-mode .download-btn, body.light-mode .website-btn, body.light-mode .source-input-group button, body.light-mode .save-btn, body.light-mode .delete-btn, body.light-mode .logout-btn, body.light-mode .theme-option, body.light-mode .language-select, body.light-mode .project-card .download-btn, body.light-mode .project-card .website-btn, body.light-mode .device-selector button, body.light-mode .sidebar .nav-item, body.light-mode .sidebar-toggle, body.light-mode .source-type-btn, body.light-mode .device-btn { background: #2563eb !important; color: white !important; border: none; }
         body.light-mode .delete-btn { background: #ef4444 !important; }
         body.light-mode .logout-btn { background: rgba(239,68,68,0.8) !important; }
         body.light-mode .theme-option { background: #e2e8f0 !important; color: #334155 !important; }
         body.light-mode .theme-option.active { background: #2563eb !important; color: white !important; }
-
-        body.dark-mode {
-            background: #0a0f1e;
-            color: #e2e8f0;
-        }
+        body.dark-mode { background: #0a0f1e; color: #e2e8f0; }
         body.dark-mode .app-container { background: rgba(15, 25, 45, 0.6); }
         body.dark-mode .auth-card { background: rgba(20, 30, 50, 0.9); }
         body.dark-mode .sidebar { background: rgba(20, 30, 50, 0.7); }
@@ -89,513 +68,123 @@
         body.dark-mode .source-type-btn.active { background: #2563eb; color: white; }
         body.dark-mode .toast { background: #1e293b; color: white; }
         body.dark-mode table td, body.dark-mode table th { color: #e2e8f0; }
-
-        #particleCanvas {
+        /* 登入卡片 */
+        .auth-card { max-width: 500px; width: 100%; margin: auto; border-radius: 40px; padding: 30px 25px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 30px 50px -20px black; max-height: 90vh; overflow-y: auto; }
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 50px; flex-wrap: wrap; }
+        .auth-tab { flex: 1 1 auto; text-align: center; padding: 12px; font-weight: 600; font-size: 1rem; color: #94a3b8; cursor: pointer; border-radius: 40px; transition: 0.3s; }
+        .auth-tab.active { background: #2563eb; color: white; box-shadow: 0 5px 15px #2563eb; }
+        .auth-form { display: flex; flex-direction: column; gap: 18px; }
+        .auth-form h3 { margin-bottom: 5px; font-size: 1.2rem; }
+        .form-group { text-align: left; }
+        .form-group label { font-weight: 500; font-size: 0.85rem; color: #a5b4cb; display: block; margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 14px 18px; border-radius: 40px; font-size: 0.95rem; transition: 0.2s; -webkit-appearance: none; appearance: none; }
+        .form-control:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
+        .auth-btn { background: linear-gradient(135deg, #2563eb, #1e40af); color: white; padding: 14px; border-radius: 50px; font-weight: 600; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .error-message { color: #f87171; font-size: 0.85rem; background: rgba(220,38,38,0.2); padding: 10px 16px; border-radius: 30px; border: 1px solid #ef4444; display: none; }
+        /* 設備選擇器 */
+        .device-selector { display: flex; gap: 8px; margin-left: auto; }
+        .device-btn { background: #1e293b; color: white; padding: 8px 15px; border-radius: 30px; font-size: 0.9rem; }
+        /* 主面板 */
+        .main-panel { display: none; flex: 1; gap: 15px; height: 100%; overflow: hidden; }
+        .sidebar { background: rgba(20, 30, 50, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 35px; padding: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.15); height: 100%; overflow-y: auto; transition: width 0.3s; }
+        .sidebar.collapsed .nav-item span { display: none; }
+        .sidebar .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border-radius: 25px; color: white; border: 1px solid rgba(255,255,255,0.1); gap: 5px; font-size: 0.75rem; width: 70px; height: 70px; }
+        .sidebar .nav-item i { font-size: 1.5rem; }
+        .nav-item.active { background: #2563eb; border-color: white; box-shadow: 0 0 20px #2563eb; }
+        .sidebar-toggle { width: 100%; display: flex; justify-content: center; margin-bottom: 10px; cursor: pointer; color: white; font-size: 1.2rem; }
+        .content-area { flex: 1; min-width: 0; height: 100%; overflow-y: auto; padding-right: 5px; scrollbar-width: thin; }
+        .page-card { background: rgba(25, 35, 55, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 40px; padding: 25px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.15); }
+        .page-title { font-size: 2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
+        .project-card { background: rgba(0,0,0,0.2); border-radius: 25px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+        .project-card.locked { opacity: 0.6; }
+        .project-card.unlocked { border-color: #4ade80; }
+        .project-card .letter { font-size: 2rem; font-weight: 700; margin-bottom: 5px; }
+        .project-card .name { font-size: 0.9rem; color: #94a3b8; display: none; }
+        .project-card.unlocked .name { display: block; }
+        .project-card .lock-icon { position: absolute; top: 5px; right: 5px; font-size: 0.8rem; }
+        .project-detail { margin-top: 20px; }
+        .project-detail img { max-width: 100%; border-radius: 20px; margin: 15px 0; }
+        .download-btn, .website-btn { display: inline-block; background: #2563eb; color: white; padding: 12px 25px; border-radius: 40px; text-decoration: none; margin: 10px 5px; }
+        .website-btn { background: #10b981; }
+        .timer { font-size: 1.2rem; color: #fbbf24; margin: 10px 0; }
+        /* 表格樣式 */
+        .password-table, .user-table { width: 100%; border-collapse: collapse; }
+        .password-table th, .password-table td, .user-table th, .user-table td { padding: 8px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); vertical-align: middle; }
+        .password-table input, .user-table input, .user-table select { padding: 5px; border-radius: 20px; background: #1e293b; color: white; border: 1px solid #3b82f6; width: 100%; }
+        .delete-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 20px; }
+        /* 設定頁面 */
+        .settings-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; gap: 10px; }
+        .settings-item .value { background: #1e293b; padding: 5px 15px; border-radius: 30px; color: white; }
+        .settings-item .dots { letter-spacing: 3px; font-size: 1.2rem; }
+        .theme-toggle { display: flex; gap: 10px; flex-wrap: wrap; }
+        .theme-option { padding: 8px 20px; border-radius: 30px; background: #1e293b; color: #94a3b8; }
+        .theme-option.active { background: #2563eb; color: white; }
+        .language-select { background: #1e293b; color: white; padding: 8px 15px; border-radius: 30px; border: 1px solid #3b82f6; }
+        .version-info { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .logout-btn { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid #ef4444; padding: 12px 30px; border-radius: 40px; display: inline-block; margin-top: 20px; }
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; z-index: 9999; opacity: 0; transform: translateY(20px); border: 1px solid #3b82f6; pointer-events: none; transition: opacity 0.3s, transform 0.3s; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .shake { animation: shake 0.4s ease-in-out; }
+        @keyframes shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-6px); } 40%,80% { transform: translateX(6px); } }
+        /* 條款內容區塊 (原本用於檔案列表下方，現在用於浮層) */
+        .terms-box { background: rgba(0,0,0,0.2); border-radius: 30px; padding: 20px; max-height: 300px; overflow-y: auto; }
+        .terms-box p { white-space: pre-wrap; }
+        /* 條款浮層 */
+        .terms-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            background: radial-gradient(circle at 20% 30%, #1e2a4a, #0b1423);
-        }
-        .app-container {
-            width: 100%;
-            max-width: 1400px;
-            height: 100vh;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 15px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
-            border: 1px solid rgba(255,255,255,0.1);
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: background 0.3s;
-        }
-
-        /* 登入/註冊卡片 */
-        .auth-card {
-            max-width: 500px;
-            width: 100%;
-            margin: auto;
-            border-radius: 40px;
-            padding: 30px 25px;
-            border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: 0 30px 50px -20px black;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .auth-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            background: rgba(0,0,0,0.3);
-            padding: 6px;
-            border-radius: 50px;
-            flex-wrap: wrap;
-        }
-        .auth-tab {
-            flex: 1 1 auto;
-            text-align: center;
-            padding: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            color: #94a3b8;
-            cursor: pointer;
-            border-radius: 40px;
-            transition: 0.3s;
-        }
-        .auth-tab.active {
-            background: #2563eb;
-            color: white;
-            box-shadow: 0 5px 15px #2563eb;
-        }
-        .auth-form { display: flex; flex-direction: column; gap: 18px; }
-        .auth-form h3 {
-            margin-bottom: 5px;
-            font-size: 1.2rem;
-        }
-        .form-group { text-align: left; }
-        .form-group label {
-            font-weight: 500; font-size: 0.85rem; color: #a5b4cb;
-            display: block; margin-bottom: 6px;
-        }
-        .form-control {
-            width: 100%;
-            padding: 14px 18px;
-            border-radius: 40px;
-            font-size: 0.95rem;
-            transition: 0.2s;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
-        }
-        /* 統一按鈕樣式與動畫 */
-        .auth-btn, .download-btn, .source-input-group button, .save-btn, .delete-btn, .logout-btn, .theme-option, .language-select, .project-card .download-btn, .device-selector button {
-            transition: transform 0.2s ease, background 0.2s, opacity 0.2s;
-            cursor: pointer;
-            user-select: none;
-            border: none;
-            outline: none;
-        }
-        .auth-btn:active, .download-btn:active, .source-input-group button:active, .save-btn:active, .delete-btn:active, .logout-btn:active, .theme-option:active, .language-select:active, .project-card .download-btn:active, .device-selector button:active {
-            transform: scale(0.98);
-        }
-        .auth-btn.loading, .download-btn.loading, .source-input-group button.loading, .save-btn.loading, .delete-btn.loading, .logout-btn.loading, .project-card .download-btn.loading, .device-selector button.loading {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-        .auth-btn.loading i, .download-btn.loading i, .source-input-group button.loading i, .save-btn.loading i, .delete-btn.loading i, .logout-btn.loading i, .project-card .download-btn.loading i, .device-selector button.loading i {
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .auth-btn {
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            color: white;
-            padding: 14px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1rem;
+            background: rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            z-index: 10000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        .error-message {
-            color: #f87171; font-size: 0.85rem;
-            background: rgba(220,38,38,0.2); padding: 10px 16px; border-radius: 30px;
-            border: 1px solid #ef4444; display: none;
+        .terms-modal.show {
+            visibility: visible;
+            opacity: 1;
         }
-        .student-fields { display: flex; flex-direction: column; gap: 15px; }
-
-        /* 設備選擇器 */
-        .device-selector {
-            display: flex;
-            gap: 8px;
-            margin-left: auto;
-        }
-        .device-selector button {
+        .terms-modal-content {
             background: #1e293b;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-        }
-
-        /* 主面板 (左右) */
-        .main-panel {
-            display: none;
-            flex: 1;
-            gap: 15px;
-            height: 100%;
-            overflow: hidden;
-        }
-        /* 左側導航 (可折疊) */
-        .sidebar {
-            background: rgba(20, 30, 50, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 35px;
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            border: 1px solid rgba(255,255,255,0.15);
-            height: 100%;
-            overflow-y: auto;
-            transition: width 0.3s;
-        }
-        .sidebar.collapsed .nav-item span {
-            display: none;
-        }
-        .sidebar .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.08);
-            border-radius: 25px;
-            color: white;
-            cursor: pointer;
-            transition: 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
-            gap: 5px;
-            font-size: 0.75rem;
-            width: 70px;
-            height: 70px;
-        }
-        .sidebar .nav-item i { font-size: 1.5rem; }
-        .nav-item.active {
-            background: #2563eb;
-            border-color: white;
-            box-shadow: 0 0 20px #2563eb;
-        }
-        .sidebar-toggle {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-            cursor: pointer;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        /* 右側內容區 (可滑動) */
-        .content-area {
-            flex: 1;
-            min-width: 0;
-            height: 100%;
-            overflow-y: auto;
-            padding-right: 5px;
-            scrollbar-width: thin;
-        }
-
-        /* 頁面卡片 */
-        .page-card {
-            background: rgba(25, 35, 55, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border-radius: 40px;
-            padding: 25px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.15);
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #3b82f6;
         }
-        .page-title {
-            font-size: 2rem;
+        .terms-modal-content h2 {
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        /* 專案網格 */
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-        }
-        .project-card {
-            background: rgba(0,0,0,0.2);
-            border-radius: 25px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-        }
-        .project-card.locked { opacity: 0.6; }
-        .project-card.unlocked { border-color: #4ade80; }
-        .project-card .letter {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        .project-card .name {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            display: none;
-        }
-        .project-card.unlocked .name {
-            display: block;
-        }
-        .project-card .lock-icon {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            font-size: 0.8rem;
-        }
-
-        /* 專案詳情 */
-        .project-detail {
-            margin-top: 20px;
-        }
-        .project-detail img {
-            max-width: 100%;
-            border-radius: 20px;
-            margin: 15px 0;
-        }
-        .download-btn {
-            display: inline-block;
-            background: #2563eb;
             color: white;
-            padding: 12px 25px;
-            border-radius: 40px;
-            text-decoration: none;
-            margin: 10px 0;
         }
-        .timer {
-            font-size: 1.2rem;
-            color: #fbbf24;
-            margin: 10px 0;
-        }
-        .unlock-section {
-            background: rgba(0,0,0,0.2);
-            border-radius: 30px;
-            padding: 20px;
+        .terms-modal-content .terms-box {
             margin: 20px 0;
-        }
-        .source-type {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        .source-type-btn {
-            flex: 1 1 auto;
-            padding: 10px;
-            border-radius: 30px;
-            background: #1e293b;
-            color: #94a3b8;
-            text-align: center;
-            cursor: pointer;
-        }
-        .source-type-btn.active {
-            background: #2563eb;
-            color: white;
-        }
-        .source-input-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-        .source-input-group input, .source-input-group select {
-            flex: 1 1 200px;
-            padding: 12px;
-            border-radius: 40px;
-            border: 1px solid #3b82f6;
             background: #0f172a;
-            color: white;
         }
-        .source-input-group button {
-            padding: 12px 20px;
-            border-radius: 40px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* 密碼庫表格 */
-        .password-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .password-table th, .password-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .password-table input {
-            width: 100%;
-            padding: 8px;
-            border-radius: 20px;
-            border: 1px solid #3b82f6;
-            background: #1e293b;
-            color: white;
-        }
-        .save-btn {
+        .terms-modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
             margin-top: 20px;
-            padding: 12px 25px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 40px;
-            cursor: pointer;
         }
-
-        /* 用戶管理表格 (整合人物資料，可編輯帳號) */
-        .user-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .user-table th, .user-table td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            vertical-align: middle;
-        }
-        .user-table input, .user-table select {
-            padding: 5px;
-            border-radius: 20px;
-            background: #1e293b;
-            color: white;
-            border: 1px solid #3b82f6;
-            width: 100%;
-        }
-        .delete-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-
-        /* 子專案管理 */
-        .subproject-item {
-            background: rgba(0,0,0,0.1);
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 10px;
-        }
-        .project-edit-section {
-            background: rgba(0,0,0,0.1);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        /* 設定頁面 */
-        .settings-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .settings-item .value {
-            background: #1e293b;
-            padding: 5px 15px;
-            border-radius: 30px;
-            color: white;
-        }
-        .settings-item .dots {
-            letter-spacing: 3px;
-            font-size: 1.2rem;
-        }
-        .theme-toggle {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .theme-option {
-            padding: 8px 20px;
-            border-radius: 30px;
-            background: #1e293b;
-            color: #94a3b8;
-            cursor: pointer;
-        }
-        .theme-option.active {
-            background: #2563eb;
-            color: white;
-        }
-        .language-select {
-            background: #1e293b;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 30px;
-            border: 1px solid #3b82f6;
-        }
-        .version-info {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .logout-btn {
-            background: rgba(239,68,68,0.2);
-            color: #f87171;
-            border: 1px solid #ef4444;
+        .terms-modal-buttons button {
             padding: 12px 30px;
             border-radius: 40px;
-            cursor: pointer;
-            display: inline-block;
-            margin-top: 20px;
+            font-weight: 600;
         }
-
-        .toast {
-            position: fixed; bottom: 20px; right: 20px;
-            background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px;
-            z-index: 9999; opacity: 0; transform: translateY(20px);
-            border: 1px solid #3b82f6;
-            pointer-events: none;
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .shake { animation: shake 0.4s ease-in-out; }
-        @keyframes shake {
-            0%,100% { transform: translateX(0); }
-            20%,60% { transform: translateX(-6px); }
-            40%,80% { transform: translateX(6px); }
-        }
-
-        /* 設備相關調整 */
-        .device-selector {
-            display: flex;
-            gap: 5px;
-        }
-        .device-btn {
-            background: #1e293b;
-            color: #94a3b8;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-        .device-btn.active {
+        .btn-agree {
             background: #2563eb;
+            color: white;
+        }
+        .btn-disagree {
+            background: #ef4444;
             color: white;
         }
     </style>
@@ -604,7 +193,7 @@
     <canvas id="particleCanvas"></canvas>
 
     <div class="app-container">
-        <!-- 頂部設備選擇器 (僅在登入後顯示) -->
+        <!-- 頂部設備選擇器 (登入後顯示) -->
         <div id="deviceSelector" style="display: none; justify-content: flex-end; margin-bottom: 10px;">
             <div class="device-selector">
                 <button class="device-btn active" data-device="desktop"><i class="fas fa-desktop"></i> 桌面</button>
@@ -613,96 +202,85 @@
             </div>
         </div>
 
-        <!-- 登入/註冊卡片 (可滑動) -->
+        <!-- 登入卡片 (三個頁籤) -->
         <div id="authCard" class="auth-card">
             <div class="auth-tabs">
-                <div class="auth-tab active" id="loginTab" data-i18n="login">登入</div>
-                <div class="auth-tab" id="registerTab" data-i18n="register">註冊</div>
-                <div class="auth-tab" id="permCodeTab" data-i18n="permCode">永久原始碼</div>
-                <div class="auth-tab" id="onceCodeTab" data-i18n="onceCode">一次性原始碼</div>
+                <div class="auth-tab active" id="loginTab">登入</div>
+                <div class="auth-tab" id="permCodeTab">永久原始碼</div>
+                <div class="auth-tab" id="onceCodeTab">一次性原始碼</div>
             </div>
 
-            <!-- 登入表單 (帳號密碼) - 初始值為空 -->
+            <!-- 登入表單 (帳號密碼) -->
             <div id="loginForm" class="auth-form">
-                <h3 data-i18n="loginTitle">帳號密碼登入</h3>
+                <h3>帳號密碼登入</h3>
                 <div class="form-group">
-                    <label data-i18n="username">👤 帳號</label>
+                    <label>👤 帳號</label>
                     <input type="text" class="form-control" id="loginUsername" placeholder="請輸入帳號" value="">
                 </div>
                 <div class="form-group">
-                    <label data-i18n="password">🔑 密碼</label>
+                    <label>🔑 密碼</label>
                     <input type="password" class="form-control" id="loginPassword" placeholder="請輸入密碼" value="">
                 </div>
-                <div id="loginError" class="error-message"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="loginError">帳號或密碼錯誤</span></div>
-                <button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> <span data-i18n="loginBtn">登入</span></button>
+                <div id="loginError" class="error-message"><i class="fas fa-exclamation-triangle"></i> 帳號或密碼錯誤</div>
+                <button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> 登入</button>
             </div>
 
-            <!-- 註冊表單 (職業只有學生) - 初始值為空 -->
-            <div id="registerForm" class="auth-form" style="display: none;">
-                <h3 data-i18n="registerTitle">註冊新帳號</h3>
-                <div class="form-group">
-                    <label data-i18n="username">👤 帳號</label>
-                    <input type="text" class="form-control" id="regUsername" placeholder="請輸入帳號">
-                </div>
-                <div class="form-group">
-                    <label data-i18n="password">🔑 密碼</label>
-                    <input type="password" class="form-control" id="regPassword" placeholder="請輸入密碼">
-                </div>
-                <div class="form-group">
-                    <label data-i18n="occupation">💼 職業</label>
-                    <select class="form-control" id="regOccupation">
-                        <option value="student" data-i18n="student">學生</option>
-                    </select>
-                </div>
-                <div class="student-fields" id="studentFields">
-                    <div class="form-group"><label data-i18n="class">📚 班級</label><input type="text" class="form-control" id="regClass" placeholder="例如 三年一班"></div>
-                    <div class="form-group"><label data-i18n="number">🔢 座號</label><input type="text" class="form-control" id="regNumber" placeholder="例如 12"></div>
-                </div>
-                <div id="registerError" class="error-message"></div>
-                <button class="auth-btn" id="registerBtn"><i class="fas fa-user-plus"></i> <span data-i18n="registerBtn">註冊</span></button>
-            </div>
-
-            <!-- 永久原始碼登入 - 初始值為空 -->
+            <!-- 永久原始碼登入 -->
             <div id="permCodeForm" class="auth-form" style="display: none;">
-                <h3 data-i18n="permCodeTitle">永久原始碼登入</h3>
+                <h3>永久原始碼登入</h3>
                 <div class="form-group">
-                    <label data-i18n="permCodeInput">🔢 請輸入永久原始碼 (數字)</label>
-                    <input type="text" class="form-control" id="permCode" placeholder="例如 100A" value="">
+                    <label>🔢 請輸入永久原始碼 (24位數字)</label>
+                    <input type="text" class="form-control" id="permCode" placeholder="例如 102030405060708090102030" value="">
+                    <small style="color:#94a3b8;">格式：前15碼用戶ID + 中間6碼檔案密碼 + 末3碼使用秒數</small>
                 </div>
-                <div id="permCodeError" class="error-message"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="permCodeError">原始碼無效</span></div>
-                <button class="auth-btn" id="permCodeBtn"><i class="fas fa-key"></i> <span data-i18n="permCodeBtn">登入</span></button>
+                <div id="permCodeError" class="error-message"><i class="fas fa-exclamation-triangle"></i> 原始碼無效</div>
+                <button class="auth-btn" id="permCodeBtn"><i class="fas fa-key"></i> 登入</button>
             </div>
 
-            <!-- 一次性原始碼登入 - 初始值為空 -->
+            <!-- 一次性原始碼登入 -->
             <div id="onceCodeForm" class="auth-form" style="display: none;">
-                <h3 data-i18n="onceCodeTitle">一次性原始碼登入</h3>
+                <h3>一次性原始碼登入</h3>
                 <div class="form-group">
-                    <label data-i18n="onceCodeInput">🔢 請輸入一次性原始碼 (數字)</label>
-                    <input type="text" class="form-control" id="onceCode" placeholder="例如 ONCEA001" value="">
+                    <label>🔢 請輸入一次性原始碼 (9位數字)</label>
+                    <input type="text" class="form-control" id="onceCode" placeholder="例如 123456789" value="">
+                    <small style="color:#94a3b8;">中間3碼為使用秒數，例如 123456789 時間 456 秒</small>
                 </div>
-                <div id="onceCodeError" class="error-message"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="onceCodeError">原始碼無效或已使用</span></div>
-                <button class="auth-btn" id="onceCodeBtn"><i class="fas fa-key"></i> <span data-i18n="onceCodeBtn">登入</span></button>
+                <div id="onceCodeError" class="error-message"><i class="fas fa-exclamation-triangle"></i> 原始碼無效或已使用</div>
+                <button class="auth-btn" id="onceCodeBtn"><i class="fas fa-key"></i> 登入</button>
             </div>
         </div>
 
-        <!-- 主面板 -->
+        <!-- 主面板 (登入後) -->
         <div id="mainPanel" class="main-panel">
             <!-- 左側導航 (可折疊) -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
-                <div class="nav-item active" data-page="home"><i class="fas fa-home"></i><span data-i18n="home">首頁</span></div>
-                <div class="nav-item" data-page="projects"><i class="fas fa-folder"></i><span data-i18n="projects">專案</span></div>
-                <!-- 超級用戶專屬導航 -->
-                <div class="nav-item" data-page="passwordVault" id="passwordVaultNav" style="display: none;"><i class="fas fa-lock"></i><span data-i18n="passwordVault">密碼庫</span></div>
-                <div class="nav-item" data-page="userManagement" id="userManagementNav" style="display: none;"><i class="fas fa-user-cog"></i><span data-i18n="userManagement">用戶管理</span></div>
-                <div class="nav-item" data-page="subProjectAdmin" id="subProjectAdminNav" style="display: none;"><i class="fas fa-layer-group"></i><span>專案管理</span></div>
-                <div class="nav-item" data-page="sourceCodeAdmin" id="sourceCodeAdminNav" style="display: none;"><i class="fas fa-code"></i><span>原始碼管理</span></div>
-                <div class="nav-item" data-page="settings"><i class="fas fa-cog"></i><span data-i18n="settings">設定</span></div>
+                <div class="nav-item active" data-page="files"><i class="fas fa-folder"></i><span>檔案</span></div>
+                <!-- 超級用戶專屬導航 (創造者可見) -->
+                <div class="nav-item" data-page="passwordVault" id="passwordVaultNav" style="display: none;"><i class="fas fa-lock"></i><span>密碼庫</span></div>
+                <div class="nav-item" data-page="permCodeAdmin" id="permCodeAdminNav" style="display: none;"><i class="fas fa-key"></i><span>永久原始碼</span></div>
+                <div class="nav-item" data-page="onceCodeAdmin" id="onceCodeAdminNav" style="display: none;"><i class="fas fa-code"></i><span>一次性原始碼</span></div>
+                <div class="nav-item" data-page="fileAdmin" id="fileAdminNav" style="display: none;"><i class="fas fa-edit"></i><span>檔案管理</span></div>
+                <div class="nav-item" data-page="userManagement" id="userManagementNav" style="display: none;"><i class="fas fa-users-cog"></i><span>用戶管理</span></div>
+                <div class="nav-item" data-page="termsAdmin" id="termsAdminNav" style="display: none;"><i class="fas fa-file-contract"></i><span>條款管理</span></div>
+                <div class="nav-item" data-page="settings"><i class="fas fa-cog"></i><span>設定</span></div>
             </div>
 
             <!-- 右側內容區 (可滑動) -->
-            <div class="content-area" id="contentArea">
-                <!-- 頁面會動態載入 -->
+            <div class="content-area" id="contentArea"></div>
+        </div>
+
+        <!-- 條款同意浮層 -->
+        <div class="terms-modal" id="termsModal">
+            <div class="terms-modal-content">
+                <h2>使用條款</h2>
+                <div class="terms-box" id="termsModalContent">
+                    <p>${termsContent}</p>
+                </div>
+                <div class="terms-modal-buttons">
+                    <button class="btn-disagree" id="termsDisagree">不同意</button>
+                    <button class="btn-agree" id="termsAgree">同意</button>
+                </div>
             </div>
         </div>
     </div>
@@ -711,34 +289,19 @@
 
     <script>
         (function() {
-            // ---------- 語言包 ----------
+            // =========================================================================
+            // 第一部分：語言包 (可修改顯示文字)
+            // 修改方式：直接在下方物件中更改對應的中文或英文文字
+            // =========================================================================
             const i18n = {
                 'zh-TW': {
-                    login: '登入',
-                    register: '註冊',
-                    permCode: '永久原始碼',
-                    onceCode: '一次性原始碼',
-                    loginTitle: '帳號密碼登入',
-                    registerTitle: '註冊新帳號',
-                    permCodeTitle: '永久原始碼登入',
-                    onceCodeTitle: '一次性原始碼登入',
-                    username: '👤 帳號',
-                    password: '🔑 密碼',
-                    occupation: '💼 職業',
-                    student: '學生',
-                    class: '📚 班級',
-                    number: '🔢 座號',
-                    loginBtn: '登入',
-                    registerBtn: '註冊',
-                    permCodeBtn: '登入',
-                    onceCodeBtn: '登入',
-                    loginError: '帳號或密碼錯誤',
-                    permCodeError: '原始碼無效',
-                    onceCodeError: '原始碼無效或已使用',
-                    home: '首頁',
-                    projects: '專案',
+                    files: '檔案',
                     passwordVault: '密碼庫',
+                    permCodeAdmin: '永久原始碼',
+                    onceCodeAdmin: '一次性原始碼',
+                    fileAdmin: '檔案管理',
                     userManagement: '用戶管理',
+                    termsAdmin: '條款管理',
                     settings: '設定',
                     welcome: '歡迎',
                     role_observer: '觀察者',
@@ -746,30 +309,28 @@
                     role_manager: '管理者',
                     role_creator: '創造者',
                     accountId: '帳號ID',
-                    quickCommand: '快速指令',
-                    permSource: '永久原始碼',
-                    onceSource: '一次性原始碼',
-                    execute: '執行',
-                    unlockSuccess: '解鎖成功',
-                    remaining: '剩餘時間',
-                    seconds: '秒',
-                    download: '下載檔案',
-                    unlockWithSource: '原始碼解鎖',
-                    unlockWithPassword: '專案密碼解鎖',
-                    enterSource: '請輸入原始碼',
-                    enterPassword: '請輸入密碼',
-                    confirm: '確認',
-                    cancel: '取消',
                     permissionDenied: '⛔ 權限不足',
                     onlyCreator: '只有創造者可以查看此頁面',
-                    project: '專案',
-                    person: '人物',
-                    name: '姓名',
-                    occupationLabel: '職業',
-                    classLabel: '班級',
-                    numberLabel: '座號',
-                    email: '電子郵件',
-                    notFilled: '未填寫',
+                    project: '檔案',
+                    details: '詳情',
+                    back: '返回',
+                    download: '下載檔案',
+                    website: '前往網站',
+                    remaining: '剩餘時間',
+                    seconds: '秒',
+                    expired: '已過期',
+                    saveChanges: '儲存變更',
+                    edit: '編輯',
+                    delete: '刪除',
+                    logout: '登出',
+                    required: '必填',
+                    cannotRegister: '不可註冊',
+                    userExists: '帳號已存在',
+                    registerSuccess: '註冊成功，請登入',
+                    loginError: '帳號或密碼錯誤',
+                    permCodeError: '原始碼無效',
+                    onceCodeError: '原始碼無效或已使用',
+                    checkComplete: '已是最新版本',
                     settingsTitle: '設定',
                     accountName: '帳號名稱',
                     passwordLabel: '密碼',
@@ -779,51 +340,17 @@
                     dark: '深色',
                     version: '版本',
                     checkUpdate: '檢查更新',
-                    logout: '登出',
-                    back: '返回',
-                    details: '詳情',
-                    expired: '已過期',
-                    codeFor: '此原始碼對應的是',
-                    noPassword: '此專案無密碼設定',
-                    wrongPassword: '密碼錯誤',
-                    required: '必填',
-                    cannotRegister: '不可註冊',
-                    userExists: '帳號已存在',
-                    classNumberRequired: '請填寫班級與座號',
-                    registerSuccess: '註冊成功，請登入',
-                    saveChanges: '儲存變更',
-                    edit: '編輯',
-                    delete: '刪除',
-                    loginTime: '登入時間',
-                    action: '操作',
-                    checkComplete: '已是最新版本',
+                    termsTitle: '網站條款',
+                    termsContent: '歡迎使用本系統。使用前請詳閱以下條款...', // 預設條款內容
                 },
                 'en': {
-                    login: 'Login',
-                    register: 'Register',
-                    permCode: 'Permanent Code',
-                    onceCode: 'One-time Code',
-                    loginTitle: 'Login with Account',
-                    registerTitle: 'Register',
-                    permCodeTitle: 'Permanent Code Login',
-                    onceCodeTitle: 'One-time Code Login',
-                    username: '👤 Username',
-                    password: '🔑 Password',
-                    occupation: '💼 Occupation',
-                    student: 'Student',
-                    class: '📚 Class',
-                    number: '🔢 Number',
-                    loginBtn: 'Login',
-                    registerBtn: 'Register',
-                    permCodeBtn: 'Login',
-                    onceCodeBtn: 'Login',
-                    loginError: 'Invalid username or password',
-                    permCodeError: 'Invalid code',
-                    onceCodeError: 'Invalid or used code',
-                    home: 'Home',
-                    projects: 'Projects',
+                    files: 'Files',
                     passwordVault: 'Password Vault',
+                    permCodeAdmin: 'Permanent Codes',
+                    onceCodeAdmin: 'One-time Codes',
+                    fileAdmin: 'File Management',
                     userManagement: 'User Management',
+                    termsAdmin: 'Terms Management',
                     settings: 'Settings',
                     welcome: 'Welcome',
                     role_observer: 'Observer',
@@ -831,30 +358,28 @@
                     role_manager: 'Manager',
                     role_creator: 'Creator',
                     accountId: 'Account ID',
-                    quickCommand: 'Quick Command',
-                    permSource: 'Permanent Code',
-                    onceSource: 'One-time Code',
-                    execute: 'Execute',
-                    unlockSuccess: 'Unlock successful',
-                    remaining: 'Remaining',
-                    seconds: 'sec',
-                    download: 'Download',
-                    unlockWithSource: 'Unlock with Code',
-                    unlockWithPassword: 'Unlock with Password',
-                    enterSource: 'Enter code',
-                    enterPassword: 'Enter password',
-                    confirm: 'Confirm',
-                    cancel: 'Cancel',
                     permissionDenied: '⛔ Permission denied',
                     onlyCreator: 'Only creator can view this page',
-                    project: 'Project',
-                    person: 'Person',
-                    name: 'Name',
-                    occupationLabel: 'Occupation',
-                    classLabel: 'Class',
-                    numberLabel: 'Number',
-                    email: 'Email',
-                    notFilled: 'Not filled',
+                    project: 'File',
+                    details: 'Details',
+                    back: 'Back',
+                    download: 'Download',
+                    website: 'Visit Website',
+                    remaining: 'Remaining',
+                    seconds: 'sec',
+                    expired: 'Expired',
+                    saveChanges: 'Save Changes',
+                    edit: 'Edit',
+                    delete: 'Delete',
+                    logout: 'Logout',
+                    required: 'Required',
+                    cannotRegister: 'Cannot register',
+                    userExists: 'Username exists',
+                    registerSuccess: 'Registration successful, please login',
+                    loginError: 'Invalid username or password',
+                    permCodeError: 'Invalid code',
+                    onceCodeError: 'Invalid or used code',
+                    checkComplete: 'Up to date',
                     settingsTitle: 'Settings',
                     accountName: 'Account Name',
                     passwordLabel: 'Password',
@@ -864,24 +389,8 @@
                     dark: 'Dark',
                     version: 'Version',
                     checkUpdate: 'Check Update',
-                    logout: 'Logout',
-                    back: 'Back',
-                    details: 'Details',
-                    expired: 'Expired',
-                    codeFor: 'This code is for',
-                    noPassword: 'No password set',
-                    wrongPassword: 'Wrong password',
-                    required: 'Required',
-                    cannotRegister: 'Cannot register',
-                    userExists: 'Username exists',
-                    classNumberRequired: 'Please fill class and number',
-                    registerSuccess: 'Registration successful, please login',
-                    saveChanges: 'Save Changes',
-                    edit: 'Edit',
-                    delete: 'Delete',
-                    loginTime: 'Login Time',
-                    action: 'Action',
-                    checkComplete: 'Up to date',
+                    termsTitle: 'Terms of Use',
+                    termsContent: 'Welcome to our system. Please read the following terms...',
                 }
             };
 
@@ -894,7 +403,7 @@
             function applyLanguage() {
                 document.querySelectorAll('[data-i18n]').forEach(el => {
                     const key = el.getAttribute('data-i18n');
-                    el.textContent = t(key);
+                    if (key) el.textContent = t(key);
                 });
             }
 
@@ -903,7 +412,7 @@
                 localStorage.setItem('lang', lang);
                 applyLanguage();
                 if (currentUser.username) {
-                    const activePage = document.querySelector('.nav-item.active')?.dataset.page || 'home';
+                    const activePage = document.querySelector('.nav-item.active')?.dataset.page || 'files';
                     renderPage(activePage);
                 }
             }
@@ -943,34 +452,39 @@
             const authCard = document.getElementById('authCard');
             const mainPanel = document.getElementById('mainPanel');
             const loginTab = document.getElementById('loginTab');
-            const registerTab = document.getElementById('registerTab');
             const permCodeTab = document.getElementById('permCodeTab');
             const onceCodeTab = document.getElementById('onceCodeTab');
             const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
             const permCodeForm = document.getElementById('permCodeForm');
             const onceCodeForm = document.getElementById('onceCodeForm');
             const loginBtn = document.getElementById('loginBtn');
-            const registerBtn = document.getElementById('registerBtn');
             const permCodeBtn = document.getElementById('permCodeBtn');
             const onceCodeBtn = document.getElementById('onceCodeBtn');
             const loginError = document.getElementById('loginError');
-            const registerError = document.getElementById('registerError');
             const permCodeError = document.getElementById('permCodeError');
             const onceCodeError = document.getElementById('onceCodeError');
-            const regOccupation = document.getElementById('regOccupation');
-            const studentFields = document.getElementById('studentFields');
             const toast = document.getElementById('toast');
             const navItems = document.querySelectorAll('.nav-item');
             const contentArea = document.getElementById('contentArea');
             const passwordVaultNav = document.getElementById('passwordVaultNav');
+            const permCodeAdminNav = document.getElementById('permCodeAdminNav');
+            const onceCodeAdminNav = document.getElementById('onceCodeAdminNav');
+            const fileAdminNav = document.getElementById('fileAdminNav');
             const userManagementNav = document.getElementById('userManagementNav');
-            const subProjectAdminNav = document.getElementById('subProjectAdminNav');
-            const sourceCodeAdminNav = document.getElementById('sourceCodeAdminNav');
+            const termsAdminNav = document.getElementById('termsAdminNav');
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebarToggle');
             const deviceSelector = document.getElementById('deviceSelector');
             const deviceBtns = document.querySelectorAll('.device-btn');
+
+            // 條款浮層
+            const termsModal = document.getElementById('termsModal');
+            const termsModalContent = document.getElementById('termsModalContent');
+            const termsAgree = document.getElementById('termsAgree');
+            const termsDisagree = document.getElementById('termsDisagree');
+
+            // 儲存登入成功後要顯示的目標頁面（檔案列表或特定檔案）
+            let pendingTargetLetter = null;
 
             // 設備切換
             deviceBtns.forEach(btn => {
@@ -1007,9 +521,9 @@
             // 當前登入用戶資訊
             let currentUser = {
                 username: null,
-                role: null,
+                role: null,          // 'observer', 'user', 'manager', 'creator'
                 accountId: null,
-                unlockedProjects: {}
+                unlockedFiles: {}     // 解鎖的檔案及過期時間
             };
 
             // 用戶登入記錄
@@ -1019,7 +533,7 @@
             let version = (() => {
                 const stored = localStorage.getItem('version');
                 if (stored) return stored;
-                return '1.0.0'; // 預設版本
+                return '1.0.0';
             })();
 
             function setVersion(newVersion) {
@@ -1035,143 +549,124 @@
                 setVersion(parts.join('.'));
             }
 
-            // ========== 從 localStorage 讀取資料 ==========
+            // =========================================================================
+            // 第二部分：從 localStorage 讀取資料 (所有可修改的資料都在這裡)
+            // 修改方式：直接更改下方的預設值，或透過管理介面修改後自動儲存
+            // =========================================================================
             function loadFromStorage(key, defaultValue) {
                 const stored = localStorage.getItem(key);
                 return stored ? JSON.parse(stored) : defaultValue;
             }
 
-            // 使用者資料庫 (已整合人物資料，並加入超級用戶 0)
-            let users = loadFromStorage('users', {
-                user1: { password: 'pass', role: 'observer', accountId: 'OBS-123ABC', name: '張三', occupation: '學生', class: '三年一班', number: '12', email: 'zhang@school.com' },
-                admin: { password: 'admin', role: 'manager', accountId: 'MGR-456DEF', name: '李四', occupation: '老師', class: '', number: '', email: 'li@school.com' },
-                '0': { password: '', role: 'creator', accountId: 'CREATOR-0', name: '超級用戶', occupation: '管理員', class: '', number: '', email: 'creator@system.com' }
+            // ---------- 使用者帳號密碼 (包含100位預設用戶) ----------
+            // 格式: "帳號": { password: "密碼", role: "角色", accountId: "ID", name: "姓名", occupation: "職業", class: "班級", number: "座號", email: "電子郵件" }
+            let users = loadFromStorage('users', (() => {
+                const defaultUsers = {
+                    admin: { password: 'admin', role: 'manager', accountId: 'MGR-456DEF', name: '管理員', occupation: '管理者', class: '', number: '', email: 'admin@system.com' },
+                    '0': { password: '', role: 'creator', accountId: 'CREATOR-0', name: '超級用戶', occupation: '管理員', class: '', number: '', email: 'creator@system.com' }
+                };
+                // 生成100位預設用戶 (A001 ~ A100)
+                for (let i = 1; i <= 100; i++) {
+                    let username = 'A' + String(i).padStart(3, '0'); // A001, A002, ...
+                    let password = 'pass' + String(i).padStart(3, '0'); // pass001, pass002, ...
+                    let accountId = 'OBS-' + String(i).padStart(6, '0');
+                    let name = '用戶' + i;
+                    let occupation = i % 2 === 0 ? '學生' : '老師';
+                    let classNum = '三年' + (i % 6 + 1) + '班';
+                    let number = String(i);
+                    let email = username.toLowerCase() + '@school.com';
+                    defaultUsers[username] = {
+                        password: password,
+                        role: 'observer',
+                        accountId: accountId,
+                        name: name,
+                        occupation: occupation,
+                        class: classNum,
+                        number: number,
+                        email: email
+                    };
+                }
+                return defaultUsers;
+            })());
+
+            // ---------- 檔案密碼 (每個字母對應一個6碼密碼) ----------
+            // 格式: 字母: "6位數字"
+            let filePasswords = loadFromStorage('filePasswords', {
+                A: "090102", B: "090103", C: "090104", D: "090105", E: "090106",
+                F: "090107", G: "090108", H: "090109", I: "090110", J: "090111",
+                K: "090112", L: "090113", M: "090114", N: "090115", O: "090116",
+                P: "090117", Q: "090118", R: "090119", S: "090120", T: "090121",
+                U: "090122", V: "090123", W: "090124", X: "090125", Y: "090126", Z: "090127"
             });
 
-            // 永久原始碼
-            let permSourceCodes = loadFromStorage('permSourceCodes', {
-                "100A": { letter: "A", expirySec: 100, role: 'manager', allowedUsers: [] },
-                "200B": { letter: "B", expirySec: 200, role: 'manager', allowedUsers: [] },
-                "300C": { letter: "C", expirySec: 300, role: 'manager', allowedUsers: [] },
-                "400D": { letter: "D", expirySec: 400, role: 'manager', allowedUsers: [] },
-                "500E": { letter: "E", expirySec: 500, role: 'manager', allowedUsers: [] },
-                "600F": { letter: "F", expirySec: 600, role: 'manager', allowedUsers: [] },
-                "700G": { letter: "G", expirySec: 700, role: 'manager', allowedUsers: [] },
-                "800H": { letter: "H", expirySec: 800, role: 'manager', allowedUsers: [] },
-                "900I": { letter: "I", expirySec: 900, role: 'manager', allowedUsers: [] },
-                "101J": { letter: "J", expirySec: 101, role: 'manager', allowedUsers: [] },
-                "202K": { letter: "K", expirySec: 202, role: 'manager', allowedUsers: [] },
-                "303L": { letter: "L", expirySec: 303, role: 'manager', allowedUsers: [] },
-                "404M": { letter: "M", expirySec: 404, role: 'manager', allowedUsers: [] },
-                "505N": { letter: "N", expirySec: 505, role: 'manager', allowedUsers: [] },
-                "606O": { letter: "O", expirySec: 606, role: 'manager', allowedUsers: [] },
-                "707P": { letter: "P", expirySec: 707, role: 'manager', allowedUsers: [] },
-                "808Q": { letter: "Q", expirySec: 808, role: 'manager', allowedUsers: [] },
-                "909R": { letter: "R", expirySec: 909, role: 'manager', allowedUsers: [] },
-                "111S": { letter: "S", expirySec: 111, role: 'manager', allowedUsers: [] },
-                "222T": { letter: "T", expirySec: 222, role: 'manager', allowedUsers: [] },
-                "333U": { letter: "U", expirySec: 333, role: 'manager', allowedUsers: [] },
-                "444V": { letter: "V", expirySec: 444, role: 'manager', allowedUsers: [] },
-                "555W": { letter: "W", expirySec: 555, role: 'manager', allowedUsers: [] },
-                "666X": { letter: "X", expirySec: 666, role: 'manager', allowedUsers: [] },
-                "777Y": { letter: "Y", expirySec: 777, role: 'manager', allowedUsers: [] },
-                "888Z": { letter: "Z", expirySec: 888, role: 'manager', allowedUsers: [] }
-            });
+            // ---------- 永久原始碼記錄 (用於顯示，實際登入時動態驗證) ----------
+            // 格式: 陣列，每個物件包含 userId(15碼), fileLetter(字母), expirySec(秒數)
+            // 程式會自動生成完整24碼原始碼 (userId + filePasswords[fileLetter] + expirySec)
+            let permCodeRecords = loadFromStorage('permCodeRecords', (() => {
+                const records = [];
+                for (let i = 1; i <= 100; i++) {
+                    let userId = String(i).padStart(15, '0'); // 15位用戶ID
+                    let fileLetter = String.fromCharCode(65 + (i-1)%26); // A-Z循環
+                    let expirySec = 300; // 預設300秒
+                    records.push({
+                        userId: userId,
+                        fileLetter: fileLetter,
+                        expirySec: expirySec
+                    });
+                }
+                return records;
+            })());
 
-            // 一次性原始碼
-            let onceSourceCodes = loadFromStorage('onceSourceCodes', {
-                "ONCEA001": { letter: "A", expirySec: 1, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEB002": { letter: "B", expirySec: 2, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEC003": { letter: "C", expirySec: 3, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCED004": { letter: "D", expirySec: 4, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEE005": { letter: "E", expirySec: 5, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEF006": { letter: "F", expirySec: 6, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEG007": { letter: "G", expirySec: 7, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEH008": { letter: "H", expirySec: 8, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEI009": { letter: "I", expirySec: 9, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEJ010": { letter: "J", expirySec: 10, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEK011": { letter: "K", expirySec: 11, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEL012": { letter: "L", expirySec: 12, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEM013": { letter: "M", expirySec: 13, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEN014": { letter: "N", expirySec: 14, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEO015": { letter: "O", expirySec: 15, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEP016": { letter: "P", expirySec: 16, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEQ017": { letter: "Q", expirySec: 17, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCER018": { letter: "R", expirySec: 18, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCES019": { letter: "S", expirySec: 19, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCET020": { letter: "T", expirySec: 20, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEU021": { letter: "U", expirySec: 21, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEV022": { letter: "V", expirySec: 22, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEW023": { letter: "W", expirySec: 23, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEX024": { letter: "X", expirySec: 24, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEY025": { letter: "Y", expirySec: 25, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null },
-                "ONCEZ026": { letter: "Z", expirySec: 26, used: false, role: 'user', allowedUsers: [], maxUses: 1, usedCount: 0, expiryDate: null }
-            });
+            // ---------- 一次性原始碼 (可新增/編輯/刪除) ----------
+            // 格式: "9碼數字": { fileLetter: "字母", used: false, expirySec: 秒數 }
+            let onceCodes = loadFromStorage('onceCodes', (() => {
+                const codes = {};
+                // 預設9個一次性原始碼
+                const defaults = [
+                    { code: "123456789", fileLetter: "A", expirySec: 456 },
+                    { code: "234567890", fileLetter: "B", expirySec: 567 },
+                    { code: "345678901", fileLetter: "C", expirySec: 678 },
+                    { code: "456789012", fileLetter: "D", expirySec: 789 },
+                    { code: "567890123", fileLetter: "E", expirySec: 890 },
+                    { code: "678901234", fileLetter: "F", expirySec: 901 },
+                    { code: "789012345", fileLetter: "G", expirySec: 123 },
+                    { code: "890123456", fileLetter: "H", expirySec: 234 },
+                    { code: "901234567", fileLetter: "I", expirySec: 345 },
+                ];
+                defaults.forEach(item => {
+                    codes[item.code] = { fileLetter: item.fileLetter, used: false, expirySec: item.expirySec };
+                });
+                return codes;
+            })());
 
-            // 專案密碼
-            let projectPasswords = loadFromStorage('projectPasswords', {
-                A: "123030", B: "456060", C: "789090", D: "111120", E: "222150",
-                F: "333180", G: "444210", H: "555240", I: "666270", J: "777300",
-                K: "888330", L: "999360", M: "121390", N: "232420", O: "343450",
-                P: "454480", Q: "565510", R: "676540", S: "787570", T: "898600",
-                U: "909630", V: "101660", W: "202690", X: "303720", Y: "404750", Z: "505780"
-            });
+            // ---------- 檔案資訊 (A-Z) ----------
+            // 格式: 字母: { name: "名稱", desc: "描述", downloadUrl: "下載連結", imageUrl: "圖片網址", websiteUrl: "網站連結" }
+            let fileData = loadFromStorage('fileData', (() => {
+                const data = {};
+                for (let i = 65; i <= 90; i++) {
+                    let letter = String.fromCharCode(i);
+                    data[letter] = {
+                        name: letter + ' 檔案',
+                        desc: '請編輯檔案描述',
+                        downloadUrl: '#',
+                        imageUrl: 'https://picsum.photos/200/150?random=' + i,
+                        websiteUrl: '#'
+                    };
+                }
+                return data;
+            })());
 
-            // 專案資料
-            let projectData = loadFromStorage('projectData', {
-                A: { name: 'A 智慧城市', desc: 'AI 城市管理平台', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=1', subProjects: [] },
-                B: { name: 'B 區塊鏈金融', desc: '去中心化金融應用', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=2', subProjects: [] },
-                C: { name: 'C 物聯網', desc: '工業 4.0 解決方案', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=3', subProjects: [] },
-                D: { name: 'D 大數據', desc: '資料分析平台', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=4', subProjects: [] },
-                E: { name: 'E 雲端運算', desc: '混合雲管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=5', subProjects: [] },
-                F: { name: 'F 邊緣計算', desc: '邊緣節點管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=6', subProjects: [] },
-                G: { name: 'G 5G 通訊', desc: '5G 網路切片', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=7', subProjects: [] },
-                H: { name: 'H 資安防護', desc: '零信任架構', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=8', subProjects: [] },
-                I: { name: 'I 數位分身', desc: '虛擬工廠', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=9', subProjects: [] },
-                J: { name: 'J 量子運算', desc: '量子模擬', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=10', subProjects: [] },
-                K: { name: 'K 機器學習', desc: 'MLOps 平台', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=11', subProjects: [] },
-                L: { name: 'L 自然語言', desc: '對話式 AI', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=12', subProjects: [] },
-                M: { name: 'M 電腦視覺', desc: '影像辨識', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=13', subProjects: [] },
-                N: { name: 'N 推薦系統', desc: '個人化推薦', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=14', subProjects: [] },
-                O: { name: 'O 自動駕駛', desc: '感知融合', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=15', subProjects: [] },
-                P: { name: 'P 智慧醫療', desc: '遠距診療', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=16', subProjects: [] },
-                Q: { name: 'Q 智慧農業', desc: '精準灌溉', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=17', subProjects: [] },
-                R: { name: 'R 智慧零售', desc: '庫存管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=18', subProjects: [] },
-                S: { name: 'S 智慧製造', desc: '預測維護', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=19', subProjects: [] },
-                T: { name: 'T 智慧電網', desc: '能源調度', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=20', subProjects: [] },
-                U: { name: 'U 智慧家居', desc: '物聯網控制', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=21', subProjects: [] },
-                V: { name: 'V 智慧辦公', desc: '自動化流程', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=22', subProjects: [] },
-                W: { name: 'W 智慧物流', desc: '路徑優化', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=23', subProjects: [] },
-                X: { name: 'X 智慧交通', desc: '車流預測', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=24', subProjects: [] },
-                Y: { name: 'Y 智慧環保', desc: '汙染監測', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=25', subProjects: [] },
-                Z: { name: 'Z 智慧能源', desc: '再生能源管理', downloadUrl: '#', imageUrl: 'https://picsum.photos/200/150?random=26', subProjects: [] },
-            });
+            // ---------- 網站條款內容 (可編輯) ----------
+            let termsContent = loadFromStorage('termsContent', t('termsContent'));
 
             // ========== 儲存至 localStorage 的輔助函數 ==========
-            function saveUsers() { 
-                localStorage.setItem('users', JSON.stringify(users)); 
-                incVersion(false, false, true); // 用戶資料修改 → patch +1
-            }
-            function savePermSourceCodes() { 
-                localStorage.setItem('permSourceCodes', JSON.stringify(permSourceCodes)); 
-                incVersion(false, true, false); // 專案相關資料修改 → minor +1 (視為專案層級)
-            }
-            function saveOnceSourceCodes() { 
-                localStorage.setItem('onceSourceCodes', JSON.stringify(onceSourceCodes)); 
-                incVersion(false, true, false);
-            }
-            function saveProjectPasswords() { 
-                localStorage.setItem('projectPasswords', JSON.stringify(projectPasswords)); 
-                incVersion(false, true, false);
-            }
-            function saveProjectData() { 
-                localStorage.setItem('projectData', JSON.stringify(projectData)); 
-                incVersion(false, true, false);
-            }
-            function saveUserLogs() { 
-                localStorage.setItem('userLogs', JSON.stringify(userLogs)); 
-                // 日誌不影響版本
-            }
+            function saveUsers() { localStorage.setItem('users', JSON.stringify(users)); incVersion(false, false, true); }
+            function saveFilePasswords() { localStorage.setItem('filePasswords', JSON.stringify(filePasswords)); incVersion(false, true, false); }
+            function savePermCodeRecords() { localStorage.setItem('permCodeRecords', JSON.stringify(permCodeRecords)); }
+            function saveOnceCodes() { localStorage.setItem('onceCodes', JSON.stringify(onceCodes)); incVersion(false, true, false); }
+            function saveFileData() { localStorage.setItem('fileData', JSON.stringify(fileData)); incVersion(false, true, false); }
+            function saveTermsContent() { localStorage.setItem('termsContent', termsContent); }
+            function saveUserLogs() { localStorage.setItem('userLogs', JSON.stringify(userLogs)); }
 
             // ========== 輔助函數 ==========
             function showToast(msg, duration = 2000) {
@@ -1196,24 +691,24 @@
                 }
             }
 
-            // 超級用戶自動解鎖所有專案
+            // 檢查檔案是否解鎖且未過期
             function isUnlocked(letter) {
                 if (currentUser.role === 'creator') return true;
-                if (!currentUser.unlockedProjects) return false;
-                const data = currentUser.unlockedProjects[letter];
+                if (!currentUser.unlockedFiles) return false;
+                const data = currentUser.unlockedFiles[letter];
                 if (!data) return false;
                 if (data.expiry && Date.now() > data.expiry) {
-                    delete currentUser.unlockedProjects[letter];
+                    delete currentUser.unlockedFiles[letter];
                     return false;
                 }
                 return true;
             }
 
-            function unlockProject(letter, expirySec) {
+            function unlockFile(letter, expirySec) {
                 if (currentUser.role === 'creator') return;
-                if (!currentUser.unlockedProjects) currentUser.unlockedProjects = {};
+                if (!currentUser.unlockedFiles) currentUser.unlockedFiles = {};
                 const expiry = Date.now() + expirySec * 1000;
-                currentUser.unlockedProjects[letter] = { expiry };
+                currentUser.unlockedFiles[letter] = { expiry };
             }
 
             function generateAccountId(username, role) {
@@ -1222,16 +717,42 @@
             }
 
             function logUserLogin(username, role, accountId) {
-                userLogs.push({
-                    username,
-                    role,
-                    accountId,
-                    loginTime: new Date().toLocaleString()
-                });
+                userLogs.push({ username, role, accountId, loginTime: new Date().toLocaleString() });
                 saveUserLogs();
             }
 
-            // ========== 登入成功處理 ==========
+            // 顯示條款浮層，等待使用者同意
+            function showTermsModal() {
+                // 更新條款內容
+                termsModalContent.innerHTML = `<p>${termsContent.replace(/\n/g, '<br>')}</p>`;
+                termsModal.classList.add('show');
+            }
+
+            // 條款同意處理
+            termsAgree.addEventListener('click', () => {
+                termsModal.classList.remove('show');
+                // 同意後顯示主面板，並導向目標頁面
+                authCard.style.display = 'none';
+                mainPanel.style.display = 'flex';
+                if (pendingTargetLetter) {
+                    navItems.forEach(n => n.classList.remove('active'));
+                    document.querySelector('[data-page="files"]').classList.add('active');
+                    showFileDetail(pendingTargetLetter);
+                } else {
+                    navItems.forEach(n => n.classList.remove('active'));
+                    document.querySelector('[data-page="files"]').classList.add('active');
+                    renderPage('files');
+                }
+                pendingTargetLetter = null;
+            });
+
+            // 條款不同意處理
+            termsDisagree.addEventListener('click', () => {
+                termsModal.classList.remove('show');
+                logout();
+            });
+
+            // ========== 登入成功處理 (修改版：只記錄用戶資訊，顯示條款，不顯示主面板) ==========
             function loginSuccess(username, role, accountId, targetLetter = null) {
                 currentUser.username = username;
                 currentUser.role = role;
@@ -1241,558 +762,474 @@
 
                 const isCreator = (role === 'creator');
                 passwordVaultNav.style.display = isCreator ? 'flex' : 'none';
+                permCodeAdminNav.style.display = isCreator ? 'flex' : 'none';
+                onceCodeAdminNav.style.display = isCreator ? 'flex' : 'none';
+                fileAdminNav.style.display = isCreator ? 'flex' : 'none';
                 userManagementNav.style.display = isCreator ? 'flex' : 'none';
-                subProjectAdminNav.style.display = isCreator ? 'flex' : 'none';
-                sourceCodeAdminNav.style.display = isCreator ? 'flex' : 'none';
+                termsAdminNav.style.display = isCreator ? 'flex' : 'none';
                 deviceSelector.style.display = 'flex';
 
+                // 先隱藏登入卡片，但主面板先不顯示
                 authCard.style.display = 'none';
-                mainPanel.style.display = 'flex';
+                // 記錄要導向的目標
+                pendingTargetLetter = targetLetter;
 
-                navItems.forEach(item => {
-                    item.classList.remove('active');
-                    item.addEventListener('click', (e) => {
+                // 顯示條款浮層
+                showTermsModal();
+
+                // 原本的導航事件仍然需要綁定，但等同意後才生效
+                sidebar.addEventListener('click', (e) => {
+                    const target = e.target.closest('.nav-item');
+                    if (!target) return;
+                    const page = target.dataset.page;
+                    if (page) {
                         navItems.forEach(n => n.classList.remove('active'));
-                        item.classList.add('active');
-                        renderPage(item.dataset.page);
-                    });
+                        target.classList.add('active');
+                        // 如果已經同意條款且主面板已顯示，才渲染頁面
+                        if (mainPanel.style.display === 'flex') {
+                            renderPage(page);
+                        }
+                    }
                 });
-
-                if (targetLetter) {
-                    navItems.forEach(n => n.classList.remove('active'));
-                    document.querySelector('[data-page="projects"]').classList.add('active');
-                    showProjectDetail(targetLetter);
-                } else {
-                    navItems.forEach(n => n.classList.remove('active'));
-                    document.querySelector('[data-page="home"]').classList.add('active');
-                    renderPage('home');
-                }
-
-                showToast(`${t('welcome')}，${username} (${t('role_' + role)})`);
             }
 
             // ========== 渲染頁面 ==========
             function renderPage(page) {
                 let html = '';
-                if (page === 'home') {
+                if (page === 'files') {
                     html = `<div class="page-card">
-                        <div class="page-title"><i class="fas fa-home"></i> ${t('home')}</div>
-                        <p>${t('welcome')}，${currentUser.username} (${t('role_' + currentUser.role)})</p>
-                        <p>${t('accountId')}：${currentUser.accountId}</p>
-                        <hr style="margin:20px 0; border-color:#2d3f5e;">
-                        <h3>${t('quickCommand')}</h3>
-                        <div class="source-type" style="margin-top:15px;">
-                            <div class="source-type-btn active" id="homePermBtn">${t('permSource')}</div>
-                            <div class="source-type-btn" id="homeOnceBtn">${t('onceSource')}</div>
-                        </div>
-                        <div class="source-input-group">
-                            <input type="text" id="homeSourceCode" placeholder="${t('enterSource')}">
-                            <button id="homeUnlockBtn">${t('execute')}</button>
-                        </div>
-                        <div id="homeSourceMsg" style="color:#f87171; margin-top:10px;"></div>
-                    </div>`;
-                    setTimeout(() => {
-                        let homeSourceType = 'permanent';
-                        document.getElementById('homePermBtn').addEventListener('click', function() {
-                            document.getElementById('homePermBtn').classList.add('active');
-                            document.getElementById('homeOnceBtn').classList.remove('active');
-                            homeSourceType = 'permanent';
-                        });
-                        document.getElementById('homeOnceBtn').addEventListener('click', function() {
-                            document.getElementById('homeOnceBtn').classList.add('active');
-                            document.getElementById('homePermBtn').classList.remove('active');
-                            homeSourceType = 'once';
-                        });
-                        const homeUnlockBtn = document.getElementById('homeUnlockBtn');
-                        homeUnlockBtn.addEventListener('click', function() {
-                            setButtonLoading(this, true);
-                            let code = document.getElementById('homeSourceCode').value.trim();
-                            let source;
-                            if (homeSourceType === 'permanent') {
-                                source = permSourceCodes[code];
-                            } else {
-                                source = onceSourceCodes[code];
-                            }
-                            let msgDiv = document.getElementById('homeSourceMsg');
-                            setTimeout(() => {
-                                setButtonLoading(homeUnlockBtn, false);
-                                if (!source) {
-                                    msgDiv.textContent = '❌ ' + t('permCodeError');
-                                    return;
-                                }
-                                if (homeSourceType === 'once' && source.used) {
-                                    msgDiv.textContent = '❌ ' + t('onceCodeError');
-                                    return;
-                                }
-                                if (homeSourceType === 'once') {
-                                    source.used = true;
-                                    saveOnceSourceCodes();
-                                }
-                                unlockProject(source.letter, source.expirySec);
-                                showToast(`🔓 ${t('unlockSuccess')} (${source.expirySec}${t('seconds')})`);
-                                msgDiv.textContent = '✅ ' + t('unlockSuccess');
-                            }, 500);
-                        });
-                    }, 0);
-                } else if (page === 'projects') {
-                    html = `<div class="page-card">
-                        <div class="page-title"><i class="fas fa-folder"></i> ${t('projects')}</div>
+                        <div class="page-title"><i class="fas fa-folder"></i> 所有檔案</div>
                         <div class="project-grid" id="projectGrid">`;
                     for (let i = 65; i <= 90; i++) {
                         let letter = String.fromCharCode(i);
                         let unlocked = isUnlocked(letter);
-                        let proj = projectData[letter] || { name: letter+' '+t('project'), desc: '' };
+                        let file = fileData[letter] || { name: letter+' 檔案', desc: '' };
                         html += `<div class="project-card ${unlocked ? 'unlocked' : 'locked'}" data-letter="${letter}">
                             <div class="letter">${letter}</div>
-                            <div class="name">${unlocked ? proj.name : ''}</div>
+                            <div class="name">${unlocked ? file.name : ''}</div>
                             <div class="lock-icon"><i class="fas ${unlocked ? 'fa-lock-open' : 'fa-lock'}"></i></div>
                         </div>`;
                     }
-                    html += `</div></div>`;
-                    setTimeout(() => {
-                        document.querySelectorAll('.project-card').forEach(card => {
-                            card.addEventListener('click', () => {
-                                let letter = card.dataset.letter;
-                                showProjectDetail(letter);
-                            });
+                    html += `</div>`;
+                    // 不再在檔案列表下方顯示條款，因為條款已改為浮層
+                    html += `</div>`;
+                    contentArea.innerHTML = html;
+                    document.querySelectorAll('.project-card').forEach(card => {
+                        card.addEventListener('click', () => {
+                            let letter = card.dataset.letter;
+                            showFileDetail(letter);
                         });
-                    }, 0);
+                    });
                 } else if (page === 'passwordVault') {
                     if (currentUser.role !== 'creator') {
                         html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
-                    } else {
-                        html = `<div class="page-card">
-                            <div class="page-title"><i class="fas fa-lock"></i> ${t('passwordVault')}</div>
-                            <table class="password-table">
-                                <thead><tr><th>字母</th><th>密碼</th><th>操作</th></tr></thead>
-                                <tbody id="passwordTableBody">`;
-                        for (let i = 65; i <= 90; i++) {
-                            let letter = String.fromCharCode(i);
-                            let pwd = projectPasswords[letter] || '';
-                            html += `<tr>
-                                <td>${letter}</td>
-                                <td><input type="text" id="pwd-${letter}" value="${pwd}" placeholder="密碼"></td>
-                                <td><button class="auth-btn save-btn" style="padding:5px 10px;" onclick="updatePassword('${letter}')">${t('saveChanges')}</button></td>
-                            </tr>`;
-                        }
-                        html += `</tbody></table></div>`;
-                        setTimeout(() => {
-                            window.updatePassword = function(letter) {
-                                let newPwd = document.getElementById(`pwd-${letter}`).value.trim();
-                                if (newPwd) {
-                                    projectPasswords[letter] = newPwd;
-                                    saveProjectPasswords();
-                                    showToast(`✅ 密碼已更新`);
-                                }
-                            };
-                        }, 0);
+                        contentArea.innerHTML = html;
+                        return;
                     }
+                    html = `<div class="page-card">
+                        <div class="page-title"><i class="fas fa-lock"></i> 檔案密碼庫</div>
+                        <table class="password-table">
+                            <thead><tr><th>字母</th><th>密碼 (6碼)</th><th>操作</th></tr></thead>
+                            <tbody id="passwordTableBody">`;
+                    for (let i = 65; i <= 90; i++) {
+                        let letter = String.fromCharCode(i);
+                        let pwd = filePasswords[letter] || '';
+                        html += `<tr>
+                            <td>${letter}</td>
+                            <td><input type="text" id="pwd-${letter}" value="${pwd}" placeholder="6碼密碼"></td>
+                            <td><button class="auth-btn save-btn" style="padding:5px 10px;" onclick="updatePassword('${letter}')">${t('saveChanges')}</button></td>
+                        </tr>`;
+                    }
+                    html += `</tbody></table></div>`;
+                    contentArea.innerHTML = html;
+                    window.updatePassword = function(letter) {
+                        let newPwd = document.getElementById(`pwd-${letter}`).value.trim();
+                        if (newPwd.length === 6) {
+                            filePasswords[letter] = newPwd;
+                            saveFilePasswords();
+                            showToast(`✅ 密碼已更新`);
+                        } else {
+                            showToast('❌ 密碼必須為6碼');
+                        }
+                    };
+                } else if (page === 'permCodeAdmin') {
+                    if (currentUser.role !== 'creator') {
+                        html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
+                        contentArea.innerHTML = html;
+                        return;
+                    }
+                    html = `<div class="page-card">
+                        <div class="page-title"><i class="fas fa-key"></i> 永久原始碼管理</div>
+                        <table class="user-table">
+                            <thead><tr><th>用戶ID (15碼)</th><th>檔案字母</th><th>有效秒數</th><th>完整原始碼</th><th>操作</th></tr></thead>
+                            <tbody>`;
+                    permCodeRecords.forEach((rec, idx) => {
+                        let code = rec.userId + filePasswords[rec.fileLetter] + String(rec.expirySec).padStart(3, '0');
+                        html += `<tr>
+                            <td><input type="text" id="userId-${idx}" value="${rec.userId}" style="width:120px;"></td>
+                            <td><input type="text" id="fileLetter-${idx}" value="${rec.fileLetter}" style="width:50px;"></td>
+                            <td><input type="number" id="expirySec-${idx}" value="${rec.expirySec}" style="width:70px;"></td>
+                            <td><code>${code}</code></td>
+                            <td><button class="auth-btn" style="padding:5px 10px;" onclick="updatePermRecord(${idx})">更新</button></td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table>
+                        <h3>新增永久原始碼</h3>
+                        <div class="form-group"><label>用戶ID (15碼)</label><input type="text" id="newUserId" class="form-control"></div>
+                        <div class="form-group"><label>檔案字母</label><input type="text" id="newFileLetter" class="form-control" maxlength="1"></div>
+                        <div class="form-group"><label>有效秒數</label><input type="number" id="newExpirySec" class="form-control"></div>
+                        <button class="auth-btn" id="addPermBtn">新增</button>
+                    </div>`;
+                    contentArea.innerHTML = html;
+                    window.updatePermRecord = function(idx) {
+                        let userId = document.getElementById(`userId-${idx}`).value.trim();
+                        let fileLetter = document.getElementById(`fileLetter-${idx}`).value.trim().toUpperCase();
+                        let expirySec = parseInt(document.getElementById(`expirySec-${idx}`).value);
+                        if (userId.length !== 15 || !/^\d+$/.test(userId)) {
+                            showToast('❌ 用戶ID必須為15位數字');
+                            return;
+                        }
+                        if (!fileLetter.match(/[A-Z]/) || fileLetter.length !== 1) {
+                            showToast('❌ 檔案字母必須為單一大寫字母');
+                            return;
+                        }
+                        if (isNaN(expirySec) || expirySec < 1) {
+                            showToast('❌ 有效秒數必須為正整數');
+                            return;
+                        }
+                        permCodeRecords[idx] = { userId, fileLetter, expirySec };
+                        savePermCodeRecords();
+                        renderPage('permCodeAdmin');
+                        showToast('✅ 已更新');
+                    };
+                    document.getElementById('addPermBtn').addEventListener('click', () => {
+                        let userId = document.getElementById('newUserId').value.trim();
+                        let fileLetter = document.getElementById('newFileLetter').value.trim().toUpperCase();
+                        let expirySec = parseInt(document.getElementById('newExpirySec').value);
+                        if (userId.length !== 15 || !/^\d+$/.test(userId)) {
+                            showToast('❌ 用戶ID必須為15位數字');
+                            return;
+                        }
+                        if (!fileLetter.match(/[A-Z]/) || fileLetter.length !== 1) {
+                            showToast('❌ 檔案字母必須為單一大寫字母');
+                            return;
+                        }
+                        if (isNaN(expirySec) || expirySec < 1) {
+                            showToast('❌ 有效秒數必須為正整數');
+                            return;
+                        }
+                        permCodeRecords.push({ userId, fileLetter, expirySec });
+                        savePermCodeRecords();
+                        renderPage('permCodeAdmin');
+                        showToast('✅ 新增成功');
+                    });
+                } else if (page === 'onceCodeAdmin') {
+                    if (currentUser.role !== 'creator') {
+                        html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
+                        contentArea.innerHTML = html;
+                        return;
+                    }
+                    html = `<div class="page-card">
+                        <div class="page-title"><i class="fas fa-code"></i> 一次性原始碼管理</div>
+                        <table class="user-table">
+                            <thead><tr><th>原始碼</th><th>檔案字母</th><th>有效秒數</th><th>已使用</th><th>操作</th></tr></thead>
+                            <tbody>`;
+                    for (let code in onceCodes) {
+                        let oc = onceCodes[code];
+                        html += `<tr>
+                            <td><input type="text" id="once-${code}" value="${code}" style="width:100px;"></td>
+                            <td><input type="text" id="onceLetter-${code}" value="${oc.fileLetter}" style="width:50px;"></td>
+                            <td><input type="number" id="onceSec-${code}" value="${oc.expirySec}" style="width:70px;"></td>
+                            <td><input type="checkbox" ${oc.used ? 'checked' : ''} disabled></td>
+                            <td><button class="auth-btn" style="padding:5px 10px;" onclick="updateOnce('${code}')">更新</button></td>
+                        </tr>`;
+                    }
+                    html += `</tbody></table>
+                        <h3>新增一次性原始碼</h3>
+                        <div class="form-group"><label>原始碼 (9碼)</label><input type="text" id="newOnceCode" class="form-control"></div>
+                        <div class="form-group"><label>檔案字母</label><input type="text" id="newOnceLetter" class="form-control" maxlength="1"></div>
+                        <div class="form-group"><label>秒數</label><input type="number" id="newOnceSec" class="form-control"></div>
+                        <button class="auth-btn" id="addOnceBtn">新增</button>
+                    </div>`;
+                    contentArea.innerHTML = html;
+                    window.updateOnce = function(code) {
+                        let newCode = document.getElementById(`once-${code}`).value.trim();
+                        let letter = document.getElementById(`onceLetter-${code}`).value.trim().toUpperCase();
+                        let sec = parseInt(document.getElementById(`onceSec-${code}`).value);
+                        if (!/^\d{9}$/.test(newCode)) {
+                            showToast('❌ 原始碼必須為9位數字');
+                            return;
+                        }
+                        if (!letter.match(/[A-Z]/) || letter.length !== 1) {
+                            showToast('❌ 檔案字母必須為單一大寫字母');
+                            return;
+                        }
+                        if (isNaN(sec) || sec < 1) {
+                            showToast('❌ 秒數必須為正整數');
+                            return;
+                        }
+                        delete onceCodes[code];
+                        onceCodes[newCode] = { fileLetter: letter, used: false, expirySec: sec };
+                        saveOnceCodes();
+                        renderPage('onceCodeAdmin');
+                        showToast('✅ 已更新');
+                    };
+                    document.getElementById('addOnceBtn').addEventListener('click', () => {
+                        let code = document.getElementById('newOnceCode').value.trim();
+                        let letter = document.getElementById('newOnceLetter').value.trim().toUpperCase();
+                        let sec = parseInt(document.getElementById('newOnceSec').value);
+                        if (!/^\d{9}$/.test(code)) {
+                            showToast('❌ 原始碼必須為9位數字');
+                            return;
+                        }
+                        if (!letter.match(/[A-Z]/) || letter.length !== 1) {
+                            showToast('❌ 檔案字母必須為單一大寫字母');
+                            return;
+                        }
+                        if (isNaN(sec) || sec < 1) {
+                            showToast('❌ 秒數必須為正整數');
+                            return;
+                        }
+                        if (onceCodes[code]) {
+                            showToast('❌ 原始碼已存在');
+                            return;
+                        }
+                        onceCodes[code] = { fileLetter: letter, used: false, expirySec: sec };
+                        saveOnceCodes();
+                        renderPage('onceCodeAdmin');
+                        showToast('✅ 新增成功');
+                    });
+                } else if (page === 'fileAdmin') {
+                    if (currentUser.role !== 'creator') {
+                        html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
+                        contentArea.innerHTML = html;
+                        return;
+                    }
+                    html = `<div class="page-card">
+                        <div class="page-title"><i class="fas fa-edit"></i> 檔案管理</div>
+                        <p>選擇檔案字母：</p>
+                        <select id="fileLetter" class="form-control" style="margin-bottom:20px;">`;
+                    for (let i = 65; i <= 90; i++) {
+                        let letter = String.fromCharCode(i);
+                        html += `<option value="${letter}">${letter}</option>`;
+                    }
+                    html += `</select>
+                        <div class="project-edit-section">
+                            <h3>編輯檔案基本資料</h3>
+                            <div class="form-group"><label>檔案名稱</label><input type="text" id="editFileName" class="form-control"></div>
+                            <div class="form-group"><label>檔案描述</label><textarea id="editFileDesc" class="form-control"></textarea></div>
+                            <div class="form-group"><label>下載連結</label><input type="text" id="editFileUrl" class="form-control"></div>
+                            <div class="form-group"><label>圖片網址</label><input type="text" id="editFileImage" class="form-control"></div>
+                            <div class="form-group"><label>網站連結</label><input type="text" id="editFileWebsite" class="form-control" placeholder="https://..."></div>
+                            <button class="auth-btn" id="updateFileBtn">更新檔案</button>
+                        </div>
+                    </div>`;
+                    contentArea.innerHTML = html;
+                    (function() {
+                        function loadFileData() {
+                            let letter = document.getElementById('fileLetter').value;
+                            let file = fileData[letter];
+                            if (file) {
+                                document.getElementById('editFileName').value = file.name || '';
+                                document.getElementById('editFileDesc').value = file.desc || '';
+                                document.getElementById('editFileUrl').value = file.downloadUrl || '#';
+                                document.getElementById('editFileImage').value = file.imageUrl || '';
+                                document.getElementById('editFileWebsite').value = file.websiteUrl || '';
+                            }
+                        }
+                        document.getElementById('fileLetter').addEventListener('change', loadFileData);
+                        loadFileData();
+
+                        document.getElementById('updateFileBtn').addEventListener('click', () => {
+                            let letter = document.getElementById('fileLetter').value;
+                            let name = document.getElementById('editFileName').value.trim();
+                            let desc = document.getElementById('editFileDesc').value.trim();
+                            let url = document.getElementById('editFileUrl').value.trim();
+                            let img = document.getElementById('editFileImage').value.trim();
+                            let website = document.getElementById('editFileWebsite').value.trim();
+                            if (!fileData[letter]) fileData[letter] = {};
+                            fileData[letter].name = name;
+                            fileData[letter].desc = desc;
+                            fileData[letter].downloadUrl = url;
+                            fileData[letter].imageUrl = img;
+                            fileData[letter].websiteUrl = website;
+                            saveFileData();
+                            showToast('✅ 檔案已更新');
+                        });
+                    })();
                 } else if (page === 'userManagement') {
                     if (currentUser.role !== 'creator') {
                         html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
-                    } else {
-                        // 建立用戶選項（用於原始碼管理中的下拉，此處不需要）
-                        const userOptions = Object.keys(users).map(u => `<option value="${u}">${u}</option>`).join('');
-                        html = `<div class="page-card">
-                            <div class="page-title"><i class="fas fa-user-cog"></i> ${t('userManagement')}</div>
-                            <h3>新增用戶</h3>
-                            <div class="form-group">
-                                <label>帳號</label><input type="text" id="newUsername" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label>密碼</label><input type="password" id="newPassword" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label>帳號ID (可留空自動生成)</label><input type="text" id="newAccountId" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label>姓名</label><input type="text" id="newName" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label>職業</label><input type="text" id="newOccupation" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label>班級</label><input type="text" id="newClass" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label>座號</label><input type="text" id="newNumber" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label>電子郵件</label><input type="email" id="newEmail" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label>角色</label>
-                                <select id="newRole" class="form-control">
-                                    <option value="observer">觀察者</option>
-                                    <option value="user">使用者</option>
-                                    <option value="manager">管理者</option>
-                                    <option value="creator">創造者</option>
+                        contentArea.innerHTML = html;
+                        return;
+                    }
+                    html = `<div class="page-card">
+                        <div class="page-title"><i class="fas fa-users-cog"></i> 用戶管理</div>
+                        <h3>新增用戶</h3>
+                        <div class="form-group">
+                            <label>帳號</label><input type="text" id="newUsername" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>密碼</label><input type="password" id="newPassword" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>帳號ID (可留空自動生成)</label><input type="text" id="newAccountId" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>姓名</label><input type="text" id="newName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>職業</label><input type="text" id="newOccupation" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>班級</label><input type="text" id="newClass" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>座號</label><input type="text" id="newNumber" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>電子郵件</label><input type="email" id="newEmail" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>角色</label>
+                            <select id="newRole" class="form-control">
+                                <option value="observer">觀察者</option>
+                                <option value="user">使用者</option>
+                                <option value="manager">管理者</option>
+                                <option value="creator">創造者</option>
+                            </select>
+                        </div>
+                        <button class="auth-btn" id="addUserBtn">新增用戶</button>
+                        <hr>
+                        <h3>用戶列表</h3>
+                        <table class="user-table">
+                            <thead><tr><th>帳號</th><th>密碼</th><th>ID</th><th>姓名</th><th>職業</th><th>班級</th><th>座號</th><th>電郵</th><th>角色</th><th>操作</th></tr></thead>
+                            <tbody id="userTableBody">`;
+                    for (let u in users) {
+                        let user = users[u];
+                        html += `<tr data-original-username="${u}">
+                            <td><input type="text" id="userNameField-${u}" value="${u}" class="username-input" style="width:80px;"></td>
+                            <td><input type="text" id="userPwd-${u}" value="${user.password}" style="width:60px;"></td>
+                            <td><input type="text" id="userAcc-${u}" value="${user.accountId || ''}" style="width:80px;"></td>
+                            <td><input type="text" id="userRealName-${u}" value="${user.name || ''}" style="width:70px;"></td>
+                            <td><input type="text" id="userOcc-${u}" value="${user.occupation || ''}" style="width:70px;"></td>
+                            <td><input type="text" id="userClass-${u}" value="${user.class || ''}" style="width:60px;"></td>
+                            <td><input type="text" id="userNumber-${u}" value="${user.number || ''}" style="width:50px;"></td>
+                            <td><input type="text" id="userEmail-${u}" value="${user.email || ''}" style="width:100px;"></td>
+                            <td>
+                                <select id="userRole-${u}">
+                                    <option value="observer" ${user.role === 'observer' ? 'selected' : ''}>觀察者</option>
+                                    <option value="user" ${user.role === 'user' ? 'selected' : ''}>使用者</option>
+                                    <option value="manager" ${user.role === 'manager' ? 'selected' : ''}>管理者</option>
+                                    <option value="creator" ${user.role === 'creator' ? 'selected' : ''}>創造者</option>
                                 </select>
-                            </div>
-                            <button class="auth-btn" id="addUserBtn">新增用戶</button>
-                            <hr>
-                            <h3>用戶列表</h3>
-                            <table class="user-table">
-                                <thead><tr><th>帳號</th><th>密碼</th><th>ID</th><th>姓名</th><th>職業</th><th>班級</th><th>座號</th><th>電郵</th><th>角色</th><th>操作</th></tr></thead>
-                                <tbody id="userTableBody">`;
-                        for (let u in users) {
-                            let user = users[u];
-                            html += `<tr data-original-username="${u}">
-                                <td><input type="text" id="userNameField-${u}" value="${u}" class="username-input" style="width:80px;"></td>
-                                <td><input type="text" id="userPwd-${u}" value="${user.password}" style="width:60px;"></td>
-                                <td><input type="text" id="userAcc-${u}" value="${user.accountId || ''}" style="width:80px;"></td>
-                                <td><input type="text" id="userRealName-${u}" value="${user.name || ''}" style="width:70px;"></td>
-                                <td><input type="text" id="userOcc-${u}" value="${user.occupation || ''}" style="width:70px;"></td>
-                                <td><input type="text" id="userClass-${u}" value="${user.class || ''}" style="width:60px;"></td>
-                                <td><input type="text" id="userNumber-${u}" value="${user.number || ''}" style="width:50px;"></td>
-                                <td><input type="text" id="userEmail-${u}" value="${user.email || ''}" style="width:100px;"></td>
-                                <td>
-                                    <select id="userRole-${u}">
-                                        <option value="observer" ${user.role === 'observer' ? 'selected' : ''}>觀察者</option>
-                                        <option value="user" ${user.role === 'user' ? 'selected' : ''}>使用者</option>
-                                        <option value="manager" ${user.role === 'manager' ? 'selected' : ''}>管理者</option>
-                                        <option value="creator" ${user.role === 'creator' ? 'selected' : ''}>創造者</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <button class="auth-btn" style="padding:5px 10px;" onclick="updateUser('${u}')">更新</button>
-                                    <button class="delete-btn" onclick="deleteUser('${u}')">刪除</button>
-                                </td>
-                            </tr>`;
-                        }
-                        html += `</tbody></table></div>`;
-                        setTimeout(() => {
-                            document.getElementById('addUserBtn').addEventListener('click', () => {
-                                let newUsername = document.getElementById('newUsername').value.trim();
-                                let newPassword = document.getElementById('newPassword').value.trim();
-                                let newAccountId = document.getElementById('newAccountId').value.trim() || generateAccountId(newUsername, document.getElementById('newRole').value);
-                                let newName = document.getElementById('newName').value.trim();
-                                let newOccupation = document.getElementById('newOccupation').value.trim();
-                                let newClass = document.getElementById('newClass').value.trim();
-                                let newNumber = document.getElementById('newNumber').value.trim();
-                                let newEmail = document.getElementById('newEmail').value.trim();
-                                let newRole = document.getElementById('newRole').value;
-                                if (!newUsername || !newPassword) {
-                                    showToast('❌ 帳號密碼必填');
-                                    return;
-                                }
-                                if (users[newUsername]) {
-                                    showToast('❌ 帳號已存在');
-                                    return;
-                                }
-                                users[newUsername] = {
-                                    password: newPassword,
-                                    accountId: newAccountId,
-                                    name: newName,
-                                    occupation: newOccupation,
-                                    class: newClass,
-                                    number: newNumber,
-                                    email: newEmail,
-                                    role: newRole
-                                };
-                                saveUsers();
-                                renderPage('userManagement');
-                                showToast('✅ 用戶新增成功');
-                            });
-                            window.updateUser = function(oldUsername) {
-                                let row = document.querySelector(`tr[data-original-username="${oldUsername}"]`);
-                                if (!row) return;
-                                let newUsername = row.querySelector('.username-input').value.trim();
-                                let newPwd = document.getElementById(`userPwd-${oldUsername}`).value.trim();
-                                let newAcc = document.getElementById(`userAcc-${oldUsername}`).value.trim();
-                                let newName = document.getElementById(`userRealName-${oldUsername}`).value.trim();
-                                let newOcc = document.getElementById(`userOcc-${oldUsername}`).value.trim();
-                                let newClass = document.getElementById(`userClass-${oldUsername}`).value.trim();
-                                let newNumber = document.getElementById(`userNumber-${oldUsername}`).value.trim();
-                                let newEmail = document.getElementById(`userEmail-${oldUsername}`).value.trim();
-                                let newRole = document.getElementById(`userRole-${oldUsername}`).value;
-                                if (!newUsername) {
-                                    showToast('❌ 帳號不可為空');
-                                    return;
-                                }
-                                if (newUsername !== oldUsername && users[newUsername] && newUsername !== oldUsername) {
-                                    showToast('❌ 新帳號已被使用');
-                                    return;
-                                }
-                                delete users[oldUsername];
-                                users[newUsername] = {
-                                    password: newPwd,
-                                    accountId: newAcc,
-                                    name: newName,
-                                    occupation: newOcc,
-                                    class: newClass,
-                                    number: newNumber,
-                                    email: newEmail,
-                                    role: newRole
-                                };
-                                saveUsers();
-                                renderPage('userManagement');
-                                showToast('✅ 用戶更新成功');
-                            };
-                            window.deleteUser = function(username) {
-                                if (username === '0') {
-                                    showToast('❌ 不能刪除超級用戶');
-                                    return;
-                                }
-                                if (confirm('確定刪除？')) {
-                                    delete users[username];
-                                    saveUsers();
-                                    renderPage('userManagement');
-                                    showToast('✅ 已刪除');
-                                }
-                            };
-                        }, 0);
+                            </td>
+                            <td>
+                                <button class="auth-btn" style="padding:5px 10px;" onclick="updateUser('${u}')">更新</button>
+                                <button class="delete-btn" onclick="deleteUser('${u}')">刪除</button>
+                            </td>
+                        </tr>`;
                     }
-                } else if (page === 'subProjectAdmin') {
+                    html += `</tbody></table></div>`;
+                    contentArea.innerHTML = html;
+                    document.getElementById('addUserBtn').addEventListener('click', () => {
+                        let newUsername = document.getElementById('newUsername').value.trim();
+                        let newPassword = document.getElementById('newPassword').value.trim();
+                        let newAccountId = document.getElementById('newAccountId').value.trim() || generateAccountId(newUsername, document.getElementById('newRole').value);
+                        let newName = document.getElementById('newName').value.trim();
+                        let newOccupation = document.getElementById('newOccupation').value.trim();
+                        let newClass = document.getElementById('newClass').value.trim();
+                        let newNumber = document.getElementById('newNumber').value.trim();
+                        let newEmail = document.getElementById('newEmail').value.trim();
+                        let newRole = document.getElementById('newRole').value;
+                        if (!newUsername || !newPassword) {
+                            showToast('❌ 帳號密碼必填');
+                            return;
+                        }
+                        if (users[newUsername]) {
+                            showToast('❌ 帳號已存在');
+                            return;
+                        }
+                        users[newUsername] = {
+                            password: newPassword,
+                            accountId: newAccountId,
+                            name: newName,
+                            occupation: newOccupation,
+                            class: newClass,
+                            number: newNumber,
+                            email: newEmail,
+                            role: newRole
+                        };
+                        saveUsers();
+                        renderPage('userManagement');
+                        showToast('✅ 用戶新增成功');
+                    });
+                    window.updateUser = function(oldUsername) {
+                        let row = document.querySelector(`tr[data-original-username="${oldUsername}"]`);
+                        if (!row) return;
+                        let newUsername = row.querySelector('.username-input').value.trim();
+                        let newPwd = document.getElementById(`userPwd-${oldUsername}`).value.trim();
+                        let newAcc = document.getElementById(`userAcc-${oldUsername}`).value.trim();
+                        let newName = document.getElementById(`userRealName-${oldUsername}`).value.trim();
+                        let newOcc = document.getElementById(`userOcc-${oldUsername}`).value.trim();
+                        let newClass = document.getElementById(`userClass-${oldUsername}`).value.trim();
+                        let newNumber = document.getElementById(`userNumber-${oldUsername}`).value.trim();
+                        let newEmail = document.getElementById(`userEmail-${oldUsername}`).value.trim();
+                        let newRole = document.getElementById(`userRole-${oldUsername}`).value;
+                        if (!newUsername) {
+                            showToast('❌ 帳號不可為空');
+                            return;
+                        }
+                        if (newUsername !== oldUsername && users[newUsername]) {
+                            showToast('❌ 新帳號已被使用');
+                            return;
+                        }
+                        delete users[oldUsername];
+                        users[newUsername] = {
+                            password: newPwd,
+                            accountId: newAcc,
+                            name: newName,
+                            occupation: newOcc,
+                            class: newClass,
+                            number: newNumber,
+                            email: newEmail,
+                            role: newRole
+                        };
+                        saveUsers();
+                        renderPage('userManagement');
+                        showToast('✅ 用戶更新成功');
+                    };
+                    window.deleteUser = function(username) {
+                        if (username === '0') {
+                            showToast('❌ 不能刪除超級用戶');
+                            return;
+                        }
+                        if (confirm('確定刪除？')) {
+                            delete users[username];
+                            saveUsers();
+                            renderPage('userManagement');
+                            showToast('✅ 已刪除');
+                        }
+                    };
+                } else if (page === 'termsAdmin') {
                     if (currentUser.role !== 'creator') {
                         html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
-                    } else {
-                        html = `<div class="page-card">
-                            <div class="page-title"><i class="fas fa-layer-group"></i> 專案管理</div>
-                            <p>選擇專案字母：</p>
-                            <select id="projectLetter" class="form-control" style="margin-bottom:20px;">`;
-                        for (let i = 65; i <= 90; i++) {
-                            let letter = String.fromCharCode(i);
-                            html += `<option value="${letter}">${letter}</option>`;
-                        }
-                        html += `</select>
-                            <div class="project-edit-section" id="projectEditSection">
-                                <h3>編輯專案基本資料</h3>
-                                <div class="form-group"><label>專案名稱</label><input type="text" id="editProjectName" class="form-control"></div>
-                                <div class="form-group"><label>專案描述</label><textarea id="editProjectDesc" class="form-control"></textarea></div>
-                                <div class="form-group"><label>下載連結</label><input type="text" id="editProjectUrl" class="form-control"></div>
-                                <div class="form-group"><label>圖片網址</label><input type="text" id="editProjectImage" class="form-control"></div>
-                                <button class="auth-btn" id="updateProjectBtn">更新專案</button>
-                            </div>
-                            <div id="subProjectList"></div>
-                            <h3>新增子專案</h3>
-                            <div class="form-group"><label>名稱</label><input type="text" id="newSubName" class="form-control"></div>
-                            <div class="form-group"><label>描述</label><textarea id="newSubDesc" class="form-control"></textarea></div>
-                            <div class="form-group"><label>下載連結</label><input type="text" id="newSubUrl" class="form-control" value="#"></div>
-                            <div class="form-group"><label>圖片網址</label><input type="text" id="newSubImage" class="form-control" value="https://picsum.photos/200/150?random=999"></div>
-                            <button class="auth-btn" id="addSubBtn">新增子專案</button>
-                        </div>`;
-                        setTimeout(() => {
-                            function loadProjectData() {
-                                let letter = document.getElementById('projectLetter').value;
-                                let proj = projectData[letter];
-                                if (proj) {
-                                    document.getElementById('editProjectName').value = proj.name || '';
-                                    document.getElementById('editProjectDesc').value = proj.desc || '';
-                                    document.getElementById('editProjectUrl').value = proj.downloadUrl || '#';
-                                    document.getElementById('editProjectImage').value = proj.imageUrl || '';
-                                }
-                                renderSubList();
-                            }
-                            function renderSubList() {
-                                let letter = document.getElementById('projectLetter').value;
-                                let listDiv = document.getElementById('subProjectList');
-                                let proj = projectData[letter];
-                                if (!proj) return;
-                                let subs = proj.subProjects || [];
-                                let html = '<h3>現有子專案</h3>';
-                                subs.forEach((sub, idx) => {
-                                    html += `<div class="subproject-item">
-                                        <div><strong>${sub.name}</strong> <button class="delete-btn" onclick="deleteSub('${letter}', ${idx})">刪除</button></div>
-                                        <div>描述：${sub.desc}</div>
-                                        <div>下載：<a href="${sub.downloadUrl}" target="_blank">連結</a></div>
-                                        <div>圖片：<img src="${sub.imageUrl}" style="max-width:100px;"></div>
-                                    </div>`;
-                                });
-                                listDiv.innerHTML = html;
-                            }
-                            document.getElementById('projectLetter').addEventListener('change', loadProjectData);
-                            loadProjectData();
-
-                            document.getElementById('updateProjectBtn').addEventListener('click', () => {
-                                let letter = document.getElementById('projectLetter').value;
-                                let name = document.getElementById('editProjectName').value.trim();
-                                let desc = document.getElementById('editProjectDesc').value.trim();
-                                let url = document.getElementById('editProjectUrl').value.trim();
-                                let img = document.getElementById('editProjectImage').value.trim();
-                                if (!projectData[letter]) projectData[letter] = {};
-                                projectData[letter].name = name;
-                                projectData[letter].desc = desc;
-                                projectData[letter].downloadUrl = url;
-                                projectData[letter].imageUrl = img;
-                                saveProjectData();
-                                showToast('✅ 專案已更新');
-                            });
-
-                            document.getElementById('addSubBtn').addEventListener('click', () => {
-                                let letter = document.getElementById('projectLetter').value;
-                                let name = document.getElementById('newSubName').value.trim();
-                                let desc = document.getElementById('newSubDesc').value.trim();
-                                let url = document.getElementById('newSubUrl').value.trim();
-                                let img = document.getElementById('newSubImage').value.trim();
-                                if (!name) { showToast('❌ 名稱必填'); return; }
-                                if (!projectData[letter].subProjects) projectData[letter].subProjects = [];
-                                projectData[letter].subProjects.push({ name, desc, downloadUrl: url, imageUrl: img });
-                                saveProjectData();
-                                renderSubList();
-                                document.getElementById('newSubName').value = '';
-                                document.getElementById('newSubDesc').value = '';
-                                document.getElementById('newSubUrl').value = '#';
-                                document.getElementById('newSubImage').value = 'https://picsum.photos/200/150?random=999';
-                                showToast('✅ 子專案新增成功');
-                            });
-                            window.deleteSub = function(letter, idx) {
-                                if (confirm('確定刪除？')) {
-                                    projectData[letter].subProjects.splice(idx, 1);
-                                    saveProjectData();
-                                    renderSubList();
-                                    showToast('✅ 已刪除');
-                                }
-                            };
-                        }, 0);
+                        contentArea.innerHTML = html;
+                        return;
                     }
-                } else if (page === 'sourceCodeAdmin') {
-                    if (currentUser.role !== 'creator') {
-                        html = `<div class="page-card"><div class="page-title">⛔ ${t('permissionDenied')}</div><p>${t('onlyCreator')}</p></div>`;
-                    } else {
-                        const userOptions = Object.keys(users).map(u => `<option value="${u}">${u}</option>`).join('');
-                        html = `<div class="page-card">
-                            <div class="page-title"><i class="fas fa-code"></i> 原始碼管理</div>
-                            <h3>永久原始碼</h3>
-                            <table class="user-table">
-                                <thead><tr><th>代碼</th><th>字母</th><th>秒數</th><th>角色</th><th>允許用戶</th><th>操作</th></tr></thead>
-                                <tbody>`;
-                        for (let code in permSourceCodes) {
-                            let sc = permSourceCodes[code];
-                            html += `<tr>
-                                <td><input type="text" id="perm-${code}" value="${code}" style="width:100px;"></td>
-                                <td><input type="text" id="permLetter-${code}" value="${sc.letter}" style="width:50px;"></td>
-                                <td><input type="number" id="permSec-${code}" value="${sc.expirySec}" style="width:70px;"></td>
-                                <td><input type="text" id="permRole-${code}" value="${sc.role}" style="width:80px;"></td>
-                                <td>
-                                    <select id="permUsers-${code}" multiple style="height:60px; width:120px;">
-                                        ${userOptions}
-                                    </select>
-                                </td>
-                                <td><button class="auth-btn" style="padding:5px 10px;" onclick="updatePerm('${code}')">更新</button></td>
-                            </tr>`;
-                        }
-                        html += `</tbody></table>
-                            <h3>新增永久原始碼</h3>
-                            <div class="form-group"><label>代碼</label><input type="text" id="newPermCode" class="form-control"></div>
-                            <div class="form-group"><label>字母</label><input type="text" id="newPermLetter" class="form-control" maxlength="1"></div>
-                            <div class="form-group"><label>秒數</label><input type="number" id="newPermSec" class="form-control"></div>
-                            <div class="form-group"><label>角色</label><input type="text" id="newPermRole" class="form-control" value="manager"></div>
-                            <div class="form-group"><label>允許用戶 (按住Ctrl多選)</label><select id="newPermUsers" multiple style="height:100px;">${userOptions}</select></div>
-                            <button class="auth-btn" id="addPermBtn">新增</button>
-                            <hr>
-                            <h3>一次性原始碼</h3>
-                            <table class="user-table">
-                                <thead><tr><th>代碼</th><th>字母</th><th>秒數</th><th>已使用</th><th>允許用戶</th><th>最大次數</th><th>到期日</th><th>操作</th></tr></thead>
-                                <tbody>`;
-                        for (let code in onceSourceCodes) {
-                            let sc = onceSourceCodes[code];
-                            html += `<tr>
-                                <td><input type="text" id="once-${code}" value="${code}" style="width:100px;"></td>
-                                <td><input type="text" id="onceLetter-${code}" value="${sc.letter}" style="width:50px;"></td>
-                                <td><input type="number" id="onceSec-${code}" value="${sc.expirySec}" style="width:70px;"></td>
-                                <td><input type="checkbox" id="onceUsed-${code}" ${sc.used ? 'checked' : ''} disabled></td>
-                                <td>
-                                    <select id="onceUsers-${code}" multiple style="height:60px; width:120px;">
-                                        ${userOptions}
-                                    </select>
-                                </td>
-                                <td><input type="number" id="onceMax-${code}" value="${sc.maxUses || 1}" style="width:60px;"></td>
-                                <td><input type="text" id="onceExpiry-${code}" value="${sc.expiryDate || ''}" style="width:100px;" placeholder="YYYY-MM-DD"></td>
-                                <td><button class="auth-btn" style="padding:5px 10px;" onclick="updateOnce('${code}')">更新</button></td>
-                            </tr>`;
-                        }
-                        html += `</tbody></table>
-                            <h3>新增一次性原始碼</h3>
-                            <div class="form-group"><label>代碼</label><input type="text" id="newOnceCode" class="form-control"></div>
-                            <div class="form-group"><label>字母</label><input type="text" id="newOnceLetter" class="form-control" maxlength="1"></div>
-                            <div class="form-group"><label>秒數</label><input type="number" id="newOnceSec" class="form-control"></div>
-                            <div class="form-group"><label>允許用戶 (按住Ctrl多選)</label><select id="newOnceUsers" multiple style="height:100px;">${userOptions}</select></div>
-                            <div class="form-group"><label>最大使用次數</label><input type="number" id="newOnceMax" class="form-control" value="1"></div>
-                            <div class="form-group"><label>到期日 (YYYY-MM-DD)</label><input type="text" id="newOnceExpiry" class="form-control"></div>
-                            <button class="auth-btn" id="addOnceBtn">新增</button>
-                        </div>`;
-                        setTimeout(() => {
-                            window.updatePerm = function(code) {
-                                let newCode = document.getElementById(`perm-${code}`).value.trim();
-                                let letter = document.getElementById(`permLetter-${code}`).value.trim().toUpperCase();
-                                let sec = parseInt(document.getElementById(`permSec-${code}`).value);
-                                let role = document.getElementById(`permRole-${code}`).value.trim();
-                                let userSelect = document.getElementById(`permUsers-${code}`);
-                                let allowedUsers = Array.from(userSelect.selectedOptions).map(opt => opt.value);
-                                if (newCode && letter && sec && role) {
-                                    delete permSourceCodes[code];
-                                    permSourceCodes[newCode] = { letter, expirySec: sec, role, allowedUsers };
-                                    savePermSourceCodes();
-                                    renderPage('sourceCodeAdmin');
-                                    showToast('✅ 已更新');
-                                }
-                            };
-                            window.updateOnce = function(code) {
-                                let newCode = document.getElementById(`once-${code}`).value.trim();
-                                let letter = document.getElementById(`onceLetter-${code}`).value.trim().toUpperCase();
-                                let sec = parseInt(document.getElementById(`onceSec-${code}`).value);
-                                let userSelect = document.getElementById(`onceUsers-${code}`);
-                                let allowedUsers = Array.from(userSelect.selectedOptions).map(opt => opt.value);
-                                let maxUses = parseInt(document.getElementById(`onceMax-${code}`).value);
-                                let expiryDate = document.getElementById(`onceExpiry-${code}`).value.trim();
-                                if (newCode && letter && sec) {
-                                    delete onceSourceCodes[code];
-                                    onceSourceCodes[newCode] = {
-                                        letter,
-                                        expirySec: sec,
-                                        used: false,
-                                        role: 'user',
-                                        allowedUsers,
-                                        maxUses,
-                                        usedCount: 0,
-                                        expiryDate: expiryDate || null
-                                    };
-                                    saveOnceSourceCodes();
-                                    renderPage('sourceCodeAdmin');
-                                    showToast('✅ 已更新');
-                                }
-                            };
-                            document.getElementById('addPermBtn').addEventListener('click', () => {
-                                let code = document.getElementById('newPermCode').value.trim();
-                                let letter = document.getElementById('newPermLetter').value.trim().toUpperCase();
-                                let sec = parseInt(document.getElementById('newPermSec').value);
-                                let role = document.getElementById('newPermRole').value.trim();
-                                let userSelect = document.getElementById('newPermUsers');
-                                let allowedUsers = Array.from(userSelect.selectedOptions).map(opt => opt.value);
-                                if (!code || !letter || !sec || !role) { showToast('❌ 請填寫完整'); return; }
-                                if (permSourceCodes[code]) { showToast('❌ 代碼已存在'); return; }
-                                permSourceCodes[code] = { letter, expirySec: sec, role, allowedUsers };
-                                savePermSourceCodes();
-                                renderPage('sourceCodeAdmin');
-                                showToast('✅ 新增成功');
-                            });
-                            document.getElementById('addOnceBtn').addEventListener('click', () => {
-                                let code = document.getElementById('newOnceCode').value.trim();
-                                let letter = document.getElementById('newOnceLetter').value.trim().toUpperCase();
-                                let sec = parseInt(document.getElementById('newOnceSec').value);
-                                let userSelect = document.getElementById('newOnceUsers');
-                                let allowedUsers = Array.from(userSelect.selectedOptions).map(opt => opt.value);
-                                let maxUses = parseInt(document.getElementById('newOnceMax').value);
-                                let expiryDate = document.getElementById('newOnceExpiry').value.trim();
-                                if (!code || !letter || !sec) { showToast('❌ 請填寫代碼、字母、秒數'); return; }
-                                if (onceSourceCodes[code]) { showToast('❌ 代碼已存在'); return; }
-                                onceSourceCodes[code] = {
-                                    letter,
-                                    expirySec: sec,
-                                    used: false,
-                                    role: 'user',
-                                    allowedUsers,
-                                    maxUses,
-                                    usedCount: 0,
-                                    expiryDate: expiryDate || null
-                                };
-                                saveOnceSourceCodes();
-                                renderPage('sourceCodeAdmin');
-                                showToast('✅ 新增成功');
-                            });
-                        }, 0);
-                    }
+                    html = `<div class="page-card">
+                        <div class="page-title"><i class="fas fa-file-contract"></i> 條款管理</div>
+                        <p>編輯網站條款內容：</p>
+                        <textarea id="termsTextarea" rows="10" class="form-control" style="white-space: pre-wrap;">${termsContent}</textarea>
+                        <button class="auth-btn" id="saveTermsBtn" style="margin-top:20px;">儲存條款</button>
+                    </div>`;
+                    contentArea.innerHTML = html;
+                    document.getElementById('saveTermsBtn').addEventListener('click', () => {
+                        let newContent = document.getElementById('termsTextarea').value;
+                        termsContent = newContent;
+                        saveTermsContent();
+                        showToast('✅ 條款已更新');
+                    });
                 } else if (page === 'settings') {
                     let currentPassword = (users[currentUser.username] && users[currentUser.username].password) || '';
                     let dots = '●'.repeat(currentPassword.length) || '';
@@ -1833,9 +1270,10 @@
                         </div>
                         <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> ${t('logout')}</button>
                     </div>`;
-                    setTimeout(() => {
-                        document.getElementById('logoutBtn').addEventListener('click', logout);
-                        const checkUpdateBtn = document.getElementById('checkUpdate');
+                    contentArea.innerHTML = html;
+                    document.getElementById('logoutBtn').addEventListener('click', logout);
+                    const checkUpdateBtn = document.getElementById('checkUpdate');
+                    if (checkUpdateBtn) {
                         checkUpdateBtn.addEventListener('click', function() {
                             setButtonLoading(this, true);
                             setTimeout(() => {
@@ -1843,78 +1281,46 @@
                                 showToast(`✅ ${t('checkComplete')}`);
                             }, 1500);
                         });
-                        document.getElementById('langSelect').addEventListener('change', (e) => {
-                            setLanguage(e.target.value);
-                        });
-                        document.getElementById('lightTheme').addEventListener('click', () => {
-                            document.body.classList.remove('dark-mode');
-                            document.body.classList.add('light-mode');
-                            document.getElementById('lightTheme').classList.add('active');
-                            document.getElementById('darkTheme').classList.remove('active');
-                            localStorage.setItem('theme', 'light');
-                        });
-                        document.getElementById('darkTheme').addEventListener('click', () => {
-                            document.body.classList.remove('light-mode');
-                            document.body.classList.add('dark-mode');
-                            document.getElementById('darkTheme').classList.add('active');
-                            document.getElementById('lightTheme').classList.remove('active');
-                            localStorage.setItem('theme', 'dark');
-                        });
-                    }, 0);
+                    }
+                    document.getElementById('langSelect').addEventListener('change', (e) => {
+                        setLanguage(e.target.value);
+                    });
+                    document.getElementById('lightTheme').addEventListener('click', () => {
+                        document.body.classList.remove('dark-mode');
+                        document.body.classList.add('light-mode');
+                        document.getElementById('lightTheme').classList.add('active');
+                        document.getElementById('darkTheme').classList.remove('active');
+                        localStorage.setItem('theme', 'light');
+                    });
+                    document.getElementById('darkTheme').addEventListener('click', () => {
+                        document.body.classList.remove('light-mode');
+                        document.body.classList.add('dark-mode');
+                        document.getElementById('darkTheme').classList.add('active');
+                        document.getElementById('lightTheme').classList.remove('active');
+                        localStorage.setItem('theme', 'dark');
+                    });
                 }
-                contentArea.innerHTML = html;
             }
 
-            // 顯示專案詳情（整合子專案）
-            function showProjectDetail(letter) {
-                let proj = projectData[letter] || { name: letter+' '+t('project'), desc: '', downloadUrl: '#', imageUrl: '', subProjects: [] };
+            // 顯示檔案詳情
+            function showFileDetail(letter) {
+                let file = fileData[letter] || { name: letter+' 檔案', desc: '', downloadUrl: '#', imageUrl: '', websiteUrl: '#' };
                 let unlocked = isUnlocked(letter);
-                let expiryTime = currentUser.unlockedProjects[letter]?.expiry;
+                let expiryTime = currentUser.unlockedFiles?.[letter]?.expiry;
                 let remaining = expiryTime ? Math.max(0, Math.floor((expiryTime - Date.now()) / 1000)) : 0;
 
                 let html = `<div class="page-card">
-                    <div class="page-title">${t('project')} ${letter} ${t('details')} <button class="auth-btn" style="padding:8px 15px; margin-left:auto;" onclick="renderPage('projects')">${t('back')}</button></div>
+                    <div class="page-title">檔案 ${letter} ${t('details')} <button class="auth-btn" style="padding:8px 15px; margin-left:auto;" onclick="renderPage('files')">${t('back')}</button></div>
                     <div class="project-detail">`;
                 if (unlocked) {
-                    html += `<h2>${proj.name}</h2>
-                        <p>${proj.desc}</p>
-                        <img src="${proj.imageUrl}" alt="project image">
+                    html += `<h2>${file.name}</h2>
+                        <p>${file.desc}</p>
+                        <img src="${file.imageUrl}" alt="file image">
                         <div class="timer" id="timer-${letter}">${t('remaining')}：${remaining} ${t('seconds')}</div>
-                        <a href="${proj.downloadUrl}" class="download-btn" download><i class="fas fa-download"></i> ${t('download')}</a>`;
-                    if (proj.subProjects && proj.subProjects.length > 0) {
-                        html += `<h3>子專案</h3>`;
-                        proj.subProjects.forEach((sub, idx) => {
-                            html += `<div class="subproject-item">
-                                <h4>${sub.name}</h4>
-                                <p>${sub.desc}</p>
-                                <img src="${sub.imageUrl}" style="max-width:200px;"><br>
-                                <a href="${sub.downloadUrl}" class="download-btn" download>下載子專案</a>
-                            </div>`;
-                        });
-                    }
+                        <a href="${file.downloadUrl}" class="download-btn" download><i class="fas fa-download"></i> ${t('download')}</a>
+                        <a href="${file.websiteUrl}" class="website-btn" target="_blank"><i class="fas fa-external-link-alt"></i> ${t('website')}</a>`;
                 } else {
-                    html += `
-                        <div class="unlock-section">
-                            <h3><i class="fas fa-key"></i> ${t('unlockWithSource')}</h3>
-                            <div class="source-type">
-                                <div class="source-type-btn active" data-type="permanent">${t('permSource')}</div>
-                                <div class="source-type-btn" data-type="once">${t('onceSource')}</div>
-                            </div>
-                            <div class="source-input-group">
-                                <input type="text" id="sourceCode" placeholder="${t('enterSource')}">
-                                <button id="unlockWithSource">${t('confirm')}</button>
-                            </div>
-                            <div id="sourceMsg" style="color:#f87171; margin-top:10px;"></div>
-                        </div>
-                        <div class="unlock-section">
-                            <h3><i class="fas fa-lock"></i> ${t('unlockWithPassword')}</h3>
-                            <div class="source-input-group">
-                                <input type="text" id="projectPassword" placeholder="${t('enterPassword')}">
-                                <button id="unlockWithPassword">${t('confirm')}</button>
-                            </div>
-                            <div id="passwordMsg" style="color:#f87171; margin-top:10px;"></div>
-                        </div>
-                    `;
+                    html += `<p>此檔案尚未解鎖。</p>`;
                 }
                 html += `</div></div>`;
                 contentArea.innerHTML = html;
@@ -1923,7 +1329,7 @@
                     const timerEl = document.getElementById(`timer-${letter}`);
                     if (timerEl) {
                         const interval = setInterval(() => {
-                            let expiry = currentUser.unlockedProjects[letter]?.expiry;
+                            let expiry = currentUser.unlockedFiles?.[letter]?.expiry;
                             if (!expiry) {
                                 clearInterval(interval);
                                 timerEl.textContent = t('expired');
@@ -1933,94 +1339,11 @@
                             timerEl.textContent = `${t('remaining')}：${remaining} ${t('seconds')}`;
                             if (remaining <= 0) {
                                 clearInterval(interval);
-                                delete currentUser.unlockedProjects[letter];
-                                showToast(`⏰ 專案 ${letter} 已過期`, 3000);
-                                showProjectDetail(letter);
+                                delete currentUser.unlockedFiles[letter];
+                                showToast(`⏰ 檔案 ${letter} 已過期`, 3000);
+                                showFileDetail(letter);
                             }
                         }, 1000);
-                    }
-                } else if (!unlocked) {
-                    let sourceType = 'permanent';
-                    document.querySelectorAll('.source-type-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            document.querySelectorAll('.source-type-btn').forEach(b => b.classList.remove('active'));
-                            this.classList.add('active');
-                            sourceType = this.dataset.type;
-                        });
-                    });
-
-                    const unlockSourceBtn = document.getElementById('unlockWithSource');
-                    if (unlockSourceBtn) {
-                        unlockSourceBtn.addEventListener('click', function() {
-                            setButtonLoading(this, true);
-                            let code = document.getElementById('sourceCode').value.trim();
-                            let source;
-                            if (sourceType === 'permanent') {
-                                source = permSourceCodes[code];
-                            } else {
-                                source = onceSourceCodes[code];
-                            }
-                            let msgDiv = document.getElementById('sourceMsg');
-                            setTimeout(() => {
-                                setButtonLoading(unlockSourceBtn, false);
-                                if (!source) {
-                                    msgDiv.textContent = '❌ ' + t('permCodeError');
-                                    return;
-                                }
-                                if (sourceType === 'once') {
-                                    if (source.expiryDate && new Date(source.expiryDate) < new Date()) {
-                                        msgDiv.textContent = '❌ 原始碼已過期';
-                                        return;
-                                    }
-                                    if (source.maxUses && source.usedCount >= source.maxUses) {
-                                        msgDiv.textContent = '❌ 原始碼已達使用次數上限';
-                                        return;
-                                    }
-                                    if (source.allowedUsers && source.allowedUsers.length > 0 && !source.allowedUsers.includes(currentUser.username)) {
-                                        msgDiv.textContent = '❌ 您無權使用此原始碼';
-                                        return;
-                                    }
-                                    source.usedCount = (source.usedCount || 0) + 1;
-                                    if (source.maxUses && source.usedCount >= source.maxUses) {
-                                        source.used = true;
-                                    }
-                                    saveOnceSourceCodes();
-                                }
-                                if (source.letter !== letter) {
-                                    msgDiv.textContent = `❌ ${t('codeFor')} ${source.letter}`;
-                                    return;
-                                }
-                                unlockProject(letter, source.expirySec);
-                                showToast(`🔓 ${t('unlockSuccess')} (${source.expirySec}${t('seconds')})`);
-                                showProjectDetail(letter);
-                            }, 500);
-                        });
-                    }
-
-                    const unlockPwdBtn = document.getElementById('unlockWithPassword');
-                    if (unlockPwdBtn) {
-                        unlockPwdBtn.addEventListener('click', function() {
-                            setButtonLoading(this, true);
-                            let pwd = document.getElementById('projectPassword').value.trim();
-                            let correct = projectPasswords[letter];
-                            let msgDiv = document.getElementById('passwordMsg');
-                            setTimeout(() => {
-                                setButtonLoading(unlockPwdBtn, false);
-                                if (!correct) {
-                                    msgDiv.textContent = '❌ ' + t('noPassword');
-                                    return;
-                                }
-                                if (pwd !== correct) {
-                                    msgDiv.textContent = '❌ ' + t('wrongPassword');
-                                    return;
-                                }
-                                let expirySec = parseInt(correct.slice(-3));
-                                if (isNaN(expirySec) || expirySec < 1) expirySec = 30;
-                                unlockProject(letter, expirySec);
-                                showToast(`🔓 ${t('unlockSuccess')} (${expirySec}${t('seconds')})`);
-                                showProjectDetail(letter);
-                            }, 500);
-                        });
                     }
                 }
             }
@@ -2054,63 +1377,37 @@
                 setButtonLoading(loginBtn, false);
             });
 
-            registerBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                setButtonLoading(registerBtn, true);
-                let username = document.getElementById('regUsername').value.trim();
-                let password = document.getElementById('regPassword').value.trim();
-                let regClass = document.getElementById('regClass').value.trim();
-                let regNumber = document.getElementById('regNumber').value.trim();
-
-                if (!username || !password) {
-                    registerError.innerHTML = '❌ ' + t('required'); registerError.style.display = 'flex';
-                    setButtonLoading(registerBtn, false);
-                    return;
-                }
-                if (username === '0') {
-                    registerError.innerHTML = '❌ ' + t('cannotRegister'); registerError.style.display = 'flex';
-                    setButtonLoading(registerBtn, false);
-                    return;
-                }
-                if (users[username]) {
-                    registerError.innerHTML = '❌ ' + t('userExists'); registerError.style.display = 'flex';
-                    setButtonLoading(registerBtn, false);
-                    return;
-                }
-                if (!regClass || !regNumber) {
-                    registerError.innerHTML = '❌ ' + t('classNumberRequired'); registerError.style.display = 'flex';
-                    setButtonLoading(registerBtn, false);
-                    return;
-                }
-                let accountId = generateAccountId(username, 'observer');
-                users[username] = { password, role: 'observer', accountId, name: '', occupation: '學生', class: regClass, number: regNumber, email: '' };
-                saveUsers();
-                showToast('✅ ' + t('registerSuccess'));
-                loginTab.click();
-                document.getElementById('regUsername').value = '';
-                document.getElementById('regPassword').value = '';
-                document.getElementById('regClass').value = '';
-                document.getElementById('regNumber').value = '';
-                registerError.style.display = 'none';
-                setButtonLoading(registerBtn, false);
-            });
-
             permCodeBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 setButtonLoading(permCodeBtn, true);
                 let code = document.getElementById('permCode').value.trim();
-                let source = permSourceCodes[code];
-                if (!source) {
+                if (!/^\d{24}$/.test(code)) {
                     permCodeError.style.display = 'flex';
                     setTimeout(() => permCodeError.style.display = 'none', 2000);
                     setButtonLoading(permCodeBtn, false);
                     return;
                 }
-                let username = `MGR-${source.letter}`;
-                let role = source.role || 'manager';
+                let userId = code.substring(0, 15);
+                let filePwd = code.substring(15, 21);
+                let expirySec = parseInt(code.substring(21, 24), 10);
+                let fileLetter = null;
+                for (let letter in filePasswords) {
+                    if (filePasswords[letter] === filePwd) {
+                        fileLetter = letter;
+                        break;
+                    }
+                }
+                if (!fileLetter) {
+                    permCodeError.style.display = 'flex';
+                    setTimeout(() => permCodeError.style.display = 'none', 2000);
+                    setButtonLoading(permCodeBtn, false);
+                    return;
+                }
+                let username = `MGR-${fileLetter}`;
+                let role = 'manager';
                 let accountId = generateAccountId(username, role);
-                unlockProject(source.letter, source.expirySec);
-                loginSuccess(username, role, accountId, source.letter);
+                unlockFile(fileLetter, expirySec);
+                loginSuccess(username, role, accountId, fileLetter);
                 setButtonLoading(permCodeBtn, false);
             });
 
@@ -2118,41 +1415,27 @@
                 e.preventDefault();
                 setButtonLoading(onceCodeBtn, true);
                 let code = document.getElementById('onceCode').value.trim();
-                let source = onceSourceCodes[code];
-                if (!source || source.used) {
+                let once = onceCodes[code];
+                if (!once || once.used) {
                     onceCodeError.style.display = 'flex';
                     setTimeout(() => onceCodeError.style.display = 'none', 2000);
                     setButtonLoading(onceCodeBtn, false);
                     return;
                 }
-                if (source.expiryDate && new Date(source.expiryDate) < new Date()) {
-                    onceCodeError.style.display = 'flex';
-                    setTimeout(() => onceCodeError.style.display = 'none', 2000);
-                    setButtonLoading(onceCodeBtn, false);
-                    return;
-                }
-                if (source.maxUses && source.usedCount >= source.maxUses) {
-                    onceCodeError.style.display = 'flex';
-                    setTimeout(() => onceCodeError.style.display = 'none', 2000);
-                    setButtonLoading(onceCodeBtn, false);
-                    return;
-                }
-                // 原始碼登入不檢查 allowedUsers，因為無法確定是誰
-                source.usedCount = (source.usedCount || 0) + 1;
-                if (source.maxUses && source.usedCount >= source.maxUses) {
-                    source.used = true;
-                }
-                saveOnceSourceCodes();
-                let username = `USR-${source.letter}`;
-                let role = source.role || 'user';
+                once.used = true;
+                saveOnceCodes();
+                let fileLetter = once.fileLetter;
+                let expirySec = once.expirySec;
+                let username = `USR-${fileLetter}`;
+                let role = 'user';
                 let accountId = generateAccountId(username, role);
-                unlockProject(source.letter, source.expirySec);
-                loginSuccess(username, role, accountId, source.letter);
+                unlockFile(fileLetter, expirySec);
+                loginSuccess(username, role, accountId, fileLetter);
                 setButtonLoading(onceCodeBtn, false);
             });
 
             function logout() {
-                currentUser = { username: null, role: null, accountId: null, unlockedProjects: {} };
+                currentUser = { username: null, role: null, accountId: null, unlockedFiles: {} };
                 mainPanel.style.display = 'none';
                 authCard.style.display = 'block';
                 deviceSelector.style.display = 'none';
@@ -2161,33 +1444,20 @@
 
             // 頁籤切換
             loginTab.addEventListener('click', () => {
-                loginTab.classList.add('active'); registerTab.classList.remove('active');
-                permCodeTab.classList.remove('active'); onceCodeTab.classList.remove('active');
-                loginForm.style.display = 'flex'; registerForm.style.display = 'none';
-                permCodeForm.style.display = 'none'; onceCodeForm.style.display = 'none';
-            });
-            registerTab.addEventListener('click', () => {
-                registerTab.classList.add('active'); loginTab.classList.remove('active');
-                permCodeTab.classList.remove('active'); onceCodeTab.classList.remove('active');
-                registerForm.style.display = 'flex'; loginForm.style.display = 'none';
-                permCodeForm.style.display = 'none'; onceCodeForm.style.display = 'none';
+                loginTab.classList.add('active'); permCodeTab.classList.remove('active'); onceCodeTab.classList.remove('active');
+                loginForm.style.display = 'flex'; permCodeForm.style.display = 'none'; onceCodeForm.style.display = 'none';
             });
             permCodeTab.addEventListener('click', () => {
-                permCodeTab.classList.add('active'); loginTab.classList.remove('active');
-                registerTab.classList.remove('active'); onceCodeTab.classList.remove('active');
-                permCodeForm.style.display = 'flex'; loginForm.style.display = 'none';
-                registerForm.style.display = 'none'; onceCodeForm.style.display = 'none';
+                permCodeTab.classList.add('active'); loginTab.classList.remove('active'); onceCodeTab.classList.remove('active');
+                permCodeForm.style.display = 'flex'; loginForm.style.display = 'none'; onceCodeForm.style.display = 'none';
             });
             onceCodeTab.addEventListener('click', () => {
-                onceCodeTab.classList.add('active'); loginTab.classList.remove('active');
-                registerTab.classList.remove('active'); permCodeTab.classList.remove('active');
-                onceCodeForm.style.display = 'flex'; loginForm.style.display = 'none';
-                registerForm.style.display = 'none'; permCodeForm.style.display = 'none';
+                onceCodeTab.classList.add('active'); loginTab.classList.remove('active'); permCodeTab.classList.remove('active');
+                onceCodeForm.style.display = 'flex'; loginForm.style.display = 'none'; permCodeForm.style.display = 'none';
             });
 
             // 初始化
             loginError.style.display = 'none';
-            registerError.style.display = 'none';
             permCodeError.style.display = 'none';
             onceCodeError.style.display = 'none';
             authCard.style.display = 'block';
@@ -2204,23 +1474,43 @@
             }
 
             applyLanguage();
+
+            // 將 renderPage 和 showFileDetail 掛到 window 供 onclick 使用
+            window.renderPage = renderPage;
+            window.showFileDetail = showFileDetail;
         })();
     </script>
 
-    <!-- ========== 🛠️ 修改教學 ========== -->
+    <!-- ========================================================================= -->
+    <!-- 🛠️ 完整修改教學 (給開發者看的) -->
+    <!-- ========================================================================= -->
     <!--
-        🔧 所有資料皆儲存在 localStorage 中，您在介面上所做的任何新增、修改、刪除都會永久保存。
-        🔧 版本號自動更新規則：
-           - 用戶資料修改 → 第三位 +1
-           - 專案相關資料（專案、密碼、子專案、原始碼）修改 → 第二位 +1
-           - 核心系統變更 → 第一位 +1（由開發者手動修改 version 變數）
-        🔧 超級用戶「0」已加入 users 物件，可於用戶管理編輯其個人資料（但無法刪除）。
-        🔧 用戶管理表格中，帳號欄位現為可編輯的輸入框，更新時會處理鍵值變更。
-        🔧 淺色模式所有按鈕已全面修正為深藍色背景、白色文字。
-        🔧 設定頁面中，密碼點點數量會根據該用戶實際密碼長度顯示。
-        🔧 專案管理頁面已整合編輯專案基本資料與子專案管理。
-        🔧 原始碼管理頁面清楚列出允許用戶（多選），但登入時不強制檢查，因為原始碼登入無法確定用戶身份。
+        本系統所有可修改的資料皆儲存在 localStorage 中，並提供管理介面讓創造者直接修改。
+        如果您想手動修改預設值，請在 JavaScript 中找到以下區塊：
+
+        1. 語言文字：在 i18n 物件中，修改 'zh-TW' 或 'en' 下的對應鍵值。
+           例如：將 termsContent 的值改為您想要的條款內容。
+
+        2. 使用者帳號密碼：在 users 物件中，按照格式新增或修改。
+           格式： "帳號": { password: "密碼", role: "角色", accountId: "ID", name: "姓名", occupation: "職業", class: "班級", number: "座號", email: "電子郵件" }
+           角色可為：observer, user, manager, creator
+
+        3. 檔案密碼：在 filePasswords 物件中，每個字母對應一個6碼密碼。
+           例如：將 A 的密碼改為 "123456"。
+
+        4. 永久原始碼記錄：在 permCodeRecords 陣列中，每個物件包含 userId(15碼), fileLetter(字母), expirySec(秒數)。
+           例如：新增一筆記錄 { userId: "000000000000001", fileLetter: "A", expirySec: 600 }
+
+        5. 一次性原始碼：在 onceCodes 物件中，鍵為9碼數字，值為 { fileLetter, used, expirySec }。
+           例如：新增 "987654321": { fileLetter: "Z", used: false, expirySec: 500 }
+
+        6. 檔案資訊：在 fileData 物件中，每個字母對應 { name, desc, downloadUrl, imageUrl, websiteUrl }。
+           例如：將 A 的下載連結改為 "https://example.com/fileA.zip"
+
+        7. 網站條款：在 termsContent 變數中，可直接修改預設文字。
+
+        所有修改完成後，重新整理頁面即可生效。若想恢復預設值，請清除瀏覽器的 localStorage。
     -->
-    <!-- ================================== -->
+    <!-- ========================================================================= -->
 </body>
 </html>
